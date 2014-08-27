@@ -1,0 +1,101 @@
+<script type="text/javascript">
+
+    (function () {
+        var control = kiwi.components.ControlInput();
+
+        control.on('command:msg', function(event) {
+
+        	var message = event.params.join(' ');
+        	//check if the message is a quote
+        	if (message.charAt(0) != '$'){
+        		return;
+        	}
+            //min length 10 chars
+            if (message.length < 10){
+                return;
+            }
+
+        	message = message.substring(1);
+
+        	var meNick = kiwi.panels().active.get('network').get('nick');
+        	var me = kiwi.panels().active.get('members').getByNick(meNick);
+
+        	if (me.get('is_op')){
+                createQuote(message, kiwi.panels().active.get('name'));
+        	}
+        });
+ 
+    })();
+
+    function createQuote(quote, channel){
+    	// var api_endpoint = "http://api.chateagratis.local/app_dev.php/";
+    	var data = {body: quote , board: channel};
+    	$.ajax({
+		    type: "POST",
+		    dataType: "json",
+		    data : data,
+		    url: kiwi.settings.get('api_endpoint')+"api/quotes.json?access_token="+window.token,
+		    success : function(data){
+                kiwi.panels().active.addMsg('', '[QUOTE] added succesfully: '+data.body ,'action mode', null);
+		    },
+		    error: function(XMLHttpRequest, textStatus, errorThrown){
+                var error = '';
+                
+                if (XMLHttpRequest.responseJSON !== undefined){
+                    response = XMLHttpRequest.responseJSON;
+                } else {
+                    response = JSON.parse(XMLHttpRequest.responseText);
+                }
+                $.each(response.errors,function(index, value){
+                    error += index + ' : ' + value.message + '\n';
+                });
+
+                kiwi.panels().active.addMsg('', '[QUOTE] Error not saved quote: '+error ,'status');
+		    }
+        });
+    };
+
+    // Get quotes to one channel
+    (function () {
+        var network = kiwi.components.Network();
+
+        network.on('join', function(event) {
+
+            var mynick = kiwi.connections.getByConnectionId(0).get('nick');
+
+            //join listen all entries to channel, I want only getQuotes to my entry
+            if (event.nick == mynick){
+                getQuotes(encodeURIComponent(event.channel), function(resultQuotesJson){
+                    // get panel of channel
+                    _.find(kiwi.panels(), function(panel) {
+                        if (panel.get('name') == event.channel){
+                            $.each(resultQuotesJson.resources, function(i, value){
+                                panel.addMsg('', '== '+value.creator.username + ' ' + value.body , 'motd');                
+                            });                        
+                        };
+                    });
+                });
+            }
+        });
+ 
+    })();
+
+    function getQuotes(channel, callback){
+        // var api_endpoint = "http://api.chateagratis.local/app_dev.php/";
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: kiwi.settings.get('api_endpoint')+"quotes.json?access_token="+window.token+"&filter=board=channel_"+channel+',createdat=today',
+            success : function(data){
+                return callback(data);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown){
+                alert('error en get quotes');
+                console.log(XMLHttpRequest);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+    };
+
+</script>

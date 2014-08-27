@@ -1,0 +1,90 @@
+<script type="text/html" id="tmpl_user_widget">
+    <%
+    var currentYear, yearUser, yearsOld;
+
+    if(typeof(profile) != 'undefined'){
+        currentYear = new Date().getFullYear();
+        yearUser = new Date(profile.birthday).getFullYear().toString().substring(0,4);
+        yearsOld = currentYear - yearUser;
+        if (yearsOld <=0) yearsOld = '>18';
+    }else{
+        yearsOld = 'Unknown';
+    }
+    %>
+
+    <% if(typeof(profile) != 'undefined' && 
+        typeof(profile.profile_photo) != 'undefined' && 
+        typeof(profile.profile_photo.path_medium) != 'undefined'){ %>
+        <img src="<%= profile.profile_photo.path_medium %>" width="199px">
+    <% } %>
+    <ul id="user-info" style="margin-left:15px;">
+    <i class="fa fa-calendar-o"></i>  Age <%= yearsOld %><br><br>  
+        <% if(typeof(about) != 'undefined'){ %>
+            <li>About: <%= about || '' %>
+        <% } %>
+        <% if(typeof(city) != 'undefined'){ %>
+            <i class="fa fa-location-arrow"></i> Location: <%= city.name %>, <%= city.country.name %> <br></li> 
+        <% } %>
+    <li><center><a href="/users/<%= username_canonical %>-<%= id %>"> <i class="fa fa-info"></i> Full profile</a></center></li> 
+    </ul>
+</script>
+
+<script type="text/javascript">
+    var renderUser = function(user){
+        var tmpl = $('#tmpl_user_widget').html().trim();
+
+        return _.template(tmpl, user);
+    };
+
+    var getUserInfo = function(panel){
+        var url = window.api_endpoint+"/api/users/"+panel.get('name');
+        var deferred = $.Deferred();
+        var userData = panel.get('userData');
+        
+        //we haven't yet fetched the userdata from the server
+        if(!userData){
+            $.ajax({
+                dataType: 'json',
+                url: url,
+                success: function(data){
+                    panel.set('userData', data);
+                    deferred.resolve(data);                
+                },
+                error: function(){
+                    deferred.reject();
+                }
+            });
+        }else{
+            deferred.resolve(userData);
+        }
+
+        return deferred.promise();
+    };
+
+    var showUserInfoOnSideBar = function(panel){
+        var fetchingUserData = getUserInfo(panel);
+
+        $.when(fetchingUserData).done(function(data){
+            kiwi.components.RightBar.show(false);
+            $('.memberlists').html(renderUser(data));
+        });
+    };
+
+    kiwi.plugins.on('loaded', function(){
+        var net = kiwi.components.Network();
+
+        if(typeof(window.api_endpoint) != 'undefined'){
+            net.on('connect', function(e){
+                var panels = kiwi.connections.active_connection.panels;
+
+                panels.bind('add', function(panel){
+                    if(panel.isQuery()){
+                        panel.on('active', function(){
+                            showUserInfoOnSideBar(panel);
+                        });
+                    }
+                });
+            });
+        }
+    });
+</script>

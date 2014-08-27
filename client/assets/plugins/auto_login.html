@@ -1,21 +1,49 @@
 <script type="text/javascript">
-    var net = kiwi.components.Network();
-    var input = kiwi.components.ControlInput();
+    kiwi.plugins.on('loaded', function(){
+        var network = kiwi.components.Network();
+        var input = kiwi.components.ControlInput();
 
-    if(getQueryVariable('channel')){
-        var channel = "#" + getQueryVariable('channel');
-        
-        $('.server_select').hide();
-        $('#server_select_channel').val(channel);
-        $('form button').click();
-    }else if(getQueryVariable('private')){
-        var private = getQueryVariable('private');
-        
-        $('.server_select').hide();
-        $('form button').click();
+        kiwi.components.ServerEvents().onidentify(function(){
+            kiwi.components.KiwiAppEvents().trigger('identify');
+        });
 
-        net._source.bind('onconnect', function(){
-            input.run('/query '+private);
-        })
-    }
+        if(getQueryVariable('nick')){
+            var nick = getQueryVariable('nick');
+
+            $('#server_select_nick').val(nick);
+        }
+
+        if(getQueryVariable('channel')){
+            var channels = getQueryVariable('channel').split(',');
+            channels = channels.map(function(channel){
+                return channel;
+            });
+            
+            $('.server_select').hide();
+            $('#server_select_channel').val(channels.join(','));
+        }
+
+        if(getQueryVariable('private')){
+            var private = getQueryVariable('private');
+            
+            $('.server_select').hide();
+
+            network.on('connect', function(){
+                input.run('/query '+private);
+                
+                //To show panel active chat room chatsfree
+                if (kiwi.connections.active_connection.panels.getByName('#chatsfree')){
+                    kiwi.connections.active_connection.panels.getByName('#chatsfree').view.show()
+                }else{
+                    kiwi.connections.active_connection.panels.find(function(panel){
+                        return panel.isChannel(); 
+                    }).view.show();
+                }
+            });
+        }
+
+        if(getQueryVariable('channel') || getQueryVariable('private')){
+            $('form button').click();
+        }
+    });
 </script>
