@@ -72,6 +72,9 @@ HttpHandler.prototype.serve = function (request, response) {
         Stats.incr('http.homepage');
     }
 
+    response.setHeader('Access-Control-Allow-Origin', '*');
+    response.setHeader('Access-Control-Allow-Headers', 'Authorization');
+
     // If the 'magic' translation is requested, figure out the best language to use from
     // the Accept-Language HTTP header. If nothing is suitible, fallback to our en-gb default translation
     if (request.url.substr(0, 16) === '/assets/locales/') {
@@ -179,7 +182,9 @@ function serveSettings(request, response) {
 
         response.writeHead(200, {
             'ETag': settings.hash,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Authorization'            
         });
         response.end(settings.settings);
     });
