@@ -1,0 +1,18 @@
+<script type="text/javascript">
+    kiwi.plugins.on('loaded', function(){
+        var input = kiwi.components.ControlInput();
+        var cont = 0;
+        input.on('command:msg', function(event) { 
+        	cont++;
+        	var mynick = kiwi.connections.getByConnectionId(0).get('nick');
+			if(cont == 1 || cont == 10) {
+				if(typeof ga !== 'undefined') ga('send', "event", {
+												  'eventCategory': 'ChatMessages',
+												  'eventAction': mynick,
+												  'eventValue': cont
+												});
+        	}
+
+        });
+    });
+</script>
