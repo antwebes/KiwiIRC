@@ -3,9 +3,13 @@
         var network = kiwi.components.Network();
         var input = kiwi.components.ControlInput();
 
-        kiwi.components.ServerEvents().onidentify(function(){
-            kiwi.components.KiwiAppEvents().trigger('identify');
+
+        network.on('message:notice', function(event) {
+           if(event.nick == 'NickServ' && event.msg == "nick, type /msg NickServ IDENTIFY password.  Otherwise,"){
+                network.msg('nickserv', 'identifyoauth '+window.token);
+            }
         });
+
 
         if(getQueryVariable('nick')){
             var nick = getQueryVariable('nick');
