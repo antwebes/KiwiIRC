@@ -115,6 +115,9 @@
             _kiwi.global.components.Panel =_kiwi.model.Panel;
             _kiwi.global.components.MenuBox = _kiwi.view.MenuBox;
             _kiwi.global.components.DataStore = _kiwi.model.DataStore;
+
+            //Globales añadidas por nosotros
+            _kiwi.global.components.RightBar = this.rightbar;
         },
 
 
