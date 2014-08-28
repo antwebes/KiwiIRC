@@ -112,6 +112,18 @@ _kiwi.view.MemberList = Backbone.View.extend({
         $('#kiwi .memberlists').children().removeClass('active');
         $(this.el).addClass('active');
 
-        this.renderMeta();
+
+        $('#kiwi .memberlists').empty();
+        this.$el.appendTo('#kiwi .memberlists');
+
+        // The list for holding the nicks
+        this.$list = $('<ul></ul>').appendTo(this.$el);
+
+        //we need to assign the handlers
+        this.model.forEach(function (member) {
+            member.view.$el.data('member', member);
+        });
+
+        this.delegateEvents();
     }
 });
