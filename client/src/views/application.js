@@ -29,7 +29,8 @@ _kiwi.view.Application = Backbone.View.extend({
         _kiwi.global.settings.on('change:show_timestamps', this.displayTimestamps, this);
         this.displayTimestamps(_kiwi.global.settings.get('show_timestamps'));
 
-        this.$el.appendTo($('body'));
+        //Add append to container, Modificado por nosotros
+        this.$el.appendTo((this.model.get('container') || 'body'));
         this.doLayout();
 
         $(document).keydown(this.setKeyFocus);
