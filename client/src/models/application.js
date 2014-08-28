@@ -7,9 +7,10 @@
         /** _kiwi.view.StatusMessage */
         message: null,
 
-        initialize: function (options) {
-            this.app_options = options;
+        /* Address for the kiwi server */
+        kiwi_server: null,
 
+        initialize: function (options) {
             if (options.container) {
                 this.set('container', options.container);
             }
@@ -124,6 +125,10 @@
             _kiwi.global.components.MenuBox = _kiwi.view.MenuBox;
             _kiwi.global.components.DataStore = _kiwi.model.DataStore;
             _kiwi.global.components.Notification = _kiwi.view.Notification;
+            
+            //Globales añadidas por nosotros
+            _kiwi.global.components.RightBar = this.rightbar;
+
             _kiwi.global.components.Events = function() {
                 return kiwi.events.createProxy();
             };
@@ -143,25 +148,24 @@
             var active_panel;
 
             var fn = function(panel_type) {
-                var app = _kiwi.app,
-                    panels;
+                var panels;
 
                 // Default panel type
                 panel_type = panel_type || 'connections';
 
                 switch (panel_type) {
                 case 'connections':
-                    panels = app.connections.panels();
+                    panels = this.connections.panels();
                     break;
                 case 'applets':
-                    panels = app.applet_panels.models;
+                    panels = this.applet_panels.models;
                     break;
                 }
 
                 // Active panels / server
                 panels.active = active_panel;
-                panels.server = app.connections.active_connection ?
-                    app.connections.active_connection.panels.server :
+                panels.server = this.connections.active_connection ?
+                    this.connections.active_connection.panels.server :
                     null;
 
                 return panels;
@@ -220,11 +224,6 @@
                     var msg;
 
                     that.view.$el.addClass('connected');
-
-                    // Make the rpc globally available for plugins
-                    _kiwi.global.rpc = _kiwi.gateway.rpc;
-
-                    _kiwi.global.events.emit('connected');
 
                     // If we were reconnecting, show some messages we have connected back OK
                     if (gw_stat === 1) {
@@ -289,7 +288,7 @@
                         that.message.text(msg, {timeout: 8000});
 
                         setTimeout(function forcedReconnectPartTwo() {
-                            _kiwi.gateway.set('kiwi_server', serv);
+                            _kiwi.app.kiwi_server = serv;
 
                             _kiwi.gateway.reconnect(function() {
                                 // Reconnect all the IRC connections
