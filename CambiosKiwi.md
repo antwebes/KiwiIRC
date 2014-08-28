@@ -9,6 +9,25 @@ Cambios en el kiwi
 
 		this.$el.appendTo($(this.model.get('container') || 'body'));
 
+	Nota: a ver porque es necesario y si se puede hacer pull request.
+
+
+2:
+	src/translations/en-gb.po
+
+	This will close all conversations. Are you sure you want to close this window and exit of chat?	
+
+     msgid "client_views_application_close_notice"
+	-msgstr "This will close all KiwiIRC conversations. Are you sure you want to close this window?"
+	+msgstr "This will close all conversations. Are you sure you want to close this window and exit of chat?"
+ 
+
+3:
+
+	Desactivar ctcp: (Pendiente)
+
+
+
 
 Cambios en el kiwi, que sería recomendable cambiar a plugin
 -----------------------------------------------------------

@@ -270,7 +270,7 @@ msgstr "Incorrect password given"
 
 #: client/assets/src/views/application.js
 msgid "client_views_application_close_notice"
-msgstr "This will close all KiwiIRC conversations. Are you sure you want to close this window?"
+msgstr "This will close all conversations. Are you sure you want to close this window and exit of chat?"
 
 #: client/assets/src/views/channel.js
 msgid "client_views_channel_joining"
