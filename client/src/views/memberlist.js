@@ -108,7 +108,7 @@ _kiwi.view.MemberList = Backbone.View.extend({
         this.$el.appendTo('#kiwi .memberlists');
 
         // The list for holding the nicks
-        this.$list = $('<ul></ul>').appendTo(this.$el);
+        //this.$list = $('<ul></ul>').appendTo(this.$el);
 
         //we need to assign the handlers
         this.model.forEach(function (member) {
