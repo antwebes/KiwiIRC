@@ -1,18 +1,44 @@
 <script type="text/javascript">
+    var contPrivados = 0;
+    var contSalas = 0;
+    var connected = false;
+
+    var start = Date.now();
+
     kiwi.plugins.on('loaded', function(){
         var input = kiwi.components.ControlInput();
-        var cont = 0;
-        input.on('command:msg', function(event) { 
-        	cont++;
-        	var mynick = kiwi.connections.getByConnectionId(0).get('nick');
-			if(cont == 1 || cont == 10) {
-				if(typeof ga !== 'undefined') ga('send', "event", {
-												  'eventCategory': 'ChatMessages',
-												  'eventAction': mynick,
-												  'eventValue': cont
-												});
-        	}
+        connected = true;
 
+        input.on('command:msg', function(event) { 
+            if(kiwi.panels().active.get("name").indexOf("#") == 0){
+                contSalas++;
+            } else {
+                contPrivados++;
+            }
         });
     });
+
+
+    window.onbeforeunload = function (e) {
+        var end = Date.now();
+        var cont = contPrivados + contSalas;
+        var time = Math.round((end - start) / 1000);
+
+        var mynick = kiwi.connections.getByConnectionId(0).get('nick');
+        ga('send', "event", {
+          'eventCategory': 'ChatMessages',
+          'eventAction': mynick+"!p:" + contPrivados + ";s:" + contSalas,
+          'eventValue': cont
+        });
+        ga('send', "event", {
+          'eventCategory': 'ChatTime',
+          'eventAction': mynick,
+          'eventValue': time
+        });
+
+        if (connected) {
+            return "This will close all conversations. Are you sure you want to close this window and exit of chat?";
+        }
+    };
+
 </script>
