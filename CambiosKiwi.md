@@ -12,7 +12,8 @@ Cambios en el kiwi
 	Nota: a ver porque es necesario y si se puede hacer pull request.
 
 
-2:
+2: Volvemos a la versión original de kiwi y el onbuferedUnload lo sobrescribimos en el plugin de tracker
+
 	src/translations/en-gb.po
 
 	This will close all conversations. Are you sure you want to close this window and exit of chat?	
