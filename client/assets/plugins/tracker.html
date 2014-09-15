@@ -1,6 +1,11 @@
 <script type="text/javascript">
-    var contPrivados = 0;
-    var contSalas = 0;
+
+    var contMsgPrivate = 0;
+    var contMsgRooms = 0;
+
+    var arrPrivate = [];
+    var arrRooms = [];
+
     var connected = false;
 
     var start = Date.now();
@@ -10,31 +15,36 @@
         connected = true;
 
         input.on('command:msg', function(event) { 
-            if(kiwi.panels().active.get("name").indexOf("#") == 0){
-                contSalas++;
+            var activeContainer = kiwi.panels().active.get("name");
+            if(activeContainer.indexOf("#") == 0){
+                if(arrRooms.indexOf(activeContainer) == -1) arrRooms.push(activeContainer);
+                contMsgRooms++;
             } else {
-                contPrivados++;
+                if(arrPrivate.indexOf(activeContainer) == -1) arrPrivate.push(activeContainer);
+                contMsgPrivate++;
             }
+
         });
     });
 
 
     window.onbeforeunload = function (e) {
         var end = Date.now();
-        var cont = contPrivados + contSalas;
         var time = Math.round((end - start) / 1000);
 
         var mynick = kiwi.connections.getByConnectionId(0).get('nick');
-        ga('send', "event", {
-          'eventCategory': 'ChatMessages',
-          'eventAction': mynick+"!p:" + contPrivados + ";s:" + contSalas,
-          'eventValue': cont
-        });
-        ga('send', "event", {
-          'eventCategory': 'ChatTime',
-          'eventAction': mynick,
-          'eventValue': time
-        });
+
+        ga('send', "event", "ChatMessages", mynick,
+            {
+              'dimension3':  mynick,
+              'metric1': contMsgPrivate,
+              'metric2': contMsgRooms,
+              'metric3': arrPrivate.length,
+              'metric4': arrRooms.length,
+              'metric5': time
+            }
+        );
+
 
         if (connected) {
             return "This will close all conversations. Are you sure you want to close this window and exit of chat?";
