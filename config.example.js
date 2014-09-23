@@ -108,7 +108,7 @@ conf.client_plugins = [
 conf.module_dir = "../server_modules/";
 
 // Which modules to load
-conf.modules = [];
+conf.modules = ['ant_stats'];
 
 
 
