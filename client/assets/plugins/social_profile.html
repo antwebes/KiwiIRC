@@ -18,9 +18,9 @@
         <img src="<%= profile.profile_photo.path_medium %>" width="199px">
     <% } %>
     <ul id="user-info" style="margin-left:15px;">
-    <i class="fa fa-calendar-o"></i>  Age <%= yearsOld %><br><br>  
-        <% if(typeof(about) != 'undefined'){ %>
-            <li>About: <%= about || '' %>
+        <i class="fa fa-calendar-o"></i>  Age <%= yearsOld %><br><br>  
+        <% if(typeof(profile) != 'undefined' && typeof(profile.gender) != 'undefined'){ %>
+            <i class="fa fa-location-arrow"></i> Gender: <%= profile.gender || '' %>
         <% } %>
         <% if(typeof(city) != 'undefined'){ %>
             <i class="fa fa-location-arrow"></i> Location: <%= city.name %>, <%= city.country.name %> <br></li> 
@@ -37,7 +37,7 @@
     };
 
     var getUserInfo = function(panel){
-        var url = window.api_endpoint+"/api/users/"+panel.get('name');
+        var url = window.user_profile_data_url+panel.get('name');
         var deferred = $.Deferred();
         var userData = panel.get('userData');
         
@@ -73,7 +73,7 @@
     kiwi.plugins.on('loaded', function(){
         var net = kiwi.components.Network();
 
-        if(typeof(window.api_endpoint) != 'undefined'){
+        //if(typeof(window.api_endpoint) != 'undefined'){
             net.on('connect', function(e){
                 var panels = kiwi.connections.active_connection.panels;
 
@@ -85,6 +85,6 @@
                     }
                 });
             });
-        }
+        //}
     });
 </script>
