@@ -715,4 +715,7 @@ msgstr "Send message..."
 #: 
 msgid "disconnect_from_server"
 msgstr "This will disconnect from the IRC network. Are you sure?"
+#:
+msgid "email_or_url_forbidden"
+msgstr "You can't send an URL or an E-mail to the chat"
 
