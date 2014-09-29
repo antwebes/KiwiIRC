@@ -6,9 +6,13 @@
         currentYear = new Date().getFullYear();
         yearUser = new Date(profile.birthday).getFullYear().toString().substring(0,4);
         yearsOld = currentYear - yearUser;
-        if (yearsOld <=0) yearsOld = '>18';
+        if (yearsOld <=0){
+            yearsOld = '>18';
+        }else if(isNaN(yearsOld)){
+            yearsOld = null;
+        }
     }else{
-        yearsOld = 'Unknown';
+        yearsOld = null;
     }
     %>
 
@@ -18,14 +22,16 @@
         <img src="<%= profile.profile_photo.path_medium %>" width="199px">
     <% } %>
     <ul id="user-info" style="margin-left:15px;">
-        <i class="fa fa-calendar-o"></i>  Age <%= yearsOld %><br><br>  
-        <% if(typeof(profile) != 'undefined' && typeof(profile.gender) != 'undefined'){ %>
-            <i class="fa fa-location-arrow"></i> Gender: <%= profile.gender || '' %>
+        <% if(yearsOld != null){ %>
+            <li><i class="fa fa-calendar-o"></i>  Age <%= yearsOld %></li>
+        <% } %>
+        <% if(typeof(profile) != 'undefined' && typeof(profile.gender) != 'undefined' && profile.gender != ''){ %>
+            <li><i class="fa <%if(profile.gender == 'female'){%>fa-female<% }else{ %>fa-male<% } %>"></i> Gender: <%= profile.gender || '' %></li>
         <% } %>
         <% if(typeof(city) != 'undefined'){ %>
-            <i class="fa fa-location-arrow"></i> Location: <%= city.name %>, <%= city.country.name %> <br></li> 
+            <li><i class="fa fa-location-arrow"></i> Location: <% if(city.name != 'no_city'){ %><%= city.name %>, <% } %><%= city.country.name %></li> 
         <% } %>
-    <li><center><a href="/users/<%= username_canonical %>-<%= id %>"> <i class="fa fa-info"></i> Full profile</a></center></li> 
+        <li><center><a href="/users/<%= username_canonical %>-<%= id %>"> <i class="fa fa-info"></i> Full profile</a></center></li> 
     </ul>
 </script>
 
