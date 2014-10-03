@@ -27,28 +27,49 @@
             }
         }
 
+        var $content;
         var $webcam;
 
         function openWebcam(){
             onJqueryUILoaded(function(){
                 var myNick = kiwi.panels().active.get('network').get('nick');
-                $webcam = $('<div id="webcam_publisher_container"><iframe width="100%" height="100%" frameBorder="0" id="webcam_publisher" src="http://webcam.chatsfree.net/publisher.html?nick='+ myNick +'"></iframe></div>');
-                $webcam.dialog({
-                    dialogClass: "no-close",
-                    close: closeWebcam,
-                    title: 'My webcam'
+
+                $content = $('<div>');
+
+                $webcam = $('<iframe />', {
+                    name: 'webcam_publisher',
+                    id:   'webcam_publisher',
+                    width: "100%",
+                    height: "100%",
+                    frameborder: "no",
+                    scrolling: "no",
+                    src: 'http://webcam.chatsfree.net/publisher.html?nick='+ myNick
+                }).appendTo($content);
+
+
+                $content.dialog({
+                    autoOpen: true,
+                    width: 610,
+                    minWidth: 610,
+                    height: 450,
+                    minHeight: 200,
+                    modal: false,
+                    resizable: true,
+                    draggable: true,
+                    close: closeWebcam
+
                 });
             });
         }
 
         function closeWebcam(){
-            $webcam.dialog('close');
+            $content.dialog('close');
             $webcam.remove();
-            $webcam = null;
+            $content = null;
         }
  
         $icon.click(function(){
-            if($webcam){
+            if($content){
                 closeWebcam();
             }else{
                 openWebcam();
