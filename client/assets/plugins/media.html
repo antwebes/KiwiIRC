@@ -1,0 +1,53 @@
+<script type="text/javascript">
+    
+    kiwi.plugins.on('loaded', function(){
+
+
+	var json = {
+		"users": {
+			"pablo": {
+				"webcam": false
+			},
+			"borja2": {
+				"webcam": true
+			},
+			"miNickChulo": {
+				"webcam": false
+			}
+		}
+	};
+
+
+	setTimeout(function(){
+		updateMedia("channel", json);
+	}, 5000);
+
+
+
+	function updateMedia(channel, data) {
+		$( ".memberlists a" ).each(function( index ) {
+			var nick = $.trim($( this ).text());
+			if(data.users[nick] != undefined) {
+				$( this ).prepend('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');
+			} else console.log("No existe", nick);
+		});
+
+		/*
+		if(data.users != undefined) {
+			data.users.forEach(function(user) {
+		    	if(user.webcam) {
+		    		
+		    	}
+			});
+		}
+		*/
+	}
+
+
+
+
+
+
+
+    });
+</script>
