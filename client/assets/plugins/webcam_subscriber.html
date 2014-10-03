@@ -1,0 +1,61 @@
+<script type="text/javascript">
+    
+    kiwi.plugins.on('loaded', function(){
+
+
+		 function onJqueryUILoaded(callback){
+		     if(typeof jQuery.ui == 'undefined') {
+		                 var headTag = document.getElementsByTagName("head")[0];
+		                 var jqTag = document.createElement('script');
+		                 jqTag.type = 'text/javascript';
+		                 jqTag.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js';
+		                 jqTag.onload = callback;
+		                var jqlinkTag = document.createElement('link');
+		                jqlinkTag.rel = 'stylesheet';
+		                jqlinkTag.href = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css';
+		                jqlinkTag.onload = function(){
+		                    headTag.appendChild(jqTag);
+		                }
+		                headTag.appendChild(jqlinkTag);
+		     } else {
+		                 callback();
+		     }
+		}
+
+
+
+
+
+		onJqueryUILoaded(function () {
+
+			$(document).on('click', '.webcam_nick_subscriber', function(event) {
+	    		event.preventDefault();
+
+
+		    	var nick = $(this).data("nick"); 
+		    	console.log("click en " + nick);
+		    	var container = $("webcam_subscriber_container");
+
+		    	$webcam = $('<iframe />', {
+				    name: 'webcam_subscriber',
+				    id:   'webcam_subscriber',
+				    frameborder: "no",
+				    scrolling: "off",
+				    src: "http://webcam.chatsfree.net/player.html?nick="+ nick
+				});
+
+				$webcam.dialog({
+				     dialogClass: "no-close",	
+				     title: nick + " webcam"		    
+				});
+
+
+			 });
+
+
+
+		});
+
+
+    });
+</script>
