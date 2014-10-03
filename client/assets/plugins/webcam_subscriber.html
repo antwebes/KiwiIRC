@@ -28,15 +28,10 @@
 
 		onJqueryUILoaded(function () {
 
-			$(document).on('click', '.webcam_nick_subscriber', function(event) {
-	    		event.preventDefault();
+			var $webcam;
 
-
-		    	var nick = $(this).data("nick"); 
-		    	console.log("click en " + nick);
-		    	var container = $("webcam_subscriber_container");
-
-		    	$webcam = $('<iframe />', {
+			function openWebcam(nick){
+				$webcam = $('<iframe />', {
 				    name: 'webcam_subscriber',
 				    id:   'webcam_subscriber',
 				    frameborder: "no",
@@ -46,10 +41,33 @@
 
 				$webcam.dialog({
 				     dialogClass: "no-close",	
-				     title: nick + " webcam"		    
+				     title: nick + " webcam",
+				     close: closeWebcam	    
 				});
+			}
+
+			function closeWebcam(){
+				$webcam.dialog('close');
+				$webcam.remove();
+			}
+
+			$(document).on('click', '.webcam_nick_subscriber', function(event) {
+	    		event.preventDefault();
+	    		event.stopPropagation();
 
 
+		    	var nick = $(this).data("nick"); 
+		    	console.log("click en " + nick);
+		    	var container = $("webcam_subscriber_container");
+
+		    	
+		    	if($webcam){
+		    		closeWebcam();
+		    	}
+
+		    	openWebcam(nick);
+
+		    	return false;
 			 });
 
 
