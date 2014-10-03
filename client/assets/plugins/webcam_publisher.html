@@ -1,0 +1,60 @@
+
+<script type="text/javascript">
+    (function () {
+        var network = kiwi.components.Network();
+        var control = kiwi.components.ControlInput();
+ 
+        var $icon = $('<strong style="cursor:pointer; cursor: hand">WebCam</strong>');
+
+        function onJqueryUILoaded(callback){
+            if(typeof jQuery.ui == 'undefined') {
+                var headTag = document.getElementsByTagName("head")[0];
+                var jqTag = document.createElement('script');
+                jqTag.type = 'text/javascript';
+                jqTag.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js';
+                jqTag.onload = callback;
+
+                var jqlinkTag = document.createElement('link');
+                jqlinkTag.rel = 'stylesheet';
+                jqlinkTag.href = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css';
+                jqlinkTag.onload = function(){
+                    headTag.appendChild(jqTag);
+                }
+
+                headTag.appendChild(jqlinkTag);
+            } else {
+                 callback();
+            }
+        }
+
+        var $webcam;
+
+        function openWebcam(){
+            onJqueryUILoaded(function(){
+                var myNick = kiwi.panels().active.get('network').get('nick');
+                $webcam = $('<div id="webcam_publisher_container"><iframe width="100%" height="100%" frameBorder="0" id="webcam_publisher" src="http://webcam.chatsfree.net/publisher.html?nick='+ myNick +'"></iframe></div>');
+                $webcam.dialog({
+                    dialogClass: "no-close",
+                    close: closeWebcam,
+                    title: 'My webcam'
+                });
+            });
+        }
+
+        function closeWebcam(){
+            $webcam.dialog('close');
+            $webcam.remove();
+            $webcam = null;
+        }
+ 
+        $icon.click(function(){
+            if($webcam){
+                closeWebcam();
+            }else{
+                openWebcam();
+            }
+        });
+ 
+        control.addPluginIcon($icon);
+    })();
+</script>
