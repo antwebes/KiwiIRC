@@ -28,28 +28,44 @@
 
 		onJqueryUILoaded(function () {
 
+			
+
 			var $webcam;
+			var active = false;
 
 			function openWebcam(nick){
-				$webcam = $('<iframe />', {
-				    name: 'webcam_subscriber',
-				    id:   'webcam_subscriber',
-				    frameborder: "no",
-				    scrolling: "off",
-				    src: "http://webcam.chatsfree.net/player.html?nick="+ nick
-				});
+				$("#webcam_container").append($("<div />", {id: "webcam_subscriber_container"}));
+				$("#webcam_subscriber_container").append($("<div />", {id: "flash_webcham_subs"}));
 
-				$webcam.dialog({
+				active = true;
+
+
+	            var flashVars = {
+	                streamer: 'rtmp://webcam.chatsfree.net:1935/videochat'
+	            };
+
+	            flashVars.file = nick;
+
+	            swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPlayer.swf", "flash_webcham_subs", "100%", "100%", "9.0.0", null, flashVars);				
+	            $("#webcam_subscriber_container").dialog({
 				     dialogClass: "no-close",	
 				     title: nick + " webcam",
-				     close: closeWebcam	    
+				     close: closeWebcam,	    
+				     open: function( event, ui ) {
+				     	window.eventBus.trigger("webcam_sub:on");
+				     }
 				});
+
 			}
 
 			function closeWebcam(){
-				$webcam.dialog('close');
-				$webcam.remove();
+				$("#webcam_subscriber_container").dialog('close');
+				$("#webcam_subscriber_container").remove();
+				window.eventBus.trigger("webcam_sub:off");
+				active = false;
 			}
+
+
 
 			$(document).on('click', '.webcam_nick_subscriber', function(event) {
 	    		event.preventDefault();
@@ -57,15 +73,16 @@
 
 
 		    	var nick = $(this).data("nick"); 
-		    	console.log("click en " + nick);
-		    	var container = $("webcam_subscriber_container");
-
 		    	
-		    	if($webcam){
-		    		closeWebcam();
+
+		    	if(active){
+		    		closeWebcam();	
+		    		openWebcam(nick);
+		    	} else {
+		    		openWebcam(nick);
 		    	}
 
-		    	openWebcam(nick);
+		    	
 
 		    	return false;
 			 });
