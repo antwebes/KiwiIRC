@@ -1,6 +1,8 @@
 <script type="text/javascript"> 
     kiwi.plugins.on('loaded', function(){
+		
 		function getActiveWebcams(channel){
+			/*
 			var userMediaUrl = window.window.user_media_url;
 			$.ajax({
 				url: userMediaUrl,
@@ -9,15 +11,28 @@
 			.done(function( data ){
 				updateMedia(data);
 			});
+			*/
+			var json = {
+					 "users": {
+					 	"desa": {"webcam": true},
+					 	"pablo": {"webcam": true}
+					 }
+					};
+			updateMedia(json);
 		}
+
+
 
 		function updateMedia(data) {
 			$( ".memberlists a .webcam_nick_subscriber").remove();
 
 			$( ".memberlists a" ).each(function( index ) {
+
 				var nick = $.trim($( this ).text());
+				if (nick.indexOf("@") != -1 || nick.indexOf("+") != -1) nick = nick.slice(1);
+
 				if(data.users[nick] != undefined && data.users[nick].webcam) {
-					$( this ).prepend('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');
+					$( this ).append('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');
 				}
 			});
 		}
@@ -28,6 +43,6 @@
 			if(activePannel.isChannel()){
 				getActiveWebcams(activePannel.get('name'));
 			}
-		}, 30000);
+		}, 300);
     });
 </script>
