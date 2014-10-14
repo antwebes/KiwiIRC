@@ -30,12 +30,16 @@
 			});
 		}
 
-		setInterval(function(){
+		function getMedia(){
 			var activePannel = kiwi.panels().active;
 
 			if(activePannel.isChannel()){
 				getActiveWebcams(activePannel.get('name'));
 			}
-		}, 30000);
+		}
+
+		setInterval(getMedia, 30000);
+		setTimeout(getMedia, 5000);
+
     });
 </script>
