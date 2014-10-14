@@ -1,52 +1,67 @@
-<script src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
 <script type="text/javascript">
     (function () {
-        var network = kiwi.components.Network();
-        var control = kiwi.components.ControlInput();
- 
-        var $icon = $('<div id="ext-webcam"><img src="/kiwi/assets/img/webcam.png" /><span><br><i class="fa fa-play"></i> <b>Webcam</b></span></div>');
-        $(".chat-extensions").append($icon);
 
 
-
-        function openWebcam(){
-            $("#webcam_container").append($("<div />", {id: "webcam_publisher_container"}));
-
-            var myNick = network.get('nick');
-            $("#ext-webcam span").css("color" , "red");
-            $("#ext-webcam span b").html("Stop");
-            $("#ext-webcam span i").switchClass( "fa-play", "fa-stop");
-
-            var flashVars = {
-                streamer: 'rtmp://webcam.chatsfree.net:1935/videochat'
-            };
-
-            flashVars.file = myNick;
-
-            swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPublisher.swf", "webcam_publisher_container", "100%", "100%", "9.0.0", null, flashVars);
-
-
+        function onSwfobjectLoaded(callback){
+             if(typeof swfobject == 'undefined') {
+                         var headTag = document.getElementsByTagName("head")[0];
+                         var jqTag = document.createElement('script');
+                         jqTag.type = 'text/javascript';
+                         jqTag.src = '//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js';
+                         jqTag.onload = callback;
+                         headTag.appendChild(jqTag);
+             } else {
+                         callback();
+             }
         }
 
-        function closeWebcam(){
-            swfobject.removeSWF("webcam_publisher_container");
+        onSwfobjectLoaded(function () {
+            var network = kiwi.components.Network();
+            var control = kiwi.components.ControlInput();
+            var $icon;
+            if (swfobject.hasFlashPlayerVersion("9.0.18")) {
+                $icon = $('<div id="ext-webcam"><img src="/kiwi/assets/img/webcam.png" /><span><br><i class="fa fa-play"></i> <b>Webcam</b></span></div>');
+                $(".chat-extensions").append($icon);
+            } 
 
-            $("#ext-webcam span").css("color" , "black");
-            $("#ext-webcam span b").html("Webcam");
-            $("#ext-webcam span i").switchClass( "fa-stop", "fa-play");
-        }
- 
-        $icon.click(function(){
 
-            if(swfobject.getObjectById("webcam_publisher_container")){
-                closeWebcam();
-                window.eventBus.trigger("webcam_pub:off"); 
-            }else{
-                openWebcam();
-                window.eventBus.trigger("webcam_pub:on"); 
+
+            function openWebcam(){
+                $("#webcam_container").append($("<div />", {id: "webcam_publisher_container"}));
+
+                var myNick = network.get('nick');
+                $("#ext-webcam span").css("color" , "red");
+                $("#ext-webcam span b").html("Stop");
+                $("#ext-webcam span i").switchClass( "fa-play", "fa-stop");
+
+                var flashVars = {
+                    streamer: 'rtmp://webcam.chatsfree.net:1935/videochat'
+                };
+
+                flashVars.file = myNick;
+
+                swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPublisher.swf", "webcam_publisher_container", "100%", "100%", "9.0.0", null, flashVars);
             }
+
+            function closeWebcam(){
+                swfobject.removeSWF("webcam_publisher_container");
+
+                $("#ext-webcam span").css("color" , "black");
+                $("#ext-webcam span b").html("Webcam");
+                $("#ext-webcam span i").switchClass( "fa-stop", "fa-play");
+            }
+     
+            $icon.click(function(){
+
+                if(swfobject.getObjectById("webcam_publisher_container")){
+                    closeWebcam();
+                    window.eventBus.trigger("webcam_pub:off"); 
+                }else{
+                    openWebcam();
+                    window.eventBus.trigger("webcam_pub:on"); 
+                }
+            });
         });
- 
         
     })();
 </script>
