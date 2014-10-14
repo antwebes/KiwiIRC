@@ -56,6 +56,8 @@
 				     close: closeWebcam,	    
 				     open: function( event, ui ) {
 				     	window.eventBus.trigger("webcam_sub:on");
+				     	$("#webcam_subscriber_container").css("overflow", "hidden");
+				     	$("#webcam_subscriber_container").css("width", "100%");
 				     }
 				});
 
