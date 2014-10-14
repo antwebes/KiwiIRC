@@ -2,7 +2,7 @@
     kiwi.plugins.on('loaded', function(){
 		
 		function getActiveWebcams(channel){
-			/*
+
 			var userMediaUrl = window.window.user_media_url;
 			$.ajax({
 				url: userMediaUrl,
@@ -11,14 +11,7 @@
 			.done(function( data ){
 				updateMedia(data);
 			});
-			*/
-			var json = {
-					 "users": {
-					 	"desa": {"webcam": true},
-					 	"pablo": {"webcam": true}
-					 }
-					};
-			updateMedia(json);
+			
 		}
 
 
