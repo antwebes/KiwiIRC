@@ -3,7 +3,7 @@
     kiwi.plugins.on('loaded', function(){
 
 
-		 function onJqueryUILoaded(callback){
+		function onJqueryUILoaded(callback){
 		     if(typeof jQuery.ui == 'undefined') {
 		                 var headTag = document.getElementsByTagName("head")[0];
 		                 var jqTag = document.createElement('script');
@@ -22,10 +22,21 @@
 		     }
 		}
 
+		function onSwfobjectLoaded(callback){
+		     if(typeof swfobject == 'undefined') {
+		                 var headTag = document.getElementsByTagName("head")[0];
+		                 var jqTag = document.createElement('script');
+		                 jqTag.type = 'text/javascript';
+		                 jqTag.src = '//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js';
+		                 jqTag.onload = callback;
+		                 headTag.appendChild(jqTag);
+		     } else {
+		                 callback();
+		     }
+		}
 
 
-
-
+		onSwfobjectLoaded(function () {
 		onJqueryUILoaded(function () {
 
 			
@@ -95,6 +106,8 @@
 
 
 		});
+		});
+		
 
 
     });
