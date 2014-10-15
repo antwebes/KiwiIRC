@@ -20,6 +20,7 @@ _kiwi.global = {
     settings: undefined, // Instance of _kiwi.model.DataStore
     plugins: undefined, // Instance of _kiwi.model.PluginManager
     events: undefined, // Instance of PluginInterface
+    rpc: undefined, // Instance of WebsocketRpc
     utils: {}, // References to misc. re-usable helpers / functions
 
     initUtils: function() {
@@ -30,10 +31,6 @@ _kiwi.global = {
         this.utils.formatIRCMsg = formatIRCMsg;
         this.utils.styleText = styleText;
         this.utils.hsl2rgb = hsl2rgb;
-    },
-
-    rpc: function() {
-        _kiwi.gateway.rpc.call.call(_kiwi.gateway.rpc, arguments);
     },
 
     addMediaMessageType: function(match, buildHtml) {

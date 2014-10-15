@@ -534,6 +534,8 @@
         // Reply to a TIME ctcp
         if (event.msg.toUpperCase() === 'TIME') {
             this.gateway.ctcpResponse(event.type, event.nick, (new Date()).toString());
+        } else if(event.type.toUpperCase() === 'PING') { // CTCP PING reply
+            this.gateway.ctcpResponse(event.type, event.nick, event.msg.substr(5));
         }
     }
 
@@ -855,6 +857,13 @@
         case 'password_mismatch':
             this.panels.server.addMsg(' ', styleText('channel_badpassword', {nick: event.nick, text: translateText('client_models_network_badpassword', []), channel: event.channel}), 'status');
             break;
+
+        case 'error':
+            if (event.reason) {
+                this.panels.server.addMsg(' ', styleText('general_error', {text: event.reason}), 'status');
+            }
+            break;
+
         default:
             // We don't know what data contains, so don't do anything with it.
             //_kiwi.front.tabviews.server.addMsg(null, ' ', '== ' + data, 'status');
