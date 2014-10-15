@@ -60,6 +60,20 @@
                     window.eventBus.trigger("webcam_pub:on"); 
                 }
             });
+
+            // A plugin
+            kiwi.events.on('command', function (event, data) {
+                if(data.command == 'nick' && swfobject.getObjectById("webcam_publisher_container")){
+                    console.log('niiiiik');
+                    console.log(data);
+                    setTimeout(function(){
+                        closeWebcam();
+                        window.eventBus.trigger("webcam_pub:off");
+                        openWebcam();
+                        window.eventBus.trigger("webcam_pub:on");
+                    },3000);
+                }
+            });
         });
         
     })();
