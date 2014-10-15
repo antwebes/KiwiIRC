@@ -25,10 +25,11 @@
 			var userMediaUrl = window.window.user_media_url;
 			$.ajax({
 				url: userMediaUrl,
-				cache: false
+				cache: false,
+				dataType: 'json'
 			})
 			.done(function( data ){
-				updateMedia(jQuery.parseJSON(data));
+				updateMedia(data);
 			});
 			
 		}
@@ -62,7 +63,7 @@
 				}
 
 				if(typeof data.users[nick].profile != undefined && typeof data.users[nick].profile.profile_photo != undefined && typeof data.users[nick].profile.profile_photo.icon != undefined){
-					$( this ).prepend('<img class="usericon" src="' + data.users[nick].profile.profile_photo.icon + '">');
+					$( this ).prepend('<img width="16" height="16" class="usericon" src="' + data.users[nick].profile.profile_photo.icon + '">');
 				}
 
 				if(typeof data.users[nick].profile != undefined && typeof data.users[nick].profile.gender != undefined){
