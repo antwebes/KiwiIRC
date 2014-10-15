@@ -2,21 +2,36 @@
     kiwi.plugins.on('loaded', function(){
 
     	function onJqueryUILoaded(callback){
-		     if(typeof jQuery.ui == 'undefined') {
-		                 var headTag = document.getElementsByTagName("head")[0];
-		                 var jqTag = document.createElement('script');
-		                 jqTag.type = 'text/javascript';
-		                 jqTag.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js';
-		                 jqTag.onload = callback;
-		                var jqlinkTag = document.createElement('link');
-		                jqlinkTag.rel = 'stylesheet';
-		                jqlinkTag.href = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css';
-		                jqlinkTag.onload = function(){
-		                    headTag.appendChild(jqTag);
-		                }
-		                headTag.appendChild(jqlinkTag);
+		    if(typeof jQuery.ui == 'undefined') {
+		    	var headTag = document.getElementsByTagName("head")[0];
+		    	var jqlinkTag = document.createElement('link');
+                jqlinkTag.rel = 'stylesheet';
+                jqlinkTag.href = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css';
+
+		    	if ( typeof define === "function" && define.amd ){
+		    		headTag.appendChild(jqlinkTag);
+
+		    		require(['jquery', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js'], function(jq){
+
+		    			callback(jq);
+		    		});
+		    		return;
+		    	}
+
+                var jqTag = document.createElement('script');
+                jqTag.type = 'text/javascript';
+                jqTag.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js';
+                jqTag.onload = function(){
+             	    callback($);
+                }
+            
+                jqlinkTag.onload = function(){
+                    headTag.appendChild(jqTag);
+                }
+
+                headTag.appendChild(jqlinkTag);
 		     } else {
-		                 callback();
+		        callback($);
 		     }
 		}
 		
@@ -34,7 +49,7 @@
 			
 		}
 
-		onJqueryUILoaded(function(){
+		onJqueryUILoaded(function($){
 			$(document).tooltip({
 				items: ".memberlists a",
 				position: { my: "left+15 center", at: "right center" },
