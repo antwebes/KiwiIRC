@@ -74,11 +74,12 @@
 					var nick = $.trim($( this ).text());
 					var country = '';
 					var age = '';
+					var gender = '';
 
 					if (nick.indexOf("@") != -1 || nick.indexOf("+") != -1) nick = nick.slice(1);
 
 					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.gender) !== 'undefined'){
-						gender = userData[nick].profile.gender;
+						gender = '<i class="fa fa-' + userData[nick].profile.gender + '"></i> ';
 					}
 
 					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].country) !== 'undefined'){
@@ -89,7 +90,7 @@
 						age = '&nbsp;<span class="tooltip-age">' + calculateAge(userData[nick].profile.birthday) + '</span>';
 					}
 
-					return '<i class="fa fa-' + gender + '"></i> ' + age + country;
+					return gender + age + country;
 				}
 			});
 		});
