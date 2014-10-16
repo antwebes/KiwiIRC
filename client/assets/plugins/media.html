@@ -49,6 +49,22 @@
 			
 		}
 
+		var userData = {};
+
+		function calculateAge(birthday){
+			var currentYear = new Date().getFullYear();
+        	var yearUser = new Date(birthday).getFullYear().toString().substring(0,4);
+        	var yearsOld = currentYear - yearUser;
+	        
+	        if(yearsOld <=0){
+	            yearsOld = '>18';
+	        }else if(isNaN(yearsOld)){
+	            yearsOld = '';
+	        }
+
+	        return yearsOld;
+		}
+
 		onJqueryUILoaded(function($){
 			$(document).tooltip({
 				items: ".memberlists a",
@@ -56,14 +72,31 @@
 				tooltipClass: 'user-tooltip',
 				content: function(){
 					var nick = $.trim($( this ).text());
+					var country = '';
+					var age = '';
+
 					if (nick.indexOf("@") != -1 || nick.indexOf("+") != -1) nick = nick.slice(1);
 
-					return '<i class="fa fa-' + $(this).data("gender") + '"></i> ' + nick;
+					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.gender) !== 'undefined'){
+						gender = userData[nick].profile.gender;
+					}
+
+					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].country) !== 'undefined'){
+						country = '&nbsp;<span class="tooltip-country">' + userData[nick].country + '</span>';
+					}
+
+					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.birthday)){
+						age = '&nbsp;<span class="tooltip-age">' + calculateAge(userData[nick].profile.birthday) + '</span>';
+					}
+
+					return '<i class="fa fa-' + gender + '"></i> ' + age + country;
 				}
 			});
 		});
 
-		function updateMedia(data) {
+		function updateMembersList(){
+			console.log('updateMedia');
+			console.log(userData);
 			$( ".memberlists a .webcam_nick_subscriber, .memberlists a .usericon, .memberlists a .gendericon").remove();
 
 			$( ".memberlists a" ).each(function( index ) {
@@ -71,23 +104,27 @@
 				var nick = $.trim($( this ).text());
 				if (nick.indexOf("@") != -1 || nick.indexOf("+") != -1) nick = nick.slice(1);
 
-				if(data.users[nick] != undefined && data.users[nick].webcam) {
+				if(userData[nick] != undefined && userData[nick].webcam) {
 					$( this ).append('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');
 				}else{
 					return;
 				}
 
-				if(typeof data.users[nick].profile != undefined && typeof data.users[nick].profile.profile_photo != undefined && typeof data.users[nick].profile.profile_photo.icon != undefined){
-					$( this ).prepend('<img width="16" height="16" class="usericon" src="' + data.users[nick].profile.profile_photo.icon + '">');
-				}
-
-				if(typeof data.users[nick].profile != undefined && typeof data.users[nick].profile.gender != undefined){
-					var gender = data.users[nick].profile.gender;
-
-					$(this).data('gender', gender);
+				if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.icon != 'undefined'){
+					$( this ).prepend('<img width="16" height="16" class="usericon" src="' + userData[nick].profile.profile_photo.icon + '">');
 				}
 			});
 		}
+
+		function updateMedia(data) {
+			userData = data.users;
+
+			updateMembersList();
+		}
+
+		kiwi.panels.on('active', function(){
+			setTimeout(updateMembersList, 100);
+		});
 
 		function getMedia(){
 			var activePannel = kiwi.panels().active;
