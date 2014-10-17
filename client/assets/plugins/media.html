@@ -75,22 +75,27 @@
 					var country = '';
 					var age = '';
 					var gender = '';
+					var photo = '';
 
 					if (nick.indexOf("@") != -1 || nick.indexOf("+") != -1) nick = nick.slice(1);
+
+					if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.medium != 'undefined'){
+						photo = '<img class="photoUserTooltip" src="' + userData[nick].profile.profile_photo.medium + '"> <br>';
+					}					
 
 					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.gender) !== 'undefined'){
 						gender = '<i class="fa fa-' + userData[nick].profile.gender + '"></i> ';
 					}
 
 					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].country) !== 'undefined'){
-						country = '&nbsp;<span class="tooltip-country">' + userData[nick].country + '</span>';
+						country = '&nbsp;<span class="tooltip-country"><i class="fa fa-location-arrow"></i> ' + userData[nick].country + '</span>';
 					}
 
 					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.birthday)){
 						age = '&nbsp;<span class="tooltip-age">' + calculateAge(userData[nick].profile.birthday) + '</span>';
 					}
 
-					return gender + age + country;
+					return photo + gender + age + country;
 				}
 			});
 		});
@@ -110,7 +115,7 @@
 				}
 
 				if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.icon != 'undefined'){
-					$( this ).prepend('<img width="16" height="16" class="usericon" src="' + userData[nick].profile.profile_photo.icon + '">');
+					$( this ).prepend('<img width="20" height="20" class="usericon" src="' + userData[nick].profile.profile_photo.icon + '"> ');
 				}
 			});
 		}
