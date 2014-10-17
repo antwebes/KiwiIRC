@@ -105,12 +105,16 @@
 		});
 
 		function updateMembersList(){
-			$( ".memberlists a .webcam_nick_subscriber, .memberlists a .usericon, .memberlists a .gendericon").remove();
+			$( ".memberlists a .webcam_nick_subscriber, .memberlists a .usericon, .memberlists a .gendericon, .meicon").remove();
 
 			$( ".memberlists a" ).each(function( index ) {
 
 				var nick = $.trim($( this ).text());
 				if (nick.indexOf("@") != -1 || nick.indexOf("+") != -1) nick = nick.slice(1);
+
+				if(typeof userData[nick] == 'undefined') {
+					return "";
+				}
 
 				if(userData[nick] != undefined && userData[nick].webcam) {
 					$( this ).append('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');
@@ -118,6 +122,12 @@
 
 				if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.icon != 'undefined'){
 					$( this ).prepend('<img width="20" height="20" class="usericon" src="' + userData[nick].profile.profile_photo.icon + '"> ');
+				} else {
+					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.gender) !== 'undefined'){
+						$( this ).prepend('<i class="meicon fa fa-' + userData[nick].profile.gender + '"></i> ');
+					} else {
+						$( this ).prepend('<i class="meicon fa fa-user"></i> ');
+					}
 				}
 			});
 		}
