@@ -79,6 +79,10 @@
 
 					if (nick.indexOf("@") != -1 || nick.indexOf("+") != -1) nick = nick.slice(1);
 
+					if(typeof userData[nick] == 'undefined') {
+						return "";
+					}
+
 					if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.medium != 'undefined'){
 						photo = '<img class="photoUserTooltip" src="' + userData[nick].profile.profile_photo.medium + '"> <br>';
 					}					
