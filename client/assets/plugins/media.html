@@ -114,8 +114,6 @@
 
 				if(userData[nick] != undefined && userData[nick].webcam) {
 					$( this ).append('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');
-				}else{
-					return;
 				}
 
 				if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.icon != 'undefined'){
