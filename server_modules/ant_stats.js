@@ -7,36 +7,54 @@ var log_file = fs.createWriteStream('ant_stats.log', {'flags': 'a'});
 
 var antLog = function(tag, data){
     timestamp = Math.floor((new Date()).getTime() / 1000);
-    log_file.write(timestamp.toString() + ' ' + tag  + ' ' + JSON.stringify(data) + '\n');
+    console.log(timestamp.toString() + ' [' + tag  + '] ' + JSON.stringify(data) + '\n');
 };
 
 // A web client is connected
 module.on('client created', function(event, data) {
-    antLog('[client connection]', data);
+    antLog('client connection', data);
 });
 
 
 // The Client recieves a IRC PRIVMSG command
-module.on('irc message', function(event, data) {
-	antLog('[MESSAGE]', data.irc_event);
+/*module.on('rpc irc.privmsg', function(event, data) {
+	var logData = {
+        nick: data.connection.nick,
+        data: data.arguments[0]
+    };
+
+    antLog('[MESSAGE]', logData);
 });
 
 // The Client recieves a IRC USER NOTICE command
-module.on('irc user notice', function(event, data) {
-	antLog('[NOTICE]', data.irc_event);
-});
+module.on('rpc irc.notice', function(event, data) {
+	antLog('[NOTICE]', event);
+});*/
 
-// The client recieves an IRC JOIN command
-module.on('irc channel join', function(event, data) {
-	antLog('[JOIN]', data.irc_event);
-});
+var rpcEvents = ['privmsg', 'join', 'part', 'kick', 'quit', 'nick'];
+
+
+for(i in rpcEvents){
+    // The client recieves an IRC JOIN command
+    
+    (function(rpcEvent){
+        module.on('rpc irc.' + rpcEvent, function(event, data){
+            var logData = {
+                nick: data.connection.nick,
+                data: data.arguments[0]
+            };
+
+        	antLog(rpcEvent, logData);
+        });
+    })(rpcEvents[i]);
+}
 
 
 // A command has been sent from the client
-module.on('client command', function(event, data) {
+/*module.on('client command', function(event, data) {
 	var client_method = data.command.method;
 	var client_args = data.command.args;
 
 	antLog('[CLIENT COMMAND]', client_method);
 	antLog('    ', client_args);
-});
+});*/

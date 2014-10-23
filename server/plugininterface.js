@@ -145,7 +145,6 @@ PluginInterface.prototype.EmitCall = function EmitCall (event_name, event_data) 
             return;
         }
 
-
         // Call the next listener in our array
         function nextListener() {
             var listener, event_obj;
@@ -180,6 +179,7 @@ PluginInterface.prototype.EmitCall = function EmitCall (event_name, event_data) 
 
 
             listener = listeners[current_event_idx];
+            
             listener[1].call(listener[2] || that, event_obj, event_data);
 
             // If the listener hasn't signalled it's going to wait, proceed to next listener
