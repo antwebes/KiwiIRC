@@ -72,7 +72,7 @@
 	            params.allowfullscreen = "true";
 
 				if($webcamContainer.length > 0){
-					$("#webcam_container").append($("<div />", {id: "webcam_subscriber_container"}));
+					$("#webcam_container").append($("<div />", {id: "webcam_subscriber_container", style: "width: 100%"}));
 					$("#webcam_subscriber_container").append($("<div />", {id: "flash_webcham_subs"}));
 
 		            swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPlayer.swf", "flash_webcham_subs", Math.ceil($("#webcam_subscriber_container").width())+'px', "100%", "9.0.0", null, flashVars, params);
@@ -81,20 +81,15 @@
                         $("#flash_webcham_subs").width(Math.ceil($("#webcam_subscriber_container").width()));
                     });				
 	        	}else{
-	        		$('body').append($("<div />", {id: "webcam_subscriber_container", style: "width: 100%"}));
-					$("#webcam_subscriber_container").append($("<div />", {id: "flash_webcham_subs"}));
+	        		$('body').append($("<div />", {id: "webcam_subscriber_container"}));
 
-		            swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPlayer.swf", "flash_webcham_subs", "300px", "250px", "9.0.0", null, flashVars, params);
+		            swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPlayer.swf", "webcam_subscriber_container", "280px", "250px", "9.0.0", null, flashVars, params);
 
 		            $("#webcam_subscriber_container").dialog({
 					     dialogClass: "no-close",	
 					     title: nick + " webcam",
-					     close: closeWebcam,	    
-					     open: function( event, ui ) {
-					     	window.eventBus.trigger("webcam_sub:on");
-					     	$("#webcam_subscriber_container").css("overflow", "hidden");
-					     	$("#webcam_subscriber_container").css("width", "100%");
-					     }
+					     close: closeWebcam,
+					     resizable: false,
 					});
 
 	        	}
