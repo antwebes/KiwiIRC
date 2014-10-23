@@ -75,9 +75,13 @@
 					$("#webcam_container").append($("<div />", {id: "webcam_subscriber_container"}));
 					$("#webcam_subscriber_container").append($("<div />", {id: "flash_webcham_subs"}));
 
-		            swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPlayer.swf", "flash_webcham_subs", "300px", "250px", "9.0.0", null, flashVars, params);				
+		            swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPlayer.swf", "flash_webcham_subs", Math.ceil($("#webcam_subscriber_container").width())+'px', "100%", "9.0.0", null, flashVars, params);
+
+		            $(window).resize(function() {
+                        $("#flash_webcham_subs").width(Math.ceil($("#webcam_subscriber_container").width()));
+                    });				
 	        	}else{
-	        		$('body').append($("<div />", {id: "webcam_subscriber_container"}));
+	        		$('body').append($("<div />", {id: "webcam_subscriber_container", style: "width: 100%"}));
 					$("#webcam_subscriber_container").append($("<div />", {id: "flash_webcham_subs"}));
 
 		            swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPlayer.swf", "flash_webcham_subs", "300px", "250px", "9.0.0", null, flashVars, params);
