@@ -87,14 +87,19 @@
                         return;
                     }
 
-                    $webcamContainer.append($("<div />", {id: "webcam_publisher_container"}));
+                    $webcamContainer.append($("<div />", {id: "webcam_publisher_container", style: "width: 100%"}));
+                    $("#webcam_publisher_container").append($("<div />", {id: "flash_webcham_pub"}));
 
                     $("#ext-webcam span").css("color" , "red");
                     $("#ext-webcam span b").html("Stop");
                     $("#ext-webcam span i").switchClass( "fa-play", "fa-stop");
 
                     
-                    swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPublisher.swf", "webcam_publisher_container", "300px", "250px", "9.0.0", null, flashVars);
+                    swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPublisher.swf", "flash_webcham_pub", Math.ceil($("#webcam_publisher_container").width())+'px', "100%", "9.0.0", null, flashVars);
+
+                    $(window).resize(function() {
+                        $("#flash_webcham_pub").width(Math.ceil($("#webcam_publisher_container").width()));
+                    });
 
                     window.eventBus.trigger("webcam_pub:on");
                 }
@@ -108,7 +113,7 @@
                         return;
                     }
 
-                    swfobject.removeSWF("webcam_publisher_container");
+                    $('#webcam_publisher_container').remove();
 
                     $("#ext-webcam span").css("color" , "black");
                     $("#ext-webcam span b").html("Webcam");
