@@ -41,7 +41,8 @@ for(i in rpcEvents){
         module.on('rpc irc.' + rpcEvent, function(event, data){
             var logData = {
                 nick: data.connection.nick,
-                data: data.arguments[0]
+                data: data.arguments[0],
+                irc_host: data.connection.irc_host
             };
 
         	antLog(rpcEvent, logData);
