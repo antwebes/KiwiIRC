@@ -69,17 +69,14 @@
                     flashVars.file = myNick;
 
                     if($webcamContainer.length == 0){
-                        $('body').append($("<div />", {id: "webcam_publisher_container"}));
+                        $('body').append($("<div />", {id: "webcam_publisher_container"}));;
       
                         swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPublisher.swf", "webcam_publisher_container", "300px", "250px", "9.0.0", null, flashVars);
                         $("#webcam_publisher_container").dialog({
                             dialogClass: "no-close",   
                             title: "My webcam",
-                            close: closeWebcam,        
-                            open: function( event, ui ) {
-                               $("#webcam_publisher_container").css("overflow", "hidden");
-                               $("#webcam_publisher_container").css("width", "100%");
-                            }
+                            close: closeWebcam,
+                            resizable: false,      
                         });
 
                         window.eventBus.trigger("webcam_pub:on");
