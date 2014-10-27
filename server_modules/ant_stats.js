@@ -16,7 +16,6 @@ logger.configure('kiwi', {
 var antLog = function(tag, data){
     timestamp = Math.floor((new Date()).getTime() / 1000);
     data.type = tag;
-    console.log(data);
     switch(tag) {
         case "privmsg":
             console.log("target " + data.target);
@@ -24,8 +23,8 @@ var antLog = function(tag, data){
                 data.type = "chan_msg";
             }else{
                 data.type = "priv_msg";
-                delete data.msg;
-                if(data.target == "nickserv"){
+                delete data.data.msg;
+                if(data.data.target == "nickserv"){
                     if(data.msg.indexOf("identifyoauth")) {
                         data.type = "IDENTIFY";
                     } else {
