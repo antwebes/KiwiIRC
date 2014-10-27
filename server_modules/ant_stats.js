@@ -13,29 +13,28 @@ logger.configure('kiwi', {
    timeout: global.config.timeout
 });
 
-var antLog = function(tag, data){
+var antLog = function(tag, log){
     timestamp = Math.floor((new Date()).getTime() / 1000);
-    data.type = tag;
+    log.type = tag;
     switch(tag) {
         case "privmsg":
-            console.log("target " + data.target);
-            if(data.data.target.charAt(0) == "#") {
-                data.type = "chan_msg";
+            if(log.data.target.charAt(0) == "#") {
+                log.type = "chan_msg";
             }else{
-                data.type = "priv_msg";
-                delete data.data.msg;
-                if(data.data.target == "nickserv"){
-                    if(data.msg.indexOf("identifyoauth")) {
-                        data.type = "IDENTIFY";
+                log.type = "priv_msg";
+                delete log.data.msg;
+                if(log.data.target == "nickserv"){
+                    if(log.data.msg.indexOf("identifyoauth")) {
+                        log.type = "IDENTIFY";
                     } else {
-                        data.type = "NICKSERV_COMMAND";
+                        log.type = "NICKSERV_COMMAND";
                     }
                 } 
             }
         break;
     }
 
-    logger.emit("stats", data);
+    logger.emit("stats", log);
 };
 
 
