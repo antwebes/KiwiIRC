@@ -68,7 +68,9 @@
 
                     flashVars.file = myNick;
 
+                    //no exist div to insert webcam
                     if($webcamContainer.length == 0){
+                        console.log('$webcamContainer.length == 0');
                         $('body').append($("<div />", {id: "webcam_publisher_container"}));;
       
                         swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPublisher.swf", "webcam_publisher_container", "300px", "250px", "9.0.0", null, flashVars);
@@ -87,10 +89,11 @@
                     $webcamContainer.append($("<div />", {id: "webcam_publisher_container", style: "width: 100%"}));
                     $("#webcam_publisher_container").append($("<div />", {id: "flash_webcham_pub"}));
 
+                    //modify the icon to publish webcam
                     $("#ext-webcam span").css("color" , "red");
                     $("#ext-webcam span b").html("Stop");
                     $("#ext-webcam span i").switchClass( "fa-play", "fa-stop");
-
+                    //end modify the icon to publish webcam
                     
                     swfobject.embedSWF("http://webcam.chatsfree.net/RtmpPublisher.swf", "flash_webcham_pub", Math.ceil($("#webcam_publisher_container").width())+'px', "100%", "9.0.0", null, flashVars);
 
