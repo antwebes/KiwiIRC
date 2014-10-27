@@ -27,7 +27,8 @@
     "spdy": "1.28.1",
     "po2json": "0.3.0",
     "negotiator": "0.4.3",
-    "winston": "~0.7.2"
+    "winston": "~0.7.2",
+    "fluent-logger": "0.2.6"
   },
   "engines": {
     "node": ">=0.10"
