@@ -1,19 +1,24 @@
 var kiwiModules = require('../server/modules'),
-    fs = require('fs');
+    fs = require('fs')
+   logger = require('fluent-logger');
 
 var module = new kiwiModules.Module('Ant Stats Module');
 
 var log_file = fs.createWriteStream('ant_stats.log', {'flags': 'a'});
 
+
+logger.configure('kiwi', {
+   host: global.config.fluentd.server,  
+   port: global.config.fluentd.port,
+   timeout: global.config.timeout
+});
+
 var antLog = function(tag, data){
     timestamp = Math.floor((new Date()).getTime() / 1000);
-    console.log(timestamp.toString() + ' [' + tag  + '] ' + JSON.stringify(data) + '\n');
+    data.type = tag;
+    logger.emit("stats", data);
 };
 
-// A web client is connected
-module.on('client created', function(event, data) {
-    antLog('client connection', data);
-});
 
 
 // The Client recieves a IRC PRIVMSG command
@@ -30,6 +35,7 @@ module.on('client created', function(event, data) {
 module.on('rpc irc.notice', function(event, data) {
 	antLog('[NOTICE]', event);
 });*/
+
 
 var rpcEvents = ['privmsg', 'join', 'part', 'kick', 'quit', 'nick'];
 
