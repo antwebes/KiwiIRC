@@ -16,6 +16,26 @@ logger.configure('kiwi', {
 var antLog = function(tag, data){
     timestamp = Math.floor((new Date()).getTime() / 1000);
     data.type = tag;
+    console.log(data);
+    switch(tag) {
+        case "privmsg":
+            console.log("target " + data.target);
+            if(data.data.target.charAt(0) == "#") {
+                data.type = "chan_msg";
+            }else{
+                data.type = "priv_msg";
+                delete data.msg;
+                if(data.target == "nickserv"){
+                    if(data.msg.indexOf("identifyoauth")) {
+                        data.type = "IDENTIFY";
+                    } else {
+                        data.type = "NICKSERV_COMMAND";
+                    }
+                } 
+            }
+        break;
+    }
+
     logger.emit("stats", data);
 };
 
