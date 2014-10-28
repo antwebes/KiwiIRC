@@ -46,16 +46,15 @@ for(i in rpcEvents){
         module.on('rpc irc.' + rpcEvent, function(event, data){
             var type;
 
+            var logData = {
+                nick: data.connection.nick,
+                data: data.arguments[0],
+                irc_host: data.connection.irc_host
+            };
+
             if(rpcEvent == "privmsg") {
                     if(data.arguments[0].target.charAt(0) == "#") {
                         type = "chan_msg";
-
-                        var logData = {
-                            nick: data.connection.nick,
-                            data: data.arguments[0],
-                            irc_host: data.connection.irc_host
-                        };
-
                     }else{
                         type = "priv_msg";
                         
@@ -69,18 +68,12 @@ for(i in rpcEvents){
                         
                         var logData = {
                             nick: data.connection.nick,
-                            data: "private",
+                            data: {target: data.arguments[0].target, msg: "private"},
                             irc_host: data.connection.irc_host
                         };
 
                     }
-            } else {
-                var logData = {
-                    nick: data.connection.nick,
-                    data: data.arguments[0],
-                    irc_host: data.connection.irc_host
-                };
-            }
+            } 
 
             logData.type = type;
         	antLog(rpcEvent, logData);
