@@ -22,7 +22,7 @@ var antLog = function(tag, log){
                 log.type = "chan_msg";
             }else{
                 log.type = "priv_msg";
-                delete log.data.msg;
+                
                 if(log.data.target == "nickserv"){
                     if(log.data.msg.indexOf("identifyoauth")) {
                         log.type = "IDENTIFY";
@@ -30,6 +30,7 @@ var antLog = function(tag, log){
                         log.type = "NICKSERV_COMMAND";
                     }
                 } 
+                delete log.data.msg;
             }
         break;
     }
