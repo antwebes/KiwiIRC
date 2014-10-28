@@ -30,7 +30,6 @@ var antLog = function(tag, log){
                         log.type = "NICKSERV_COMMAND";
                     }
                 } 
-                delete log.data.msg;
             }
         break;
     }
