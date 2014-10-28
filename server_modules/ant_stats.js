@@ -15,25 +15,6 @@ logger.configure('kiwi', {
 
 var antLog = function(tag, log){
     timestamp = Math.floor((new Date()).getTime() / 1000);
-    log.type = tag;
-    switch(tag) {
-        case "privmsg":
-            if(log.data.target.charAt(0) == "#") {
-                log.type = "chan_msg";
-            }else{
-                log.type = "priv_msg";
-                
-                if(log.data.target == "nickserv"){
-                    if(log.data.msg.indexOf("identifyoauth")) {
-                        log.type = "IDENTIFY";
-                    } else {
-                        log.type = "NICKSERV_COMMAND";
-                    }
-                } 
-            }
-        break;
-    }
-
     logger.emit("stats", log);
 };
 
@@ -63,12 +44,45 @@ for(i in rpcEvents){
     
     (function(rpcEvent){
         module.on('rpc irc.' + rpcEvent, function(event, data){
-            var logData = {
-                nick: data.connection.nick,
-                data: data.arguments[0],
-                irc_host: data.connection.irc_host
-            };
+            var type;
 
+            if(rpcEvent == "privmsg") {
+                    if(data.arguments[0].target.charAt(0) == "#") {
+                        type = "chan_msg";
+
+                        var logData = {
+                            nick: data.connection.nick,
+                            data: data.arguments[0],
+                            irc_host: data.connection.irc_host
+                        };
+
+                    }else{
+                        type = "priv_msg";
+                        
+                        if(data.arguments[0].target == "nickserv"){
+                            if(!data.arguments[0].msg.indexOf("identifyoauth")) {
+                                type = "IDENTIFY";
+                            } else {
+                                type = "NICKSERV_COMMAND";
+                            }
+                        } 
+                        
+                        var logData = {
+                            nick: data.connection.nick,
+                            data: "private",
+                            irc_host: data.connection.irc_host
+                        };
+
+                    }
+            } else {
+                var logData = {
+                    nick: data.connection.nick,
+                    data: data.arguments[0],
+                    irc_host: data.connection.irc_host
+                };
+            }
+
+            logData.type = type;
         	antLog(rpcEvent, logData);
         });
     })(rpcEvents[i]);
