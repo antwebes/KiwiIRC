@@ -27,7 +27,10 @@ Cambios en el kiwi
 
 	Desactivar ctcp: (Pendiente)
 
+4:
 
+	Incluir los applet:
+		avatar.js
 
 
 Cambios en el kiwi, que sería recomendable cambiar a plugin

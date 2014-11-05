@@ -86,7 +86,8 @@
         'command:channel':     channelCommand,
         'command:applet':      appletCommand,
         'command:settings':    settingsCommand,
-        'command:script':      scriptCommand
+        'command:script':      scriptCommand,
+        'command:avatar':      avatarCommand
     };
 
 
@@ -415,6 +416,10 @@
         settings.view.show();
     }
 
+    function avatarCommand (ev) {
+        var settings = _kiwi.model.Applet.loadOnce('kiwi_avatar');
+        settings.view.show();
+    }
 
     function scriptCommand (ev) {
         var editor = _kiwi.model.Applet.loadOnce('kiwi_script_editor');
