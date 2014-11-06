@@ -1,5 +1,5 @@
 var kiwiModules = require('../server/modules'),
-    fs = require('fs')
+    fs = require('fs'),
    logger = require('fluent-logger');
 
 var module = new kiwiModules.Module('Ant Stats Module');
@@ -8,7 +8,7 @@ var log_file = fs.createWriteStream('ant_stats.log', {'flags': 'a'});
 
 
 logger.configure('kiwi', {
-   host: global.config.fluentd.server,  
+   host: global.config.fluentd.server,
    port: global.config.fluentd.port,
    timeout: global.config.timeout
 });
@@ -16,6 +16,7 @@ logger.configure('kiwi', {
 var antLog = function(tag, log){
     timestamp = Math.floor((new Date()).getTime() / 1000);
     logger.emit("stats", log);
+    //console.log(tag, log);
 };
 
 
@@ -81,6 +82,28 @@ for(i in rpcEvents){
     })(rpcEvents[i]);
 }
 
+module.on('rpc kiwi.connect_irc', function(event, data){
+    var logData = {
+        nick: data.nick,
+        hostname: data.hostname,
+        port: data.port,
+        ssl: data.ssl,
+        type: 'connect'
+    };
+    
+    antLog('connect', logData);
+});
+
+module.on('rpc irc.disconnect', function(event, data){
+    var logData = {
+        connection_id: data.arguments[0].connection_id,
+        reason: data.arguments[0].reason,
+        nick: data.connection.nick,
+        type: 'disconnect'
+    };
+
+    antLog('disconnect', logData);
+});
 
 // A command has been sent from the client
 /*module.on('client command', function(event, data) {

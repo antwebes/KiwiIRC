@@ -87,3 +87,80 @@ Cambios en el kiwi, que sería recomendable cambiar a plugin
 
 	        this.delegateEvents();
 	    }
+
+Cambios en la parte server
+--------------------------
+
+En server/cliente.js cambiar los siguientes metos.
+
+- Client.prototype.sendIrcCommand por:
+
+```
+Client.prototype.sendIrcCommand = function (command, data, callback) {
+    var c = {command: command, data: data};
+    connection = this.state.irc_connections[data.connection_id];
+    global.modules.emit('rpc irc.'+command, {
+            arguments: [data],
+            client: this,
+            connection: connection
+        });
+    this.rpc('irc', c, callback);
+};
+```
+
+- Client.prototype.attachKiwiCommands por:
+
+```
+Client.prototype.attachKiwiCommands = function() {
+    var that = this;
+
+    function doAttachKiwiCommand(commandName, handler){
+        var handlerWrapper = function(){
+            var args = Array.prototype.slice.call(arguments)
+            global.modules.emit('rpc '+commandName, args[1]);
+            handler.apply(null, args);
+        };
+
+        that.rpc.on(commandName, handlerWrapper);
+    }
+
+    doAttachKiwiCommand('kiwi.connect_irc', function(callback, command) {
+        if (command.hostname && command.port && command.nick) {
+            var options = {};
+
+            // Get any optional parameters that may have been passed
+            if (command.encoding)
+                options.encoding = command.encoding;
+
+            options.password = global.config.restrict_server_password || command.password;
+
+            that.state.connect(
+                (global.config.restrict_server || command.hostname),
+                (global.config.restrict_server_port || command.port),
+                (typeof global.config.restrict_server_ssl !== 'undefined' ?
+                    global.config.restrict_server_ssl :
+                    command.ssl),
+                command.nick,
+                {hostname: that.websocket.meta.revdns, address: that.websocket.meta.real_address},
+                options,
+                callback);
+        } else {
+            return callback('Hostname, port and nickname must be specified');
+        }
+    });
+
+
+    doAttachKiwiCommand('kiwi.client_info', function(callback, args) {
+        // keep hold of selected parts of the client_info
+        that.client_info = {
+            build_version: args.build_version.toString() || undefined
+        };
+    });
+
+
+    // Just to let us know the client is still there
+    doAttachKiwiCommand('kiwi.heartbeat', function(callback, args) {
+        that.heartbeat();
+    });
+};
+```

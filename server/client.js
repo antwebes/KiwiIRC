@@ -81,6 +81,12 @@ module.exports.Client = Client;
 
 Client.prototype.sendIrcCommand = function (command, data, callback) {
     var c = {command: command, data: data};
+    connection = this.state.irc_connections[data.connection_id];
+    global.modules.emit('rpc irc.'+command, {
+            arguments: [data],
+            client: this,
+            connection: connection
+        });
     this.rpc('irc', c, callback);
 };
 
@@ -127,7 +133,17 @@ Client.prototype._heartbeat_timeout = function() {
 Client.prototype.attachKiwiCommands = function() {
     var that = this;
 
-    this.rpc.on('kiwi.connect_irc', function(callback, command) {
+    function doAttachKiwiCommand(commandName, handler){
+        var handlerWrapper = function(){
+            var args = Array.prototype.slice.call(arguments)
+            global.modules.emit('rpc '+commandName, args[1]);
+            handler.apply(null, args);
+        };
+
+        that.rpc.on(commandName, handlerWrapper);
+    }
+
+    doAttachKiwiCommand('kiwi.connect_irc', function(callback, command) {
         if (command.hostname && command.port && command.nick) {
             var options = {};
 
@@ -153,7 +169,7 @@ Client.prototype.attachKiwiCommands = function() {
     });
 
 
-    this.rpc.on('kiwi.client_info', function(callback, args) {
+    doAttachKiwiCommand('kiwi.client_info', function(callback, args) {
         // keep hold of selected parts of the client_info
         that.client_info = {
             build_version: args.build_version.toString() || undefined
@@ -162,7 +178,7 @@ Client.prototype.attachKiwiCommands = function() {
 
 
     // Just to let us know the client is still there
-    this.rpc.on('kiwi.heartbeat', function(callback, args) {
+    doAttachKiwiCommand('kiwi.heartbeat', function(callback, args) {
         that.heartbeat();
     });
 };
