@@ -11,6 +11,7 @@
 
 <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/style.css?t=<%build_time%>" />
 <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/font-awesome.min.css" />
+<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" />
 </head>
 <body>
 
@@ -394,6 +395,32 @@
     </script>
 
 
+    <script type="text/html" id="tmpl_avatar_config">
+       
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-6">
+                     <h6>Tu avatar</h6>
+                    <img src="http://placehold.it/200x200" alt="" class="img-rounded img-responsive" />
+                </div>
+                <div class="col-xs-6">
+                     <h6>Cambiar avatar</h6>
+
+                        <ul class="list-group">
+                                <a class="list-group-item" data-url="animals">Animals</a>
+                                <a class="list-group-item" data-url="man">Man</a>
+                                <a class="list-group-item" data-url="woman">Woman</a>
+                                <a class="list-group-item" data-url="emoticons">Emoticon<a>
+                                <a class="list-group-item" data-url="love">Love</a>
+                        </ul>
+
+                        
+
+                </div>
+            </div>
+        </div>
+    </script>
+
 <script src="<%base_path%>/assets/libs/jquery-1.11.1.min.js"></script>
 <script>
 /* Script loader (https://github.com/ded/script.js) */
@@ -569,7 +596,7 @@
                 'assets/libs/jed.js?t=<%build_time%>'
             ]);
             scripts.push([
-                'assets/kiwi.min.js?t=<%build_time%>',
+                'assets/kiwi.js?t=<%build_time%>',
                 'assets/libs/engine.io.bundle.min.js?t=<%build_time%>'
             ]);
 
@@ -616,5 +643,6 @@
         };
     })();
 </script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </body>
 </html>

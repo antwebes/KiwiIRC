@@ -86,6 +86,7 @@ var source_files = [
 
     __dirname + '/src/applets/settings.js',
     __dirname + '/src/applets/chanlist.js',
+    __dirname + '/src/applets/avatar.js',
     __dirname + '/src/applets/scripteditor.js',
     __dirname + '/src/applets/startup.js'
 ];
