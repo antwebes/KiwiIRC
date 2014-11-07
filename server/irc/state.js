@@ -18,9 +18,11 @@ var State = function (client, save_state) {
         if (!that.save_state) {
             _.each(that.irc_connections, function (irc_connection, i, cons) {
                 if (irc_connection) {
-                    irc_connection.end('QUIT :' + (irc_connection.quit_message || global.config.quit_message || ''));
-                    global.servers.removeConnection(irc_connection);
-                    cons[i] = null;
+                    irc_connection.end('QUIT :' + (irc_connection.quit_message || global.config.quit_message || ''), function(){
+                        console.close('finished');
+                        global.servers.removeConnection(irc_connection);
+                        cons[i] = null;
+                    });
                 }
             });
 

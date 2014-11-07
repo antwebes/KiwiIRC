@@ -439,7 +439,7 @@ IrcConnection.prototype.flushWriteBuffer = function () {
 /**
  * Close the connection to the IRCd after forcing one last line
  */
-IrcConnection.prototype.end = function (data) {
+IrcConnection.prototype.end = function (data, afterDisconect) {
     var that = this;
 
     if (!this.socket) {
@@ -451,6 +451,10 @@ IrcConnection.prototype.end = function (data) {
     if (data) {
         // Once the last bit of data has been sent, then re-run this function to close the socket
         this.write(data, true, function() {
+            if(afterDisconect){
+                afterDisconect();
+            }
+
             that.end();
         });
 
