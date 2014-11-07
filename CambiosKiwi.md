@@ -164,3 +164,64 @@ Client.prototype.attachKiwiCommands = function() {
     });
 };
 ```
+En server/irc/connection.js cambiar el siguiente metodo:
+
+- IrcConnection.prototype.end:
+
+```
+IrcConnection.prototype.end = function (data, afterDisconect) {
+    var that = this;
+
+    if (!this.socket) {
+        return;
+    }
+
+    this.requested_disconnect = true;
+
+    if (data) {
+        // Once the last bit of data has been sent, then re-run this function to close the socket
+        this.write(data, true, function() {
+            if(afterDisconect){
+                afterDisconect();
+            }
+
+            that.end();
+        });
+
+        return;
+    }
+
+    this.socket.end();
+};
+```
+
+En server/irc/state.js cambiar el constructor por:
+
+```
+var State = function (client, save_state) {
+    var that = this;
+
+    events.EventEmitter.call(this);
+    this.client = client;
+    this.save_state = save_state || false;
+
+    this.irc_connections = [];
+    this.next_connection = 0;
+
+    this.client.on('dispose', function () {
+        if (!that.save_state) {
+            _.each(that.irc_connections, function (irc_connection, i, cons) {
+                if (irc_connection) {
+                    irc_connection.end('QUIT :' + (irc_connection.quit_message || global.config.quit_message || ''), function(){
+                        console.close('finished');
+                        global.servers.removeConnection(irc_connection);
+                        cons[i] = null;
+                    });
+                }
+            });
+
+            that.dispose();
+        }
+    });
+};
+```
