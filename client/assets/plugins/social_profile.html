@@ -31,7 +31,7 @@
         <% if(typeof(city) != 'undefined'){ %>
             <li><i class="fa fa-location-arrow"></i> Location: <% if(city.name != 'no_city'){ %><%= city.name %>, <% } %><%= city.country.name %></li> 
         <% } %>
-        <li><center><a href="/users/<%= username_canonical %>-<%= id %>"> <i class="fa fa-info"></i> Full profile</a></center></li> 
+        <li><center><a href="/users/<%= username_canonical %>-<%= id %>" <% if(typeof(window.user_id) != 'undefined') { %> target="_blank"<% } %>> <i class="fa fa-info"></i> Full profile</a></center></li> 
     </ul>
 </script>
 
