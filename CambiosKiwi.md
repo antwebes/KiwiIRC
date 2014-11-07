@@ -32,6 +32,19 @@ Cambios en el kiwi
 	Incluir los applet:
 		avatar.js
 
+    Añadir   en clientuicommands.js
+    var fn_to_bind = {
+        ...
+        'command:avatar':      avatarCommand
+    };
+
+   
+    function avatarCommand (ev) {
+        var settings = _kiwi.model.Applet.loadOnce('kiwi_avatar');
+        settings.view.show();
+    }
+
+
 
 Cambios en el kiwi, que sería recomendable cambiar a plugin
 -----------------------------------------------------------

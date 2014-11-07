@@ -1,0 +1,11 @@
+<script>
+    (function() {
+            var $icon = $('<div id="ext-photo"><img src="/kiwi/assets/img/photo.png" /><span><br> <b>Avatar</b></span></div>');
+            $(".chat-extensions").append($icon);
+
+            $icon.click(function () {
+            	var settings = kiwi.components.Applet.loadOnce('kiwi_avatar');
+        		settings.view.show();
+            });
+    })();
+</script>
