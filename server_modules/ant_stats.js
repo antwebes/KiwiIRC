@@ -4,7 +4,6 @@ var kiwiModules = require('../server/modules'),
 
 var module = new kiwiModules.Module('Ant Stats Module');
 
-var log_file = fs.createWriteStream('ant_stats.log', {'flags': 'a'});
 
 
 logger.configure('kiwi', {
@@ -16,7 +15,7 @@ logger.configure('kiwi', {
 var antLog = function(tag, log){
     timestamp = Math.floor((new Date()).getTime() / 1000);
     logger.emit("stats", log);
-    //console.log(tag, log);
+    console.log(tag, log);
 };
 
 
@@ -45,25 +44,25 @@ for(i in rpcEvents){
     
     (function(rpcEvent){
         module.on('rpc irc.' + rpcEvent, function(event, data){
-            var type;
+            var type = rpcEvent;
 
             var logData = {
                 nick: data.connection.nick,
                 data: data.arguments[0],
-                irc_host: data.connection.irc_host
             };
 
             if(rpcEvent == "privmsg") {
+                var privmsg_type;
                     if(data.arguments[0].target.charAt(0) == "#") {
-                        type = "chan_msg";
+                        privmsg_type = "chan_msg";
                     }else{
-                        type = "priv_msg";
+                        privmsg_type = "priv_msg";
                         
                         if(data.arguments[0].target == "nickserv"){
                             if(!data.arguments[0].msg.indexOf("identifyoauth")) {
-                                type = "IDENTIFY";
+                                privmsg_type = "IDENTIFY";
                             } else {
-                                type = "NICKSERV_COMMAND";
+                                privmsg_type = "NICKSERV_COMMAND";
                             }
                         } 
                         
@@ -74,9 +73,11 @@ for(i in rpcEvents){
                         };
 
                     }
+                logData.privmsg_type = privmsg_type;
             } 
 
             logData.type = type;
+
         	antLog(rpcEvent, logData);
         });
     })(rpcEvents[i]);
@@ -85,20 +86,24 @@ for(i in rpcEvents){
 module.on('rpc kiwi.connect_irc', function(event, data){
     var logData = {
         nick: data.nick,
-        hostname: data.hostname,
-        port: data.port,
-        ssl: data.ssl,
+        data: {
+            address: data.user.address,
+            hostname: data.user.hostname,
+            ssl: data.ssl
+        },
         type: 'connect'
     };
-    
+   
     antLog('connect', logData);
 });
 
 module.on('rpc irc.disconnect', function(event, data){
     var logData = {
-        connection_id: data.arguments[0].connection_id,
-        reason: data.arguments[0].reason,
         nick: data.connection.nick,
+        data: {
+            connection_id: data.arguments[0].connection_id,
+            reason: data.arguments[0].reason
+        },
         type: 'disconnect'
     };
 

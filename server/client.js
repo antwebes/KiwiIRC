@@ -143,7 +143,7 @@ Client.prototype.attachKiwiCommands = function() {
         that.rpc.on(commandName, handlerWrapper);
     }
 
-    doAttachKiwiCommand('kiwi.connect_irc', function(callback, command) {
+    that.rpc.on('kiwi.connect_irc', function(callback, command) {
         if (command.hostname && command.port && command.nick) {
             var options = {};
 
@@ -152,6 +152,9 @@ Client.prototype.attachKiwiCommands = function() {
                 options.encoding = command.encoding;
 
             options.password = global.config.restrict_server_password || command.password;
+
+            command.user = {hostname: that.websocket.meta.revdns, address: that.websocket.meta.real_address};
+            global.modules.emit('rpc kiwi.connect_irc', command);
 
             that.state.connect(
                 (global.config.restrict_server || command.hostname),
