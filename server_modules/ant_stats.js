@@ -15,7 +15,7 @@ logger.configure('kiwi', {
 var antLog = function(tag, log){
     timestamp = Math.floor((new Date()).getTime() / 1000);
     logger.emit("stats", log);
-    console.log(tag, log);
+    //console.log(tag, log);
 };
 
 
@@ -97,7 +97,7 @@ module.on('rpc kiwi.connect_irc', function(event, data){
     antLog('connect', logData);
 });
 
-module.on('rpc irc.disconnect', function(event, data){
+module.on('irc.disconnect', function(event, data){
     var logData = {
         nick: data.connection.nick,
         data: {

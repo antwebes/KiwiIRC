@@ -82,7 +82,7 @@ module.exports.Client = Client;
 Client.prototype.sendIrcCommand = function (command, data, callback) {
     var c = {command: command, data: data};
     connection = this.state.irc_connections[data.connection_id];
-    global.modules.emit('rpc irc.'+command, {
+    global.modules.emit('irc.'+command, {
             arguments: [data],
             client: this,
             connection: connection
