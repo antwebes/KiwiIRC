@@ -15,7 +15,7 @@ logger.configure('kiwi', {
 var antLog = function(tag, log){
     timestamp = Math.floor((new Date()).getTime() / 1000);
     logger.emit("stats", log);
-    //console.log(tag, log);
+    console.log(tag, log);
 };
 
 
@@ -58,7 +58,7 @@ for(i in rpcEvents){
                     }else{
                         privmsg_type = "priv_msg";
                         
-                        if(data.arguments[0].target == "nickserv"){
+                        if(data.arguments[0].target.toLowerCase() == "nickserv"){
                             if(!data.arguments[0].msg.indexOf("identifyoauth")) {
                                 privmsg_type = "IDENTIFY";
                             } else {
