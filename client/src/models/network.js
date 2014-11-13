@@ -331,6 +331,11 @@
         members = c.get('members');
         if (!members) return;
 
+        // Do we already have this member?
+        if (members.getByNick(event.nick)) {
+            return;
+        }
+
         user = new _kiwi.model.Member({
             nick: event.nick,
             ident: event.ident,
@@ -431,7 +436,7 @@
 
     function onMessage(event) {
         _kiwi.global.events.emit('message:new', {network: this, message: event})
-        .done(_.bind(function() {
+        .then(_.bind(function() {
             var panel,
                 is_pm = ((event.target || '').toLowerCase() == this.get('nick').toLowerCase());
 

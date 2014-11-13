@@ -44,6 +44,19 @@ Cambios en el kiwi
         settings.view.show();
     }
 
+5:
+
+    En indext.tmpl.html
+
+    en el template tmpl_application
+
+    debadro de
+
+    <div class="memberlists"></div>
+
+    poner
+    
+    <div class="chat-extensions"></div>
 
 
 Cambios en el kiwi, que sería recomendable cambiar a plugin
