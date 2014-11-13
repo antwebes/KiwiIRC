@@ -10,7 +10,10 @@
 
                 if(e.keyCode == 13){
                     currentVal = $.trim($inp.val());
-                    if(currentVal[0] != '/' && (urlRegex.test(currentVal) == true || mailRegex.test(currentVal))){
+                    var containsEmailOrUrl = urlRegex.test(currentVal) == true || mailRegex.test(currentVal);
+                    var isntCommanOrMsgCommand = currentVal[0] != '/' || currentVal.substring(0, 5).toLowerCase() == '/msg ';
+
+                    if(isntCommanOrMsgCommand && containsEmailOrUrl){
                         alert(kiwi.i18n.translate("email_or_url_forbidden").fetch());
                         $inp.val(currentVal);
                         return false;
