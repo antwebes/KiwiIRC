@@ -395,6 +395,49 @@
     </script>
 
 
+
+    <script type="text/html" id="tmpl_avatar_config"> 
+        <style>
+        #kiwi .avatar_item {margin: 1em; cursor: pointer;}
+        #kiwi .avatar_applet {padding: 1em;}
+        #kiwi .avatar_category {margin: 1em; cursor: pointer;}
+        </style>
+        <div class="row avatar_applet" >
+            <div class="col-md-3">
+                <h6><%= avatar_current %></h6>
+                <img id="img_avatar" src="" alt="" class="img-rounded img-responsive" />
+            </div>
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-2">
+                        <h6><%= avatar_category %></h6>
+                        <div>
+                                <div class="avatar_category" data-filters="category=animals"><img src="<%base_path%>/assets/img/animals.png"> Animals</div>
+                                <div class="avatar_category" data-filters="category=man"><img src="<%base_path%>/assets/img/man.png"> Man</div>
+                                <div class="avatar_category" data-filters="category=woman"><img src="<%base_path%>/assets/img/woman.png"> Woman</div>
+                                <div class="avatar_category" data-filters="category=icons"><img src="<%base_path%>/assets/img/icons.png"> Icons</div>
+                                <div class="avatar_category" data-filters="category=heroes"><img src="<%base_path%>/assets/img/heroes.png"> Heroes</div>
+                                <div class="avatar_category" data-filters="category=character"><img src="<%base_path%>/assets/img/character.png"> Characters</div>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        
+                        <div id="avatar_container">
+
+                        </div>
+                    </div>
+                </div>
+
+                    
+
+            </div>
+        </div>
+    </script>
+
+    <script type="text/html" id="tmpl_avatar_item">
+        <img src="<%=path_icon %>" class="avatar_item" data-id="<%=id>" data-urlicon="<%=path_icon>"> 
+    </script>
+
 <script src="<%base_path%>/assets/libs/jquery-1.11.1.min.js"></script>
 <script>
 /* Script loader (https://github.com/ded/script.js) */
