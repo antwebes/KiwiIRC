@@ -26,8 +26,18 @@ _kiwi.view.Channel = _kiwi.view.Panel.extend({
         this.model.bind('change:topic_set_by', this.topicSetBy, this);
 
         if (this.model.get('members')) {
+            // When we join the memberlist, we have officially joined the channel
             this.model.get('members').bind('add', function (member) {
                 if (member.get('nick') === this.model.collection.network.get('nick')) {
+                    this.$el.find('.initial_loader').slideUp(function () {
+                        $(this).remove();
+                    });
+                }
+            }, this);
+
+            // Memberlist reset with a new nicklist? Consider we have joined
+            this.model.get('members').bind('reset', function(members) {
+                if (members.getByNick(this.model.collection.network.get('nick'))) {
                     this.$el.find('.initial_loader').slideUp(function () {
                         $(this).remove();
                     });
@@ -61,7 +71,7 @@ _kiwi.view.Channel = _kiwi.view.Panel.extend({
         msg = this.generateMessageDisplayObj(msg);
 
         _kiwi.global.events.emit('message:display', {panel: this.model, message: msg})
-        .done(_.bind(function() {
+        .then(_.bind(function() {
             var line_msg;
 
             // Format the nick to the config defined format
@@ -201,7 +211,7 @@ _kiwi.view.Channel = _kiwi.view.Panel.extend({
         var found_a_url = false,
             parsed_url;
 
-        parsed_url = word.replace(/(([A-Za-z][A-Za-z0-9\-]*\:\/\/)|(www\.))([\w.\-]+)([a-zA-Z]{2,6})(:[0-9]+)?(\/[\w#!:.?$'()[\]*,;~+=&%@!\-\/]*)?/gi, function (url) {
+        parsed_url = word.replace(/^(([A-Za-z][A-Za-z0-9\-]*\:\/\/)|(www\.))([\w.\-]+)([a-zA-Z]{2,6})(:[0-9]+)?(\/[\w!:.?$'()[\]*,;~+=&%@!\-\/]*)?(#.*)?$/gi, function (url) {
             var nice = url,
                 extra_html = '';
 
@@ -226,7 +236,7 @@ _kiwi.view.Channel = _kiwi.view.Panel.extend({
             extra_html = _kiwi.view.MediaMessage.buildHtml(url);
 
             // Make the link clickable
-            return '<a class="link_ext" target="_blank" rel="nofollow" href="' + url + '">' + nice + '</a>' + extra_html;
+            return '<a class="link_ext" target="_blank" rel="nofollow" href="' + url.replace(/"/g, '%22') + '">' + _.escape(nice) + '</a>' + extra_html;
         });
 
         return found_a_url ? parsed_url : false;

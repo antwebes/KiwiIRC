@@ -172,7 +172,7 @@ _kiwi.view.ControlBox = Backbone.View.extend({
                 ac_data.push(_kiwi.app.panels().active.get('name'));
 
                 ac_data = _.sortBy(ac_data, function (nick) {
-                    return nick;
+                    return nick.toLowerCase();
                 });
                 this.tabcomplete.data = ac_data;
             }
@@ -284,7 +284,7 @@ _kiwi.view.ControlBox = Backbone.View.extend({
         events_data = {command: command, params: params};
 
         _kiwi.global.events.emit('command', events_data)
-        .done(function() {
+        .then(function() {
             // Trigger the command events
             that.trigger('command', {command: events_data.command, params: events_data.params});
             that.trigger('command:' + events_data.command, {command: events_data.command, params: events_data.params});
