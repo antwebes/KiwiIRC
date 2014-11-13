@@ -107,29 +107,67 @@
 		function updateMembersList(){
 			$( ".memberlists a .webcam_nick_subscriber, .memberlists a .usericon, .memberlists a .gendericon, .meicon").remove();
 
-			$( ".memberlists a" ).each(function( index ) {
+			// $( ".memberlists a" ).each(function( index ) {
+			$.each(kiwi.panels().active.get('members').models, function(key, value){
 
-				var nick = $.trim($( this ).text());
-				if (nick.indexOf("@") != -1 || nick.indexOf("+") != -1) nick = nick.slice(1);
+				var nick = value.get('nick');
 
+				$el = value.view.$el.find('a');
+				
 				if(typeof userData[nick] == 'undefined') {
 					return "";
 				}
 
-				if(userData[nick] != undefined && userData[nick].webcam) {
-					$( this ).append('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');
+				if(userData[nick].webcam) {
+					$el.append('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');
 				}
 
 				if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.icon != 'undefined'){
-					$( this ).prepend('<img width="20" height="20" class="usericon" src="' + userData[nick].profile.profile_photo.icon + '"> ');
+					$el.prepend('<img width="20" height="20" class="usericon" src="' + userData[nick].profile.profile_photo.icon + '"> ');
 				} else {
 					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.gender) !== 'undefined'){
-						$( this ).prepend('<i class="meicon fa fa-' + userData[nick].profile.gender + '"></i> ');
+						$el.prepend('<i class="meicon fa fa-' + userData[nick].profile.gender + '"></i> ');
 					} else {
-						$( this ).prepend('<i class="meicon fa fa-user"></i> ');
+						//nick es mi nick actual
+						src = getRandomSrcAvatarFromNick(nick);
+						if (src){
+							$el.prepend('<img width="20" height="20" class="usericon" src="' + src.src + '"> ');
+						}else{
+							$( this ).prepend('<i class="meicon fa fa-user"></i> ');
+						}
 					}
 				}
 			});
+		}
+
+		function getRandomSrcAvatarFromNick(nick) {
+			//aquí obtengo todos los nicks de mi sala actual
+			channelActive = kiwi.panels().active;
+			nicks_in_channel = channelActive.get('members').models;
+
+			ascii = getAsciiFromString(nick);
+			
+			avatar = getAvatarFromInteger(ascii);
+
+			return avatar;
+
+		}
+
+		function getAvatarFromInteger(id) {
+			avatars = [ {'src': 'https://lh4.ggpht.com/YCIJganYvrnKmrXkh5EMxtLq8gfNhtoEIqwm3-w5IU5g-qyqkrM9SG07U4YiVYF7Dqw=w128'}, {'src': 'https://lh4.ggpht.com/YCIJganYvrnKmrXkh5EMxtLq8gfNhtoEIqwm3-w5IU5g-qyqkrM9SG07U4YiVYF7Dqw=w128'} ];
+
+			modulo = id % avatars.length;
+
+			return avatars[modulo];
+		}
+
+		function getAsciiFromString(nick) {
+			suma = 0;
+			for (var i=0; i<nick.length; i++){
+				var c = nick[i];
+				suma = suma + c.charCodeAt(0);
+			}
+			return suma;
 		}
 
 		function updateMedia(data) {
