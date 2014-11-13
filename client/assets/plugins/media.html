@@ -1,5 +1,17 @@
 <script type="text/javascript"> 
+ 
+     (function() {
+            var $icon = $('<div id="ext-photo"><img id="current_avatar" width="48px" height="48px" src="/kiwi/assets/img/photo.png" /><span><br> <b>Avatar</b></span></div>');
+            $(".chat-extensions").append($icon);
+
+            $icon.click(function () {
+            	var settings = kiwi.components.Applet.loadOnce('kiwi_avatar');
+        		settings.view.show();
+            });
+    })();
+
     kiwi.plugins.on('loaded', function(){
+
 
     	function onJqueryUILoaded(callback){
 		    if(typeof jQuery.ui == 'undefined') {
@@ -46,6 +58,13 @@
 			.done(function( data ){
 				updateMedia(data);
 			});
+
+
+			var network = kiwi.components.Network();
+			var avatar = getRandomSrcAvatarFromNick(network.get('nick'));
+
+			$("#current_avatar").attr("src",avatar.src);
+
 			
 		}
 
@@ -142,8 +161,6 @@
 
 		function getRandomSrcAvatarFromNick(nick) {
 			//aquí obtengo todos los nicks de mi sala actual
-			channelActive = kiwi.panels().active;
-			nicks_in_channel = channelActive.get('members').models;
 
 			ascii = getAsciiFromString(nick);
 			
