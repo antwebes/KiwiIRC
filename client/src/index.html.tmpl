@@ -396,47 +396,50 @@
 
 
 
-    <script type="text/html" id="tmpl_avatar_config"> 
+    <script type="text/html" id="tmpl_avatar_config">
         <style>
-        #kiwi .avatar_item {margin: 1em; cursor: pointer;}
-        #kiwi .avatar_applet {padding: 1em;}
-        #kiwi .avatar_category {margin: 1em; cursor: pointer;}
+            #kiwi .avatar_item {margin: 1em; cursor: pointer;}
+            #kiwi .avatar_applet {padding: 1em;}
+            #kiwi .avatar_category {margin: 2em; }
+            #kiwi .avatar_category span {color: #0000ff; text-decoration: underline; margin-left: 5px}
+            #kiwi .avatar_applet .img-responsive { margin: 0 auto; }
+            #kiwi #avatar_container { height: 400px; overflow-y: scroll; border: 1px solid; border-radius: 5px; margin: 30px 20px 20px 20px}
         </style>
         <div class="row avatar_applet" >
-            <div class="col-md-3">
-                <h6><%= avatar_current %></h6>
+            <div class="col-md-3 center">
+                <h4><%= avatar_current %></h4>
                 <img id="img_avatar" src="" alt="" class="img-rounded img-responsive" />
             </div>
             <div class="col-md-9">
                 <div class="row">
                     <div class="col-md-2">
-                        <h6><%= avatar_category %></h6>
+                        <h4><%= avatar_category %></h4>
                         <div>
-                                <div class="avatar_category" data-filters="category=animals"><img src="<%base_path%>/assets/img/animals.png"> Animals</div>
-                                <div class="avatar_category" data-filters="category=man"><img src="<%base_path%>/assets/img/man.png"> Man</div>
-                                <div class="avatar_category" data-filters="category=woman"><img src="<%base_path%>/assets/img/woman.png"> Woman</div>
-                                <div class="avatar_category" data-filters="category=icons"><img src="<%base_path%>/assets/img/icons.png"> Icons</div>
-                                <div class="avatar_category" data-filters="category=heroes"><img src="<%base_path%>/assets/img/heroes.png"> Heroes</div>
-                                <div class="avatar_category" data-filters="category=character"><img src="<%base_path%>/assets/img/character.png"> Characters</div>
+                            <div><a class="avatar_category" data-filters="category=animals"><img src="{{ kiwi_server }}/kiwi/assets/img/animals.png"><span>Animals</span></a></div>
+                            <div><a class="avatar_category" data-filters="gender=male"><img src="{{ kiwi_server }}/kiwi/assets/img/man.png"><span>Male</span></a></div>
+                            <div><a class="avatar_category" data-filters="gender=female"><img src="{{ kiwi_server }}/kiwi/assets/img/woman.png"><span>Female</span></a></div>
+                            <div><a class="avatar_category" data-filters="category=icons"><img src="{{ kiwi_server }}/kiwi/assets/img/icons.png"><span>Icons</span></a></div>
+                            <div><a class="avatar_category" data-filters="category=heroes"><img src="{{ kiwi_server }}/kiwi/assets/img/heroes.png"><span>Heroes</span></a></div>
+                            <div><a class="avatar_category" data-filters="category=character"><img src="{{ kiwi_server }}/kiwi/assets/img/character.png"><span>Characters</span></a></div>
                         </div>
                     </div>
                     <div class="col-md-10">
-                        
+
                         <div id="avatar_container">
 
                         </div>
                     </div>
                 </div>
 
-                    
+
 
             </div>
         </div>
     </script>
 
-    <script type="text/html" id="tmpl_avatar_item">
-        <img src="<%=path_icon %>" class="avatar_item" data-id="<%=id>" data-urlicon="<%=path_icon>"> 
-    </script>
+<script type="text/html" id="tmpl_avatar_item">
+    <img src="<%=path_icon %>" class="avatar_item" data-id="<%=id>" width="80px" data-urlicon="<%=path_icon>">
+</script>
 
 <script src="<%base_path%>/assets/libs/jquery-1.11.1.min.js"></script>
 <script>
