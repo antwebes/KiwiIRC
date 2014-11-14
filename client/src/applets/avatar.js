@@ -70,7 +70,7 @@
         },
 
         changeAvatarCategory: function (ev) {
-          this.loadAvatar($(ev.target).data("filters"));
+          this.loadAvatar($(ev.currentTarget).data("filters"));
         },
 
         loadAvatar: function (filters) {
