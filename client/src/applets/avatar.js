@@ -1,8 +1,4 @@
 (function () {
-
-
-    window.guest_api = "http://www.chatsfree.lo/app_dev.php";
-
     var Mediator = {};
     _.extend(Mediator, Backbone.Events);
 
@@ -104,6 +100,7 @@
 
         selectAvatar: function(avatar){
             $("#img_avatar", this.$el).attr("src", avatar.path_medium);
+            $('#current_avatar').attr("src", avatar.path_medium);
         },
 
         render: function() {
