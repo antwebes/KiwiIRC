@@ -58,17 +58,15 @@
 			.done(function( data ){
 				updateMedia(data);
 			});
-
-
-			var network = kiwi.components.Network();
-			var avatar = getRandomSrcAvatarFromNick(network.get('nick'));
-
-			$("#current_avatar").attr("src",avatar.src);
-
-			
 		}
 
-		var userData = {};
+		var network = kiwi.components.Network();
+		network.on('connect', function(){
+            var userData = {};
+			var avatar = getRandomSrcAvatarFromNick(network.get('nick'));
+			$("#current_avatar").attr("src",avatar.src);
+        });
+
 
 		function calculateAge(birthday){
 			var currentYear = new Date().getFullYear();
