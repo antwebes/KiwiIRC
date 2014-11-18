@@ -3,6 +3,14 @@
     _.extend(Mediator, Backbone.Events);
 
 
+    function supports_html5_storage() {
+      try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+      } catch (e) {
+        return false;
+      }
+    }
+
     var Avatar = Backbone.Model.extend({
         urlRoot : window.guest_api + '/api/changeAvatar',
 
@@ -101,6 +109,10 @@
         selectAvatar: function(avatar){
             $("#img_avatar", this.$el).attr("src", avatar.path_medium);
             $('#current_avatar').attr("src", avatar.path_medium);
+
+            if(supports_html5_storage()){
+              localStorage.setItem('chatsfree.avatar', avatar.path_medium);
+            }
         },
 
         render: function() {
