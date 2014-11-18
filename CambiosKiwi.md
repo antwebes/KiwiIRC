@@ -44,6 +44,9 @@ Cambios en el kiwi
         settings.view.show();
     }
 
+    En build.js en el array source_files meter:
+
+    __dirname + '/src/applets/avatar.js',
 5:
 
     En indext.tmpl.html
