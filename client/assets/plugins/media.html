@@ -11,7 +11,13 @@
     })();
 
     kiwi.plugins.on('loaded', function(){
-
+    	function supports_html5_storage() {
+	      try {
+	        return 'localStorage' in window && window['localStorage'] !== null;
+	      } catch (e) {
+	        return false;
+	      }
+	    }
 
     	function onJqueryUILoaded(callback){
 		    if(typeof jQuery.ui == 'undefined') {
@@ -63,7 +69,22 @@
 		var network = kiwi.components.Network();
 		network.on('connect', function(){
             var userData = {};
-			var avatar = getRandomSrcAvatarFromNick(network.get('nick'));
+			var avatar = null;
+
+			if(supports_html5_storage()){
+				avatar = localStorage.getItem('chatsfree.avatar');
+				if(avatar){
+					avatar = { src: avatar };
+				}
+
+				console.log('aaaaaaaaaaaaavatar');
+				console.log(avatar);
+			}
+
+			if(avatar == null){
+				avatar = getRandomSrcAvatarFromNick(network.get('nick'));	
+			}
+			
 			$("#current_avatar").attr("src",avatar.src);
         });
 
