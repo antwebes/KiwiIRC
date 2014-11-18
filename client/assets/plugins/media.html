@@ -126,8 +126,13 @@
 		function updateMembersList(){
 			$( ".memberlists a .webcam_nick_subscriber, .memberlists a .usericon, .memberlists a .gendericon, .meicon").remove();
 
-			// $( ".memberlists a" ).each(function( index ) {
-			$.each(kiwi.panels().active.get('members').models, function(key, value){
+			var members = kiwi.panels().active.get('members');
+
+			if(typeof(members) == 'undefined' || typeof(members.models) == 'undefined'){
+				return;
+			}
+
+			$.each(members.models, function(key, value){
 
 				var nick = value.get('nick');
 
