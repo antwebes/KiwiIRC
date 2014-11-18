@@ -44,6 +44,22 @@ Cambios en el kiwi
         settings.view.show();
     }
 
+    En build.js en el array source_files meter:
+
+    __dirname + '/src/applets/avatar.js',
+5:
+
+    En indext.tmpl.html
+
+    en el template tmpl_application
+
+    debadro de
+
+    <div class="memberlists"></div>
+
+    poner
+    
+    <div class="chat-extensions"></div>
 
 
 Cambios en el kiwi, que sería recomendable cambiar a plugin
