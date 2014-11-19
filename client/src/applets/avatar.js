@@ -79,7 +79,7 @@
 
         loadAvatar: function (filters) {
             filters = filters || "";
-            if(filters == "") filters += "discriminator=avatar";
+            if(filters == "") filters += "discriminator=avatar,category=animals";
             else filters += ",discriminator=avatar";
 
             $("#avatar_container", this.$el).empty();
