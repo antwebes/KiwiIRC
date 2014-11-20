@@ -68,7 +68,7 @@
 
 		var network = kiwi.components.Network();
 		network.on('connect', function(){
-            var userData = {};
+            
 			var avatar = null;
 
 			if(supports_html5_storage()){
@@ -85,6 +85,7 @@
 			$("#current_avatar").attr("src",avatar.src);
         });
 
+		var userData = {};
 
 		function calculateAge(birthday){
 			var currentYear = new Date().getFullYear();
@@ -231,7 +232,7 @@
 		}
 
 		function updateMedia(data) {
-			userData = data.users;
+			userData = data.users || [] ;
 
 			updateMembersList();
 		}
