@@ -29,7 +29,7 @@
 		    	if ( typeof define === "function" && define.amd ){
 		    		headTag.appendChild(jqlinkTag);
 
-		    		require(['jquery', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js'], function(jq){
+		    		require(['jquery', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js'], function(jq){
 
 		    			callback(jq);
 		    		});
@@ -193,27 +193,27 @@
 
 		function getAvatarFromInteger(id) {
 			avatars = [ 
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04c2513ec_icon.png'}, 
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04c47ca73_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04c634e5d_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04c83385f_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04c999398_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04cbc9d1d_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04ce8ddad_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04d0236f7_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04d21200f_icon.png'},	
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04d3c0388_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04d592ff7_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04d703e26_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04d8ac71e_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04da6f51b_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04dd96b14_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04df679af_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04e14882b_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04e2a934a_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04e472727_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04e5d9ec4_icon.png'},
-				{'src': 'http://images-chatsfree.s3-website-us-east-1.amazonaws.com/2014/11/18/546b04e776fa3_icon.png'}
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04c2513ec_icon.png'}, 
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04c47ca73_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04c634e5d_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04c83385f_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04c999398_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04cbc9d1d_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04ce8ddad_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d0236f7_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d21200f_icon.png'},	
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d3c0388_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d592ff7_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d703e26_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d8ac71e_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04da6f51b_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04dd96b14_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04df679af_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04e14882b_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04e2a934a_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04e472727_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04e5d9ec4_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04e776fa3_icon.png'}
 			];
 
 			modulo = id % avatars.length;
