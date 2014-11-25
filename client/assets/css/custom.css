@@ -1,5 +1,9 @@
 #kiwi .controlbox .input_tools .active { margin:0 1em; display:inline; background-color: #DEDEDE}
 
+#kiwi {
+    background: #FFFFFF !important;
+}
+
 #kiwi .memberlists{
     margin-bottom: 70px;
 }
@@ -13,23 +17,6 @@
     padding-top: 2px;
 }
 
-#kiwi #ext-webcam {
-    cursor:pointer; cursor: hand;
-    width: 50%;
-    text-align: center;
-    float:left;
-    padding-left: 10px;
-}
-
-
-#kiwi .ext-webcam img{
-    display: block;
-    margin-left: auto;
-    margin-right: auto
-
-}
-
-
 #kiwi #ext-photo {
     cursor:pointer; cursor: hand;
     width: 50%;
@@ -39,7 +26,15 @@
 }
 
 
-#kiwi .ext-photo img{
+#kiwi #ext-webcam {
+    cursor:pointer; cursor: hand;
+    width: 50%;
+    text-align: center;
+    float:left;
+    padding-left: 10px;
+}
+
+#kiwi .ext-webcam img{
     display: block;
     margin-left: auto;
     margin-right: auto
