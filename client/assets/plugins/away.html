@@ -1,0 +1,90 @@
+<script>
+
+    var View = Backbone.View.extend({
+        events: {
+            'click [data-away="save"]': 'saveAway',
+            'click input[value="custom"]' : 'selectCustom'
+        },
+
+        initialize: function (options) {
+            var text = {
+                title: "Selecciona tu estado",
+                available: "disponible",
+                custom: "personalizado",
+                out: "estoy ausente",
+                eat: "salí a comer",
+                no_privates: "no acepto privados"
+            };
+
+            this.$el = $(_.template($('#tmpl_applet_away').html().trim(), text));
+        },
+
+        saveAway: function(event) {
+            event.preventDefault();
+
+            //get the radio checked and its value
+            var value = $('input[name=away_list_type]:checked').val();
+
+            switch (value) {
+                case 'eat':
+                    message = 'No estoy aquí ahora, salí a comer';
+                    break;
+                case 'out':
+                    message = 'No estoy aquí ahora, vuelvo enseguida';
+                    break;
+                case 'custom':
+                    message = $('[data-away="custom"]').val();
+                    break;
+                case 'available':
+                    message = '';
+                    break;
+                default:
+                    message = 'No estoy aquí ahora';
+                    break;
+            }
+
+            var n = kiwi.components.Network(); 
+            n.raw('AWAY :' + message);
+
+            //send command away with message
+            //kiwi.app.connections.active_connection.gateway.raw('AWAY :' + message);
+
+            var a = kiwi.components.Applet.loadOnce('kiwi_away');
+            a.close();
+            // appletAway.close();
+        },
+
+        selectCustom: function(event){
+            if ($('[data-away="custom"]').length === 0){
+                $('[data-radio="custom"]').append('<input type="text" data-away="custom">');
+            }
+        }
+
+    });
+
+
+    var Applet = Backbone.Model.extend({
+        initialize: function () {
+            //title of window of kiwii
+            this.set('title', 'Away');
+            this.view = new View();
+        }
+    });
+
+    // var appletAway =  kiwi.components.Applet.register('kiwi_away', Applet);
+    kiwi.components.Applet.register('kiwi_away', Applet);
+
+    // kiwi.events.on('command:showaway', function() {
+ //        alert('holaa');
+    //  var a = kiwi.components.Applet.loadOnce('kiwi_away');
+    //  a.view.show();
+    // });
+
+    kiwi.events.on('command', function(event, data) {
+        if (data.command === 'showaway') {
+            var a = kiwi.components.Applet.loadOnce('kiwi_away');
+            a.view.show();
+        }
+    });
+
+</script>
