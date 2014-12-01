@@ -12,7 +12,7 @@
     }
 
     var Avatar = Backbone.Model.extend({
-        urlRoot : window.guest_api + '/api/changeAvatar',
+        urlRoot : _kiwi.global.settings.get('guest_api') + '/api/changeAvatar',
 
         selectAvatar: function () {
            this.set({
