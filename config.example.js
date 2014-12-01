@@ -200,7 +200,8 @@ conf.client = {
         use_24_hour_timestamps: true,
         mute_sounds: false,
         show_emoticons: true,
-        count_all_activity: false
+        count_all_activity: false,
+        guest_api:  '//www.chatsfree.net'
     },
     window_title: 'Kiwi IRC'
 };
