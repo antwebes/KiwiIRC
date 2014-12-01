@@ -79,13 +79,13 @@
 
         loadAvatar: function (filters) {
             filters = filters || "";
-            if(filters == "") filters += "discriminator=avatar,category=animals";
+            if(filters === "") filters += "discriminator=avatar,category=animals";
             else filters += ",discriminator=avatar";
 
             $("#avatar_container", this.$el).empty();
 
             $.ajax({
-              url: window.guest_api + '/photos?filters=' + filters,
+              url: _kiwi.global.settings.get('guest_api') + '/photos?filters=' + filters,
               dataType: 'json',
               contentType: "application/json"
             })

@@ -12,6 +12,10 @@
 <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/custom.css?t=<%build_time%>" />
 <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/style.css?t=<%build_time%>" />
 <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/font-awesome.min.css" />
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 </head>
 <body>
 
@@ -416,12 +420,12 @@
                     <div class="col-md-2">
                         <h4><%= avatar_category %></h4>
                         <div>
-                            <div><a class="avatar_category" data-filters="category=animals"><img src="{{ kiwi_server }}/kiwi/assets/img/animals.png"><span>Animals</span></a></div>
-                            <div><a class="avatar_category" data-filters="gender=male"><img src="{{ kiwi_server }}/kiwi/assets/img/man.png"><span>Male</span></a></div>
-                            <div><a class="avatar_category" data-filters="gender=female"><img src="{{ kiwi_server }}/kiwi/assets/img/woman.png"><span>Female</span></a></div>
-                            <div><a class="avatar_category" data-filters="category=icons"><img src="{{ kiwi_server }}/kiwi/assets/img/icons.png"><span>Icons</span></a></div>
-                            <div><a class="avatar_category" data-filters="category=heroes"><img src="{{ kiwi_server }}/kiwi/assets/img/heroes.png"><span>Heroes</span></a></div>
-                            <div><a class="avatar_category" data-filters="category=character"><img src="{{ kiwi_server }}/kiwi/assets/img/character.png"><span>Characters</span></a></div>
+                            <div><a class="avatar_category" data-filters="category=animals"><img src="/kiwi/assets/img/animals.png"><span>Animals</span></a></div>
+                            <div><a class="avatar_category" data-filters="gender=male"><img src="/kiwi/assets/img/man.png"><span>Male</span></a></div>
+                            <div><a class="avatar_category" data-filters="gender=female"><img src="/kiwi/assets/img/woman.png"><span>Female</span></a></div>
+                            <div><a class="avatar_category" data-filters="category=icons"><img src="/kiwi/assets/img/icons.png"><span>Icons</span></a></div>
+                            <div><a class="avatar_category" data-filters="category=heroes"><img src="/kiwi/assets/img/heroes.png"><span>Heroes</span></a></div>
+                            <div><a class="avatar_category" data-filters="category=character"><img src="/kiwi/assets/img/character.png"><span>Characters</span></a></div>
                         </div>
                     </div>
                     <div class="col-md-10">
@@ -443,6 +447,9 @@
 </script>
 
 <script src="<%base_path%>/assets/libs/jquery-1.11.1.min.js"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
 <script>
 /* Script loader (https://github.com/ded/script.js) */
 (function(a,b,c){typeof c["module"]!="undefined"&&c.module.exports?c.module.exports=b():typeof c["define"]!="undefined"&&c["define"]=="function"&&c.define.amd?define(a,b):c[a]=b()})("$script",function(){function p(a,b){for(var c=0,d=a.length;c<d;++c)if(!b(a[c]))return j;return 1}function q(a,b){p(a,function(a){return!b(a)})}function r(a,b,i){function o(a){return a.call?a():d[a]}function t(){if(!--n){d[m]=1,l&&l();for(var a in f)p(a.split("|"),o)&&!q(f[a],o)&&(f[a]=[])}}a=a[k]?a:[a];var j=b&&b.call,l=j?b:i,m=j?a.join(""):b,n=a.length;return setTimeout(function(){q(a,function(a){if(h[a])return m&&(e[m]=1),h[a]==2&&t();h[a]=1,m&&(e[m]=1),s(!c.test(a)&&g?g+a+".js":a,t)})},0),r}function s(c,d){var e=a.createElement("script"),f=j;e.onload=e.onerror=e[o]=function(){if(e[m]&&!/^c|loade/.test(e[m])||f)return;e.onload=e[o]=null,f=1,h[c]=2,d()},e.async=1,e.src=c,b.insertBefore(e,b.firstChild)}var a=document,b=a.getElementsByTagName("head")[0],c=/^https?:\/\//,d={},e={},f={},g,h={},i="string",j=!1,k="push",l="DOMContentLoaded",m="readyState",n="addEventListener",o="onreadystatechange";return!a[m]&&a[n]&&(a[n](l,function t(){a.removeEventListener(l,t,j),a[m]="complete"},j),a[m]="loading"),r.get=s,r.order=function(a,b,c){(function d(e){e=a.shift(),a.length?r(e,d):r(e,b,c)})()},r.path=function(a){g=a},r.ready=function(a,b,c){a=a[k]?a:[a];var e=[];return!q(a,function(a){d[a]||e[k](a)})&&p(a,function(a){return d[a]})?b():!function(a){f[a]=f[a]||[],f[a][k](b),c&&c(e)}(a.join("|")),r},r},this)
