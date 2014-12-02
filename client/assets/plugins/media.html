@@ -55,11 +55,14 @@
 		
 		function getActiveWebcams(channel){
 
-			var userMediaUrl = window.window.user_media_url;
+			var userMediaUrl = kiwi.settings.get("guest_api") + "/realtime/media";
 			$.ajax({
 				url: userMediaUrl,
 				cache: false,
-				dataType: 'json'
+				dataType: 'json',
+				headers: {
+			        "X-Requested-With": "XMLHttpRequest"
+			    }
 			})
 			.done(function( data ){
 				updateMedia(data);
