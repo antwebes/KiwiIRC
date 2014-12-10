@@ -1,4 +1,10 @@
 <script type="text/javascript">
+/**
+    How to use right menu plugin:
+	
+	if(window.addRightMenuItem != undefined) window.addRightMenuItem("Menu1", function () {action1();});
+ 
+ **/
     kiwi.plugins.on('loaded', function(){
 
 		$(".main").append($('<li class="right-menu-btn"><i class="fa fa-align-justify" title="Open Menu"></i></li>'));
