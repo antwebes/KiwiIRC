@@ -694,6 +694,24 @@
                     window.menu_items_ready_deffered.resolve(window.right_menu_items);
                 });
 
+                window.right_menu_items = [
+                    {
+                        "name": "Avatar",
+                        "icon": "users",
+                        "command": "/avatar"
+                    },
+                                        {
+                        "name": "Away",
+                        "icon": "clock-o",
+                        "command": "/showaway"
+                    },  
+                    {
+                        "name": "Settings",
+                        "icon": "cogs",
+                        "command": "/settings"
+                    }                       
+                ];
+
                 resolve();
 
                 // If debugging, grab the debug scripts and load them
