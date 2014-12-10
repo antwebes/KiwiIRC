@@ -1,0 +1,31 @@
+<script type="text/javascript">
+    kiwi.plugins.on('loaded', function(){
+
+		$(".main").append($('<li class="right-menu-btn"><i class="fa fa-align-justify" title="Open Menu"></i></li>'));
+		$(".main").append($( "<div class='right-menu mm-menu mm-horizontal mm-offcanvas mm-current mm-opened'><ul class='right-menu-items mm-list mm-panel mm-opened mm-current'></ul></div>"));
+
+		$('.right-menu').mmenu({
+		   "offCanvas": {
+		      "position": "right"
+		   }
+        });
+
+		$(".right-menu-btn").click(function () {
+			$('.right-menu').mmenu().trigger( "open.mm" );
+		});
+
+		window.addRightMenuItem = function(item, callback) {
+			if (typeof item === 'string') {
+			  item = "<li><a href='#'>" +item + "</a></li>";
+			}
+
+			var $itemMenu = $(item);
+			$itemMenu.click(function () {
+				callback();
+			});
+
+			$(".right-menu-items").append($itemMenu);
+		}
+    });
+</script>
+
