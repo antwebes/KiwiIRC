@@ -25,7 +25,6 @@
             <div class="toolbar">
                 <div class="app_tools">
                     <ul class="main">
-                        <li class="settings"><i class="fa fa-cogs" title="Settings"></i></li>
                     </ul>
                 </div>
 
@@ -578,6 +577,24 @@
                 if (typeof data.kiwi_server !== 'undefined') {
                     opts.kiwi_server = data.kiwi_server;
                 }
+
+                window.right_menu_items = [
+                    {
+                        "name": "Avatar",
+                        "icon": "users",
+                        "command": "/avatar"
+                    },
+                                        {
+                        "name": "Away",
+                        "icon": "clock-o",
+                        "command": "/showaway"
+                    },  
+                    {
+                        "name": "Settings",
+                        "icon": "cogs",
+                        "command": "/settings"
+                    }                       
+                ];
 
                 resolve();
 

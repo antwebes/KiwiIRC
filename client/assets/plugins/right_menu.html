@@ -7,7 +7,9 @@
  **/
     kiwi.plugins.on('loaded', function(){
 
-		$(".main").append($('<li class="right-menu-btn"><i class="fa fa-align-justify" title="Open Menu"></i></li>'));
+
+
+		$(".main").append($('<li class="right-menu-btn"><i class="fa fa-align-justify" title="Open Menu"></i> Menu</li>'));
 		$(".main").append($( "<div class='right-menu mm-menu mm-horizontal mm-offcanvas mm-current mm-opened'><ul class='right-menu-items mm-list mm-panel mm-opened mm-current'></ul></div>"));
 
 		$('.right-menu').mmenu({
@@ -20,18 +22,29 @@
 			$('.right-menu').mmenu().trigger( "open.mm" );
 		});
 
-		window.addRightMenuItem = function(item, callback) {
-			if (typeof item === 'string') {
-			  item = "<li><a href='#'>" +item + "</a></li>";
-			}
 
-			var $itemMenu = $(item);
+
+    	var items = window.right_menu_items || [];
+
+		window.addRightMenuItem = function(item) {
+			
+			var itemStr = "<li><a href='#'><i class='fa fa-"+item.icon+"'> " +item.name + "</a></li>";
+
+			var $itemMenu = $(itemStr);
 			$itemMenu.click(function () {
-				callback();
+				var input = kiwi.components.ControlInput();
+            	input.run(item.command);
 			});
 
 			$(".right-menu-items").append($itemMenu);
 		}
+
+
+    	var itemsLength = items.length;
+		for (var i = 0; i < itemsLength; i++) {
+ 			window.addRightMenuItem(items[i]);
+		}
+
     });
 </script>
 
