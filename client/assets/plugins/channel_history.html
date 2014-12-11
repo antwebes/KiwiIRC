@@ -63,6 +63,7 @@
 			        if (data.command === 'togglehistory') {
 			        	var historyStatus = getChannelHistoryStatus();
 			        	localStorage.setItem("channel_history_enabled", !historyStatus);
+			        	if(typeof ga !== 'undefined')  ga('send', 'event', 'right_menu', historyStatus);
 			        }
 
 			    });
