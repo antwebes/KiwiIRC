@@ -83,3 +83,7 @@
 #kiwi .toolbar .app_tools {
     width: 100px !important;
 }
+
+#kiwi .toolbar .tabs {
+height: 40px;
+}
