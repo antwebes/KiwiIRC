@@ -1,49 +1,91 @@
 <script type="text/javascript">
-/**
-    How to use right menu plugin:
-	
-	if(window.addRightMenuItem != undefined) window.addRightMenuItem("Menu1", function () {action1();});
- 
- **/
+
     kiwi.plugins.on('loaded', function(){
 
 
 
+
+
 		$(".main").append($('<li class="right-menu-btn"><i class="fa fa-align-justify" title="Open Menu"></i> Menu</li>'));
-		$(".main").append($( "<div class='right-menu mm-menu mm-horizontal mm-offcanvas mm-current mm-opened'><ul class='right-menu-items mm-list mm-panel mm-opened mm-current'></ul></div>"));
-
-		$('.right-menu').mmenu({
-		   "offCanvas": {
-		      "position": "right"
-		   }
-        });
-
-		$(".right-menu-btn").click(function () {
-			$('.right-menu').mmenu().trigger( "open.mm" );
-		});
 
 
+    	
 
-    	var items = window.right_menu_items || [];
+    	window.update_right_menu = function () {
+    		var items = window.right_menu_items || [];
+    		var itemsLength = items.length;
 
-		window.addRightMenuItem = function(item) {
-			
-			var itemStr = "<li><a href='#'><i class='fa fa-"+item.icon+"'> " +item.name + "</a></li>";
+    		$(".right-menu").remove();
 
-			var $itemMenu = $(itemStr);
-			$itemMenu.click(function () {
-				var input = kiwi.components.ControlInput();
-            	input.run(item.command);
+			$(".main").append($( "<div class='right-menu'><ul class='right-menu-items'></ul></div>"));
+
+
+
+			$(".right-menu-btn").click(function () {
+				$('.right-menu').mmenu().trigger( "open.mm" );
 			});
 
-			$(".right-menu-items").append($itemMenu);
+    		
+
+			for (var i = 0; i < itemsLength; i++) {
+				$(".right-menu-items").append(generateRightMenuItem(items[i]));
+			}
+
+			$('.right-menu').mmenu({
+			   counters	: true,
+			   searchfield	: true,
+			   "offCanvas": {
+			      "position": "right"
+			   }
+	        });
+    	}
+		
+		generateRightMenuItem = function(item) {
+			if(item.submenu == undefined && item.type != "Toggle"){
+				var itemStr = '<li><a href="#"><i class="fa fa-'+item.icon+'"></i> ' + item.name + '</a></li>';
+			} else {
+				var itemStr = '<li><span><i class="fa fa-'+item.icon+'"></i> ' + item.name + '</span></li>';
+			}
+
+			var $itemMenu = $(itemStr);
+			var $clickItem = $itemMenu;
+
+
+
+			if(item.type == "Toggle") {
+				if(item.default) {
+					$itemMenu.append('<input type="checkbox" checked class="Toggle" />');
+				} else {
+					$itemMenu.append('<input type="checkbox" class="Toggle" />');
+				}
+				$clickItem = $("input", $itemMenu);
+				
+			}
+
+
+			if(item.command != undefined) {
+				$clickItem.click(function () {
+					var input = kiwi.components.ControlInput();
+	            	input.run(item.command);
+				});				
+			}
+
+
+			if(item.submenu != undefined){
+				$itemMenu.append("<ul />");
+				var itemsSubmenuLength = item.submenu.length;
+				for (var i = 0; i < itemsSubmenuLength; i++) {
+		 			$("ul", $itemMenu).append(generateRightMenuItem(item.submenu[i]));
+				}
+
+			}
+
+
+			return $itemMenu;
 		}
 
 
-    	var itemsLength = items.length;
-		for (var i = 0; i < itemsLength; i++) {
- 			window.addRightMenuItem(items[i]);
-		}
+		window.update_right_menu();
 
     });
 </script>
