@@ -37,7 +37,14 @@
 			   "offCanvas": {
 			      "position": "right"
 			   }
-	        });
+	        }).on("click", "a[href=\"#\"]",
+				function(event) {
+					if(event.target.innerText != undefined) {
+						 if(typeof ga !== 'undefined')  ga('send', 'event', 'right_menu', event.target.innerText);
+					}
+					return true;
+				}
+			);
     	}
 		
 		generateRightMenuItem = function(item) {
