@@ -1,0 +1,93 @@
+<script type="text/javascript"> 
+ 
+     (function() {
+    	function supports_html5_storage() {
+	      try {
+	        return 'localStorage' in window && window['localStorage'] !== null;
+	      } catch (e) {
+	        return false;
+	      }
+	    }
+
+	    function getChannelHistoryStatus() {
+	    	var enableHistory = JSON.parse(localStorage.getItem('channel_history_enabled'));
+	     	if(enableHistory == null) {
+	     		localStorage.setItem("channel_history_enabled", true);
+	     		enableHistory = true;
+	     	}
+	     	return enableHistory;
+	    }
+
+	    function buildMenuHistory() {
+ 			var channelsMenu = [];
+ 			var enableHistory =  getChannelHistoryStatus();
+ 			channelsMenu.push({"name": 'Enable History', "type": "Toggle", "default": enableHistory, "icon": "trash", "command": "/togglehistory"});
+
+ 			var channels = JSON.parse(localStorage.getItem('channel_history')) || [];
+	     	var numChannels = channels.length;
+     		
+     		if( numChannels> 0) {
+
+     			//Item delete history
+     			channelsMenu.push({"name": "Clear History", "icon": "trash", "command": "/clearhistory"});
+
+
+     			for(var i=0; i<numChannels; i++) {
+     				channelsMenu.push({"name": channels[i], "icon": "comments", "command": "/join " +channels[i] });
+     			}    			
+
+  			}  	     		
+
+ 			var menuItemsLengt = window.right_menu_items.length;
+			for (var i=0 ; i < menuItemsLengt ; i++)
+			{
+			    if (window.right_menu_items[i].name == "History") {
+			        window.right_menu_items[i].submenu = channelsMenu;
+			    }
+			}   
+	    }
+
+     	$( ".right-menu" ).promise().done(function() {
+     		if(supports_html5_storage()){
+
+     			var network = kiwi.components.Network();
+
+			    kiwi.events.on('command', function(event, data) {
+			        if (data.command === 'clearhistory') {
+			            localStorage.removeItem("channel_history");
+			            setTimeout(function() {
+			            	buildMenuHistory();
+			            	window.update_right_menu();
+			            }, 250);
+			        }
+			        if (data.command === 'togglehistory') {
+			        	var historyStatus = getChannelHistoryStatus();
+			        	localStorage.setItem("channel_history_enabled", !historyStatus);
+			        }
+
+			    });
+
+	     		
+				buildMenuHistory();
+
+
+	     		network.on('channel:join', function (event) {
+	     			var enableHistory =  JSON.parse(localStorage.getItem('channel_history_enabled'));
+	     			var channels = JSON.parse(localStorage.getItem('channel_history')) || [];
+
+	     			if(enableHistory) {
+	     				var channel = event.channel.toLowerCase();
+	     				var enableHistory =  getChannelHistoryStatus();
+	     				if(channels.indexOf(channel) == -1){
+	     					channels.push(channel);
+	     				}
+
+	     				localStorage.setItem("channel_history", JSON.stringify(channels));
+	     				buildMenuHistory();
+	     				window.update_right_menu();
+	     			}
+	     		});
+	     	}
+        });
+    })();
+</script>
