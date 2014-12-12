@@ -14,12 +14,12 @@
 
     var Avatar = Backbone.Model.extend({
         urlRoot : function() {
-          return _kiwi.global.settings.get('guest_api') + '/api/changeAvatar';
+          return kiwi.settings.get('guest_api') + '/api/changeAvatar';
 
         },
         selectAvatar: function () {
            this.set({
-             nick: _kiwi.global.components.Network().get("nick")
+             nick: kiwi.components.Network().get("nick")
            });           
            this.save(); 
            Mediator.trigger('avatar:select', this.attributes);
