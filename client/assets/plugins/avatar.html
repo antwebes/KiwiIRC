@@ -1,3 +1,4 @@
+<script>
 (function () {
     var Mediator = {};
     _.extend(Mediator, Backbone.Events);
@@ -87,7 +88,7 @@
             $("#avatar_container", this.$el).empty();
 
             $.ajax({
-              url: _kiwi.global.settings.get('guest_api') + '/photos?filters=' + filters,
+              url: kiwi.settings.get('guest_api') + '/photos?filters=' + filters,
               dataType: 'json',
               contentType: "application/json"
             })
@@ -146,7 +147,16 @@
             this.view = new View();
         }
     });
+   
+    kiwi.components.Applet.register('kiwi_avatar', Applet);
 
-    _kiwi.model.Applet.register('kiwi_avatar', Applet);
+    kiwi.events.on('command', function(event, data) {
+        if (data.command === 'avatar') {
+            var a = kiwi.components.Applet.loadOnce('kiwi_avatar');
+            a.view.show();
+        }
+    });
+
 
 })();
+</script>
