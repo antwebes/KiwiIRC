@@ -73,6 +73,7 @@ _kiwi.view.Tabs = Backbone.View.extend({
         var count = false;
         this.model.forEach(function (panel) {
             var name = panel.get('name');
+            console.log(name);
             if(name.indexOf('applet_') == -1) {
                 if(name[0] == "#") countRooms++;
                 else {
