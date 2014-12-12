@@ -11,7 +11,7 @@ _kiwi.view.NetworkTabs = Backbone.View.extend({
     },
 
     networkAdded: function(network) {
-        $('<li class="connection"></li>')
+        $('<li class="connection mm-menu mm-horizontal mm-offcanvas mm-current mm-opened"></li>')
             .append(network.panels.view.$el)
             .appendTo(this.$el);
     },

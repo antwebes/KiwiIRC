@@ -1,11 +1,11 @@
 // Model for this = _kiwi.model.PanelList
 _kiwi.view.Tabs = Backbone.View.extend({
     tagName: 'ul',
-    className: 'panellist',
+    className: 'panellist mm-list mm-panel mm-opened mm-current',
 
     events: {
         'click li': 'tabClick',
-        'click li .part': 'partClick'
+        'click .part': 'partClick'
     },
 
     initialize: function () {
@@ -67,14 +67,37 @@ _kiwi.view.Tabs = Backbone.View.extend({
         $('span', panel.tab).text(new_title);
     },
 
+    updateCounters: function() {
+        var countPrivates = 0;
+        var countRooms = 0;
+        var count = true;
+        this.model.forEach(function (panel) {
+            var name = panel.get('name');
+            if(name.indexOf('applet_') == -1) {
+                if(name[0] == "#") countRooms++;
+                else {
+                    if(name != "Server")
+                        countPrivates++; 
+                }
+            } else {
+                //en el caso de que exista algún applet es que estamos en la tab de applets, no contamos
+                count = false;;
+            }
+        });
+        if(count) {
+            $("#countRooms").html(countRooms);
+            $("#countPrivates").html(countPrivates);
+        }
+    },
+
     panelAdded: function (panel) {
         // Add a tab to the panel
-        panel.tab = $('<li><span>' + (panel.get('title') || panel.get('name')) + '</span><div class="activity"></div></li>');
+        panel.tab = $('<li><span>' + (panel.get('title') || panel.get('name')) + '<b class="activity badge"></b></span></li>');
 
         if (panel.isServer()) {
             panel.tab.addClass('server');
             panel.tab.addClass('fa');
-            panel.tab.addClass('fa-nonexistant');
+            panel.tab.addClass('fa-bolt');
         }
 
         panel.tab.data('panel', panel);
@@ -87,6 +110,7 @@ _kiwi.view.Tabs = Backbone.View.extend({
         panel.bind('change:title', this.updateTabTitle);
         panel.bind('change:name', this.updateTabTitle);
 
+        this.updateCounters();
         _kiwi.app.view.doLayout();
     },
     panelRemoved: function (panel) {
@@ -96,20 +120,23 @@ _kiwi.view.Tabs = Backbone.View.extend({
         delete panel.tab;
 
         _kiwi.app.panels.trigger('remove', panel);
-
+        
+        this.updateCounters();
         _kiwi.app.view.doLayout();
     },
 
     panelActive: function (panel, previously_active_panel) {
         // Remove any existing tabs or part images
-        _kiwi.app.view.$el.find('.panellist .part').remove();
-        _kiwi.app.view.$el.find('.panellist .active').removeClass('active');
+        $('.panellist .part').remove();
+        $('.panellist .active').removeClass('active mm-selected');
 
-        panel.tab.addClass('active');
+        panel.tab.addClass('active mm-selected');
+        
+        $("#activePanelName").html(panel.get('title') || panel.get('name'));
 
         // Only show the part image on non-server tabs
         if (!panel.isServer()) {
-            panel.tab.append('<span class="part fa fa-nonexistant"></span>');
+            $("span",panel.tab).append('<i class="part fa fa-times"></i>');
         }
     },
 
@@ -126,7 +153,7 @@ _kiwi.view.Tabs = Backbone.View.extend({
     },
 
     partClick: function (e) {
-        var tab = $(e.currentTarget).parent();
+        var tab = $(e.currentTarget).parent().parent();
         var panel = tab.data('panel');
 
         if (!panel) return;

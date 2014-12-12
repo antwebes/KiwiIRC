@@ -2,16 +2,17 @@
 
     kiwi.plugins.on('loaded', function(){
 
-    		
-    	setTimeout(function() {
-    		console.log("L00G");
-			$('.connections').mmenu({
-			   counters	: true
-	        });    		
-    	}, 5000);
+    	$(".tabs").prepend($('<ul><li class="left-menu-btn"><span id="activePanelName"></span></li><li class="menuCounters"><i class="fa fa-comments"></i> <span id="countRooms">0</span> <i class="fa fa-user"></i> <span id="countPrivates">0</span></li></ul>'));
 
-		
 
+
+		$(".left-menu-btn").click(function () {
+			$('.connections').mmenu().trigger( "open.mm" );
+		});
+
+		$('.connections').mmenu({
+		   counters	: true
+        }); 
 
     });
 </script>
