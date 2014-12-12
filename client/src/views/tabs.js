@@ -70,18 +70,21 @@ _kiwi.view.Tabs = Backbone.View.extend({
     updateCounters: function() {
         var countPrivates = 0;
         var countRooms = 0;
-        var count = true;
+        var count = false;
         this.model.forEach(function (panel) {
             var name = panel.get('name');
+            console.log(name);
             if(name.indexOf('applet_') == -1) {
                 if(name[0] == "#") countRooms++;
                 else {
                     if(name != "Server")
                         countPrivates++; 
                 }
+                count = true;
             } else {
                 //en el caso de que exista algún applet es que estamos en la tab de applets, no contamos
-                count = false;;
+                count = false;
+                return;
             }
         });
         if(count) {

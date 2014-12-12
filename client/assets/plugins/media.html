@@ -143,6 +143,40 @@
 			});
 		});
 
+		function updateLeftMenu(userData, nick) {
+			$.each(kiwi.panels(), function (key, panel) {
+				var nick = panel.get("name");
+				if(typeof userData[nick] == 'undefined') {
+					return "";
+				}
+
+				$(".usericon", panel.tab).remove();
+				$("span", panel.tab).prepend(getPhoto(userData, nick));
+
+			});
+		}
+
+		function getPhoto (userData, nick) {
+				var content = '';
+
+				if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.icon != 'undefined'){
+					content = '<img width="20" height="20" class="usericon" src="' + userData[nick].profile.profile_photo.icon + '"> ';
+				} else {
+					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.gender) !== 'undefined'){
+						content = '<i class="meicon fa fa-' + userData[nick].profile.gender + '"></i> ';
+					} else {
+						//nick es mi nick actual
+						src = getRandomSrcAvatarFromNick(nick);
+						if (src){
+							content = '<img width="20" height="20" class="usericon" src="' + src.src + '"> ';
+						}else{
+							content = '<i class="meicon fa fa-user"></i> ';
+						}
+					}
+				}
+				return content;
+		}
+
 		function updateMembersList(){
 			$( ".memberlists a .webcam_nick_subscriber, .memberlists a .usericon, .memberlists a .gendericon, .meicon").remove();
 
@@ -151,6 +185,8 @@
 			if(typeof(members) == 'undefined' || typeof(members.models) == 'undefined'){
 				return;
 			}
+
+
 
 			$.each(members.models, function(key, value){
 
@@ -161,6 +197,8 @@
 				if(typeof userData[nick] == 'undefined') {
 					return "";
 				}
+
+				updateLeftMenu(userData, nick);
 
 				if(userData[nick].webcam) {
 					$el.append('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');

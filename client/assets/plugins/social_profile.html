@@ -43,7 +43,7 @@
     };
 
     var getUserInfo = function(panel){
-        var url = window.user_profile_data_url+panel.get('name');
+        var url = window.gest_api+ "/users/"+panel.get('name');
         var deferred = $.Deferred();
         var userData = panel.get('userData');
         
@@ -51,6 +51,8 @@
         if(!userData){
             $.ajax({
                 dataType: 'json',
+                headers: {'X-Requested-With': 'XMLHttpRequest'},
+                crossDomain: true,
                 url: url,
                 success: function(data){
                     panel.set('userData', data);
