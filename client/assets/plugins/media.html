@@ -195,6 +195,9 @@
 				$el = value.view.$el.find('a');
 				
 				if(typeof userData[nick] == 'undefined') {
+						src = getRandomSrcAvatarFromNick(nick);
+						if (src){
+							$el.prepend('<img width="20" height="20" class="usericon" src="' + src.src + '"> ');
 					return "";
 				}
 
