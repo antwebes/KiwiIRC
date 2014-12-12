@@ -96,8 +96,7 @@ _kiwi.view.Tabs = Backbone.View.extend({
 
         if (panel.isServer()) {
             panel.tab.addClass('server');
-            panel.tab.addClass('fa');
-            panel.tab.addClass('fa-bolt');
+            $("span",panel.tab).addClass('fa fa-bolt');
         }
 
         panel.tab.data('panel', panel);
