@@ -185,6 +185,9 @@
 }
 #kiwi .messages .msg .media.reddit .thumbnail { float:left; margin-right: 0.5em; }
 
+#kiwi .messages .last_seen {
+    border-bottom-color: #B0CF82;
+}
 
 #kiwi .right_bar {
     background-color: #DADADA;
@@ -209,6 +212,9 @@
     padding: 0.5em 1em;
     border-bottom: 1px solid lightgray;
     text-align: center;
+}
+#kiwi.touch .memberlists ul li {
+    padding: 1em 0.5em;
 }
 #kiwi .memberlists ul li:hover {
     border-left: 5px solid #88C56A;

@@ -114,8 +114,9 @@ _kiwi.global = {
                 kiwi: 'kiwi', raw: 'raw', kick: 'kick', topic: 'topic',
                 part: 'part', join: 'join', action: 'action', ctcp: 'ctcp',
                 ctcpRequest: 'ctcpRequest', ctcpResponse: 'ctcpResponse',
-                notice: 'notice', msg: 'privmsg', changeNick: 'changeNick',
-                channelInfo: 'channelInfo', mode: 'mode', quit: 'quit'
+                notice: 'notice', msg: 'privmsg', say: 'privmsg',
+                changeNick: 'changeNick', channelInfo: 'channelInfo',
+                mode: 'mode', quit: 'quit'
             };
 
             _.each(funcs, function(gateway_fn, func_name) {
@@ -130,6 +131,18 @@ _kiwi.global = {
                     return _kiwi.gateway[fn_name].apply(_kiwi.gateway, args);
                 };
             });
+
+            // Now for some network related functions...
+            obj.createQuery = function(nick) {
+                var network, restricted_keys;
+
+                network = getNetwork();
+                if (!network) {
+                    return;
+                }
+
+                return network.createQuery(nick);
+            };
 
             // Add the networks getters/setters
             obj.get = function(name) {
@@ -174,6 +187,9 @@ _kiwi.global = {
                     return _kiwi.app.controlbox[fn_name].apply(_kiwi.app.controlbox, arguments);
                 };
             });
+
+            // Give access to the control input textarea
+            obj.input = _kiwi.app.controlbox.$('.inp');
 
             return obj;
         }

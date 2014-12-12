@@ -254,6 +254,8 @@
 
             // In all cases, show the demanded query
             query.view.show();
+
+            return query;
         }
     });
 
@@ -342,7 +344,11 @@
             hostname: event.hostname,
             user_prefixes: this.get('user_prefixes')
         });
-        members.add(user, {kiwi: event});
+
+        _kiwi.global.events.emit('channel:join', {channel: event.channel, user: user, network: this.gateway})
+        .then(function() {
+            members.add(user, {kiwi: event});
+        });
     }
 
 
@@ -370,7 +376,10 @@
         user = members.getByNick(event.nick);
         if (!user) return;
 
-        members.remove(user, {kiwi: part_options});
+        _kiwi.global.events.emit('channel:leave', {channel: event.channel, user: user, type: 'part', message: part_options.message, network: this.gateway})
+        .then(function() {
+            members.remove(user, {kiwi: part_options});
+        });
     }
 
 
@@ -396,7 +405,10 @@
             if (panel.isChannel()) {
                 member = panel.get('members').getByNick(event.nick);
                 if (member) {
-                    panel.get('members').remove(member, {kiwi: quit_options});
+                    _kiwi.global.events.emit('channel:leave', {channel: panel.get('name'), user: member, type: 'quit', message: quit_options.message, network: this.gateway})
+                    .then(function() {
+                        panel.get('members').remove(member, {kiwi: quit_options});
+                    });
                 }
             }
         });
@@ -425,17 +437,20 @@
         if (!user) return;
 
 
-        members.remove(user, {kiwi: part_options});
+        _kiwi.global.events.emit('channel:leave', {channel: event.channel, user: user, type: 'kick', message: part_options.message, network: this.gateway})
+        .then(function() {
+            members.remove(user, {kiwi: part_options});
 
-        if (part_options.current_user_kicked) {
-            members.reset([]);
-        }
+            if (part_options.current_user_kicked) {
+                members.reset([]);
+            }
+        });
     }
 
 
 
     function onMessage(event) {
-        _kiwi.global.events.emit('message:new', {network: this, message: event})
+        _kiwi.global.events.emit('message:new', {network: this.gateway, message: event})
         .then(_.bind(function() {
             var panel,
                 is_pm = ((event.target || '').toLowerCase() == this.get('nick').toLowerCase());

@@ -117,6 +117,9 @@
             _kiwi.global.components.MenuBox = _kiwi.view.MenuBox;
             _kiwi.global.components.DataStore = _kiwi.model.DataStore;
             _kiwi.global.components.Notification = _kiwi.view.Notification;
+            _kiwi.global.components.Events = function() {
+                return kiwi.events.createProxy();
+            };
 
             //Globales añadidas por nosotros
             _kiwi.global.components.RightBar = this.rightbar;
@@ -136,24 +139,25 @@
             var active_panel;
 
             var fn = function(panel_type) {
-                var panels;
+                var app = _kiwi.app,
+                    panels;
 
                 // Default panel type
                 panel_type = panel_type || 'connections';
 
                 switch (panel_type) {
                 case 'connections':
-                    panels = this.connections.panels();
+                    panels = app.connections.panels();
                     break;
                 case 'applets':
-                    panels = this.applet_panels.models;
+                    panels = app.applet_panels.models;
                     break;
                 }
 
                 // Active panels / server
                 panels.active = active_panel;
-                panels.server = this.connections.active_connection ?
-                    this.connections.active_connection.panels.server :
+                panels.server = app.connections.active_connection ?
+                    app.connections.active_connection.panels.server :
                     null;
 
                 return panels;

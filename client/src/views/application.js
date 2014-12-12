@@ -45,11 +45,23 @@ _kiwi.view.Application = Backbone.View.extend({
         // Keep tabs on the browser having focus
         this.has_focus = true;
 
-        $(window).on('focus', function () {
+        $(window).on('focus', function windowOnFocus() {
             that.has_focus = true;
         });
-        $(window).on('blur', function () {
+
+        $(window).on('blur', function windowOnBlur() {
+            var active_panel = that.model.panels().active;
+            if (active_panel && active_panel.view.updateLastSeenMarker) {
+                active_panel.view.updateLastSeenMarker();
+            }
+
             that.has_focus = false;
+        });
+
+        // If we get a touchstart event, make note of it so we know we're using a touchscreen
+        $(window).on('touchstart', function windowOnTouchstart() {
+            that.$el.addClass('touch');
+            $(window).off('touchstart', windowOnTouchstart);
         });
 
 
