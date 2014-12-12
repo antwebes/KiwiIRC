@@ -85,6 +85,8 @@
     color: #fff;
     margin-left: 10px;
     cursor: pointer;
+    height: 28px;
+    margin-bottom: 3px;
 }
 
 
@@ -97,7 +99,7 @@
 }
 
 #kiwi .toolbar .tabs {
-    height: 40px;
+    height: auto;
 }
 
 .panellist b {
@@ -107,6 +109,10 @@
 
 .panellist li {
     cursor:pointer;
+}
+
+.panellist .active {
+
 }
 
 #kiwi .left-menu-btn i {
@@ -121,4 +127,14 @@
     display:inline-block;
     margin-left: 10px;
     color:#fff;
+}
+
+#kiwi .tabs ul {
+    display: inline-block;
+    float:left;
+}
+
+#kiwi .applets li:after {
+    border-bottom-width: 0px; 
+    border-bottom-style: none; 
 }
