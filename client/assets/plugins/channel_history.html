@@ -47,7 +47,7 @@
 			}   
 	    }
 
-     	$( ".right-menu" ).promise().done(function() {
+     	
      		if(supports_html5_storage()){
 
      			var network = kiwi.components.Network();
@@ -70,7 +70,7 @@
 			    });
 
 	     		
-				buildMenuHistory();
+				
 
 
 	     		network.on('channel:join', function (event) {
@@ -90,6 +90,9 @@
 	     			}
 	     		});
 	     	}
+
+	    $( ".right-menu" ).promise().done(function() {
+	    	buildMenuHistory();
         });
     })();
 </script>
