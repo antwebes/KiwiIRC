@@ -64,7 +64,7 @@
 				active = true;
 				var params = {};
 	            var flashVars = {
-	                streamer: 'rtmp://webcam.chatsfree.net:1935/videochat'
+	                streamer: kiwi.settings.get('videochat_streamer_url')
 	            };
 
 	            flashVars.file = nick;
@@ -78,7 +78,7 @@
 					$("#webcam_subscriber_container").append('<div class="modal-header"><button type="button" class="close" data-dismiss="modal" data-webcam="close"><span aria-hidden="true">×</span><span class="sr-only" >Close</span></button><h4 class="modal-title">Webcam of '+nick+'</h4></div>');
 					$("#webcam_subscriber_container").append($("<div />", {id: "flash_webcham_subs"}));
 
-		            swfobject.embedSWF("https://webcam.chatsfree.net/RtmpPlayer.swf", "flash_webcham_subs", Math.ceil($("#webcam_subscriber_container").width())+'px', "100%", "9.0.0", null, flashVars, params);
+                    swfobject.embedSWF(kiwi.settings.get('videochat_subscriber_url'), "flash_webcham_subs", Math.ceil($("#webcam_subscriber_container").width())+'px', "100%", "9.0.0", null, flashVars, params);
 
 		            $(window).resize(function() {
                         $("#flash_webcham_subs").width(Math.ceil($("#webcam_subscriber_container").width())+'px');
@@ -87,7 +87,7 @@
 	        	}else{
 	        		$('body').append($("<div />", {id: "webcam_subscriber_container"}));
 
-		            swfobject.embedSWF("https://webcam.chatsfree.net/RtmpPlayer.swf", "webcam_subscriber_container", "280px", "250px", "9.0.0", null, flashVars, params);
+		            swfobject.embedSWF(kiwi.settings.get('videochat_subscriber_url'), "webcam_subscriber_container", "280px", "250px", "9.0.0", null, flashVars, params);
 
 		            $("#webcam_subscriber_container").dialog({
 					     dialogClass: "no-close",	

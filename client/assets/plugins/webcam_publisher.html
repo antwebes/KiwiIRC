@@ -63,7 +63,7 @@
                     var $webcamContainer = $("#webcam_container");
                     var myNick = network.get('nick');
                     var flashVars = {
-                        streamer: 'rtmp://webcam.chatsfree.net:1935/videochat'
+                        streamer: kiwi.settings.get('videochat_streamer_url')
                     };
 
                     flashVars.file = myNick;
@@ -72,8 +72,8 @@
                     if($webcamContainer.length == 0){
                         console.log('$webcamContainer.length == 0');
                         $('body').append($("<div />", {id: "webcam_publisher_container"}));;
-      
-                        swfobject.embedSWF("https://webcam.chatsfree.net/RtmpPublisher.swf", "webcam_publisher_container", "300px", "250px", "9.0.0", null, flashVars);
+
+                        swfobject.embedSWF(kiwi.settings.get('videochat_publisher_url'), "webcam_publisher_container", "300px", "250px", "9.0.0", null, flashVars);
                         $("#webcam_publisher_container").dialog({
                             dialogClass: "no-close",   
                             title: "My webcam",
@@ -95,7 +95,7 @@
                     $("#ext-webcam span i").switchClass( "fa-play", "fa-stop");
                     //end modify the icon to publish webcam
                     
-                    swfobject.embedSWF("https://webcam.chatsfree.net/RtmpPublisher.swf", "flash_webcham_pub", Math.ceil($("#webcam_publisher_container").width())+'px', "100%", "9.0.0", null, flashVars);
+                    swfobject.embedSWF(kiwi.settings.get('videochat_publisher_url'), "flash_webcham_pub", Math.ceil($("#webcam_publisher_container").width())+'px', "100%", "9.0.0", null, flashVars);
 
                     $(window).resize(function() {
                         $("#flash_webcham_pub").width(Math.ceil($("#webcam_publisher_container").width()));

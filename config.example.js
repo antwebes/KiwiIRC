@@ -201,7 +201,10 @@ conf.client = {
         mute_sounds: false,
         show_emoticons: true,
         count_all_activity: false,
-        guest_api:  '//www.chatsfree.net'
+        guest_api:  '//www.chatsfree.net',
+        videochat_streamer_url: 'rtmp://webcam.chatsfree.net:1935/videochat',
+        videochat_publisher_url: 'https://webcam.chatsfree.net/RtmpPublisher.swf',
+        videochat_subscriber_url: 'https://webcam.chatsfree.net/RtmpPlayer.swf'
     },
     window_title: 'Kiwi IRC'
 };
