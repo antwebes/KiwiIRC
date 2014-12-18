@@ -553,6 +553,42 @@
     };
 
 
+    window.loadExternalLib = function(element, url, callback){
+            if(typeof element == 'undefined') {
+                var numResources = url.length;
+                var headTag = document.getElementsByTagName("head")[0];
+                var tag = null;
+                var loaded = 0;
+
+                for(var i = 0; i < numResources; i++) {
+                    var resource = url[i];
+                    if(resource.match(/.css$/)) {
+                        var jqlinkTag = document.createElement('link');
+                        jqlinkTag.rel = 'stylesheet';
+                        jqlinkTag.href = resource;
+                        headTag.appendChild(jqlinkTag);
+                        tag = jqlinkTag;
+                    } 
+                    if(resource.match(/.js$/)) {
+                        var jqTag = document.createElement('script');
+                        jqTag.type = 'text/javascript';
+                        jqTag.src = resource;
+                        headTag.appendChild(jqTag);
+                        tag = jqTag;
+
+                        tag.onload = function(){
+                            callback();
+                        }
+                    }
+                }
+                
+             } else {
+                console.log("mierda", element);
+                callback(element);
+             }
+    };
+
+
     // Avoid `console` errors in browsers that lack a console. (https://github.com/h5bp/html5-boilerplate)
     function normalizeConsole() {
         var method;
@@ -722,7 +758,14 @@
                         "submenu": [
                           
                         ]                       
-                    },                       
+                    }, 
+                    {
+                        "name": "Radio",
+                        "icon": "headphones",
+                        "submenu": [
+                          
+                        ]                       
+                    },                                          
                     {
                         "name": "Settings",
                         "icon": "cogs",
