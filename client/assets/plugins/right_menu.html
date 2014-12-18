@@ -3,9 +3,6 @@
     kiwi.plugins.on('loaded', function(){
 
 
-
-
-
 		$(".main").append($('<li class="right-menu-btn"><i class="fa fa-gear" title="Open Menu"></i></li>'));
 
 
@@ -48,7 +45,7 @@
     	}
 		
 		generateRightMenuItem = function(item) {
-			if(item.submenu == undefined && item.type != "Toggle"){
+			if(item.submenu == undefined && item.type != "Toggle" && item.type != "Slider"){
 				var itemStr = '<li><a href="#"><i class="fa fa-'+item.icon+'"></i> ' + item.name + '</a></li>';
 			} else {
 				var itemStr = '<li><span><i class="fa fa-'+item.icon+'"></i> ' + item.name + '</span></li>';
@@ -59,21 +56,46 @@
 
 
 
-			if(item.type == "Toggle") {
-				if(item.default) {
-					$itemMenu.append('<input type="checkbox" checked class="Toggle" />');
-				} else {
-					$itemMenu.append('<input type="checkbox" class="Toggle" />');
-				}
-				$clickItem = $("input", $itemMenu);
-				
-			}
+			switch(item.type){
+				case "Toggle":
+					if(item.default) {
+						$itemMenu.append('<input type="checkbox" checked class="Toggle" />');
+					} else {
+						$itemMenu.append('<input type="checkbox" class="Toggle" />');
+					}
+					$clickItem = $("input", $itemMenu);
+				break;
+				case "Slider":
+					window.loadExternalLib(jQuery.ui, ["//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css", "//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"], function() {
+						$( "span" ,$itemMenu).append('<div id="slider"></div>');
+						$( "#slider", $itemMenu ).slider({
+							min: 0,
+							max: 100,
+							value: item.default
+						});
+						//$clickItem = $("#slider", $itemMenu);
+					});
+				break;
 
+			}
 
 			if(item.command != undefined) {
 				$clickItem.click(function () {
 					var input = kiwi.components.ControlInput();
-	            	input.run(item.command);
+					switch(item.type) {
+						case "Toggle":
+							input.run(item.command + " " + $("input", $itemMenu).is(':checked'));
+						break;
+						case "Slider":
+
+						break;
+						default:
+							input.run(item.command);
+						break;
+					}
+
+	            	
+	            	$('.right-menu').mmenu().trigger("close.mm");
 				});				
 			}
 
