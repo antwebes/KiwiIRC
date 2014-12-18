@@ -201,7 +201,21 @@ conf.client = {
         mute_sounds: false,
         show_emoticons: true,
         count_all_activity: false,
-        guest_api:  '//www.chatsfree.net'
+        guest_api:  '//www.chatsfree.net',
+        radio: [
+            {
+                'id': 1,
+                'name': 'Radio Patio',
+                'url': 'http://91.121.144.159:8009/;',
+                'channel': '#Radio'
+            },
+            {
+                'id': 2,
+                'name': 'Radio Burbuja',
+                'url': 'http://91.121.144.159:8011/;',
+                'channel': '#mas_de_40'               
+            }
+        ]        
     },
     window_title: 'Kiwi IRC'
 };
