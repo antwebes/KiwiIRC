@@ -231,13 +231,17 @@
 
         </style>
         <div style="display: block;" class="panel applet">
+            <div class="status"><%= think_nick %></div>
             <div class="login">
                 <img src="https://www.chatsfree.net/images/pachatea.png" style="align:right"/>
                 <h1>Join chat</h1>
+                <div class="server_details">
+                    <p><div class="status"><%= think_nick %></div></p>
+                </div>
                 <form>
                     <div class="basic">
-                        <input type="text" class="nick" id="server_select_nick" placeholder="<%= nickname %>" required="required">
-                        <input type="text" class="channel" id="server_select_channel" placeholder="<%= channel %>" required="required">
+                        <input type="text" class="nick" id="server_select_nick" placeholder="<%= nickname %>" >
+                        <input type="text" class="channel" id="server_select_channel" placeholder="<%= channel %>" >
                         <button type="submit" class="btn btn-primary btn-block btn-large"><%= start %></button>
                         
                         <a href="" onclick="return false;" class="show_more"><%= server_network %> <i class="fa fa-caret-down"></i></a>
