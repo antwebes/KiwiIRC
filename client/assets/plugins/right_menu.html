@@ -113,9 +113,7 @@
 				if(item.options) {
 					eventName =	item.options.event || "click";
 				} 
-				console.log("handle event", eventName);
 				$clickItem.on(eventName, function () {
-					console.log("eventico");
 					var input = kiwi.components.ControlInput();
 					switch(item.type) {
 						case "Toggle":
