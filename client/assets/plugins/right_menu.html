@@ -69,7 +69,7 @@
 		
 		generateRightMenuItem = function(item) {
 			if(item.submenu == undefined && item.type != "Toggle" && item.type != "Slider"){
-				var itemStr = '<li><a href="#"><i class="fa fa-'+item.icon+'"></i> ' + item.name + '</a></li>';
+				var itemStr = '<li><span><i class="fa fa-'+item.icon+'"></i> ' + item.name + '</span></li>';
 			} else {
 				var itemStr = '<li><span><i class="fa fa-'+item.icon+'"></i> ' + item.name + '</span></li>';
 			}

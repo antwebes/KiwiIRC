@@ -202,7 +202,9 @@ conf.client = {
         show_emoticons: true,
         count_all_activity: false,
         guest_api:  '//www.chatsfree.net',
-        radio: [
+        videochat_streamer_url: 'rtmp://webcam.chatsfree.net:1935/videochat',
+        videochat_publisher_url: 'https://webcam.chatsfree.net/RtmpPublisher.swf',
+        videochat_subscriber_url: 'https://webcam.chatsfree.net/RtmpPlayer.swf'
             {
                 'id': 1,
                 'name': 'Radio Patio',
@@ -215,7 +217,7 @@ conf.client = {
                 'url': 'http://91.121.144.159:8011/;',
                 'channel': '#mas_de_40'               
             }
-        ]        
+        ]     
     },
     window_title: 'Kiwi IRC'
 };
