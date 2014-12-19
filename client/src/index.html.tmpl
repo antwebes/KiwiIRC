@@ -675,49 +675,9 @@
                 if (typeof data.kiwi_server !== 'undefined') {
                     opts.kiwi_server = data.kiwi_server;
                 }
-
+                
                 window.gest_api = opts.server_settings.client.settings.guest_api;
-                window.right_menu_items = [
-                    {
-                        "name": "Avatar",
-                        "icon": "users",
-                        "command": "/avatar"
-                    },
-                    {
-                        "name": "List Channels",
-                        "icon": "comments",
-                        "command": "/list"
-                    },                    
-                    {
-                        "name": "Find Peple",
-                        "icon": "search",
-                        "command": "/findpeople"
-                    },
-                    {
-                        "name": "Away",
-                        "icon": "clock-o",
-                        "command": "/showaway"
-                    },
-                    {
-                        "name": "History",
-                        "icon": "history",
-                        "submenu": [
-                          
-                        ]                       
-                    }, 
-                    {
-                        "name": "Radio",
-                        "icon": "headphones",
-                        "submenu": [
-                          
-                        ]                       
-                    },                                          
-                    {
-                        "name": "Settings",
-                        "icon": "cogs",
-                        "command": "/settings"
-                    }                       
-                ];
+                window.right_menu_items= opts.server_settings.client.settings.right_menu_items;
 
                 resolve();
 

@@ -205,6 +205,48 @@ conf.client = {
         videochat_streamer_url: 'rtmp://webcam.chatsfree.net:1935/videochat',
         videochat_publisher_url: 'https://webcam.chatsfree.net/RtmpPublisher.swf',
         videochat_subscriber_url: 'https://webcam.chatsfree.net/RtmpPlayer.swf'
+        right_menu_items: [
+                    {
+                        "name": "Avatar",
+                        "icon": "users",
+                        "command": "/avatar"
+                    },
+                    {
+                        "name": "List Channels",
+                        "icon": "comments",
+                        "command": "/list"
+                    },                    
+                    {
+                        "name": "Find Peple",
+                        "icon": "search",
+                        "command": "/findpeople"
+                    },
+                    {
+                        "name": "Away",
+                        "icon": "clock-o",
+                        "command": "/showaway"
+                    },
+                    {
+                        "name": "History",
+                        "icon": "history",
+                        "submenu": [
+                          
+                        ]                       
+                    }, 
+                    {
+                        "name": "Radio",
+                        "icon": "headphones",
+                        "submenu": [
+                          
+                        ]                       
+                    },                                          
+                    {
+                        "name": "Settings",
+                        "icon": "cogs",
+                        "command": "/settings"
+                    }                       
+                ],
+        radio: [
             {
                 'id': 1,
                 'name': 'Radio Patio',
@@ -217,7 +259,7 @@ conf.client = {
                 'url': 'http://91.121.144.159:8011/;',
                 'channel': '#mas_de_40'               
             }
-        ]        
+        ]     
     },
     window_title: 'Kiwi IRC'
 };

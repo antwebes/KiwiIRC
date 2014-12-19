@@ -139,3 +139,7 @@
     border-bottom-width: 0px; 
     border-bottom-style: none; 
 }
+
+.right-menu li {
+    cursor: pointer;
+}

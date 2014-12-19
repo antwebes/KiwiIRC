@@ -6,7 +6,7 @@
         function start(radio) {
         	$("body").append('<div id="jquery_jplayer_1" style="display: none;">');
 
-        	$.getScript( "/kiwi/assets/plugins/radio/jquery.jplayer.js", function( data, textStatus, jqxhr ) {
+        	$.getScript(window.kiwi_server + "/kiwi/assets/plugins/radio/jquery.jplayer.js", function( data, textStatus, jqxhr ) {
 					var stream = {
 						title: radio.name,
 						mp3: radio.url
@@ -112,7 +112,7 @@
 	};
 
    $( ".right-menu" ).promise().done(function() {
-	    	buildMenuRadio();
+    	buildMenuRadio();
     });
    
 
