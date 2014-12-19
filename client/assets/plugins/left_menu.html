@@ -16,9 +16,12 @@
 				usedMenu = true;
 			});
 
-			$('.connections').mmenu({
-			   counters	: true
-	        }); 
+			$( ".connections" ).promise().done(function() {
+				$('.connections').mmenu({
+				   counters	: true
+		        }); 
+        	});
+
         });
 
     });
