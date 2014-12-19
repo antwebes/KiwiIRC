@@ -43,6 +43,29 @@
 				}
 			);
     	}
+
+    	generateToggle=  function(item) {
+    		var toggle= '<input type="checkbox" data-name="'+item.name+'"';
+    		if(item.options) {
+    			
+    			if(item.options.className) {
+					toggle += " " + item.opotion.className + '"';
+    			}  else {
+    				toggle += 'class="Toggle"';
+    			} 	
+
+    			if(item.options.defaultValue) {
+    				toggle += 'checked';
+    			}
+    			if(item.options.groupName) {
+    				toggle += 'data-groupName="'+item.options.groupName+'"';
+    			}
+    		} else {
+    			toggle += 'class="Toggle"';
+    		}
+    		toggle += '/>';   	
+    		return toggle;	
+    	}
 		
 		generateRightMenuItem = function(item) {
 			if(item.submenu == undefined && item.type != "Toggle" && item.type != "Slider"){
@@ -58,36 +81,48 @@
 
 			switch(item.type){
 				case "Toggle":
-					if(item.default) {
-						$itemMenu.append('<input type="checkbox" checked class="Toggle" />');
-					} else {
-						$itemMenu.append('<input type="checkbox" class="Toggle" />');
-					}
+					$itemMenu.append(generateToggle(item));
 					$clickItem = $("input", $itemMenu);
+					if(item.options && item.options.groupName) {
+						$clickItem.click(function () {
+
+							$(document).find("*[data-groupName='" + item.options.groupName + "']").each(function( index ) {
+								if($(this).data("name") != item.name) {
+									$(this).prop( "checked", false );
+								}
+							});
+						});
+					}
 				break;
 				case "Slider":
 					window.loadExternalLib(jQuery.ui, ["//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css", "//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"], function() {
 						$( "span" ,$itemMenu).append('<div id="slider"></div>');
 						$( "#slider", $itemMenu ).slider({
 							min: 0,
-							max: 100,
-							value: item.default
+							step: 0.01,
+							max: 1,
+							value: item.options.defaultValue
 						});
-						//$clickItem = $("#slider", $itemMenu);
 					});
 				break;
 
 			}
 
 			if(item.command != undefined) {
-				$clickItem.click(function () {
+				var eventName= "click";
+				if(item.options) {
+					eventName =	item.options.event || "click";
+				} 
+				console.log("handle event", eventName);
+				$clickItem.on(eventName, function () {
+					console.log("eventico");
 					var input = kiwi.components.ControlInput();
 					switch(item.type) {
 						case "Toggle":
 							input.run(item.command + " " + $("input", $itemMenu).is(':checked'));
 						break;
 						case "Slider":
-
+							input.run(item.command + " " + $("#slider", $itemMenu).slider( "option", "value" ));
 						break;
 						default:
 							input.run(item.command);

@@ -18,6 +18,10 @@
 							ready = true;
 							$(this).jPlayer("setMedia", stream);
 							$(this).jPlayer("play");
+							if(radio.channel) {
+								var input = kiwi.components.ControlInput()
+                				input.run("/join " + radio.channel);
+							}
 						},
 						pause: function() {
 							$(this).jPlayer("clearMedia");
@@ -39,11 +43,21 @@
 			});
 	    };
 
+	function changeVolume(volume) {
+		$("#jquery_jplayer_1").jPlayer("volume", volume);
+	}
+
 	function play(radio) {
 		var stream = {
 			title: radio.name,
 			mp3: radio.url
 		};
+
+		if(radio.channel) {
+			var input = kiwi.components.ControlInput()
+			input.run("/join " + radio.channel);
+		}
+
 		$("#jquery_jplayer_1").jPlayer("setMedia", stream);
 		$("#jquery_jplayer_1").jPlayer("play");
 	}
@@ -68,10 +82,22 @@
  			var numRadios = radio.length;
 
 
- 				radioMenu.push({"name": "Volume", "icon": "volume-up", "type": "Slider", "default": window.radio.volume || 100, "command": "/radiovolume"});
+ 				radioMenu.push({
+ 					"name": "Volume", 
+ 					"icon": "volume-up", 
+ 					"type": "Slider", 
+ 					"options": {"defaultValue": window.radio.volume || 100, "event": "slidechange"}, 
+ 					"command": "/radiovolume"
+ 				});
 
      			for(var i=0; i<numRadios; i++) {
-     				radioMenu.push({"name": radio[i].name, "icon": "headphones", "type": "Toggle", "default": false, "command": "/playradio " +radio[i].id });
+     				radioMenu.push({
+     					"name": radio[i].name, 
+     					"icon": "headphones", 
+     					"type": "Toggle", 
+     					"options": {"defaultValue": false, "groupName": "radios"}, 
+     					"command": "/playradio " +radio[i].id 
+     				});
      			}    			
 
   			 	     		
@@ -89,6 +115,7 @@
 	    	buildMenuRadio();
     });
    
+
     var started = false;
     kiwi.events.on('command', function(event, data) {
         if (data.command === 'playradio') {
@@ -109,7 +136,7 @@
         	}         
         }
         if (data.command === 'radiovolume') {
-
+        	changeVolume(data.params[0]);
         }
     });
 
