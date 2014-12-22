@@ -217,7 +217,7 @@ conf.client = {
                 'url': 'http://91.121.144.159:8011/;',
                 'channel': '#mas_de_40'               
             }
-        ]     
+        ]
     },
     window_title: 'Kiwi IRC'
 };
