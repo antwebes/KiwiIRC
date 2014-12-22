@@ -17,11 +17,11 @@
  */
 
 (function (root, factory) {
-	if (typeof define === 'function' && define.amd) {
+/*	if (typeof define === 'function' && define.amd) {
 		// AMD. Register as an anonymous module.
 		define(['jquery'], factory); // jQuery Switch
 		// define(['zepto'], factory); // Zepto Switch
-	} else if (typeof exports === 'object') {
+	} else */ if (typeof exports === 'object') {
 		// Node/CommonJS
 		factory(require('jquery')); // jQuery Switch
 		//factory(require('zepto')); // Zepto Switch
