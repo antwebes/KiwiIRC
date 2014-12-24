@@ -7,6 +7,11 @@
 	    	$(".tabs").prepend($('<ul><li class="left-menu-btn"><i class="fa fa-align-justify"></i> <span id="activePanelName"></span></li><li class="menuCounters"># <span id="countRooms">0</span> <i class="fa fa-user"></i> <span id="countPrivates">0</span></li></ul>'));
 
 
+	    	// Close menu when click in tab
+			$(document).on('click', '.connections .panellist li', function(){
+			  $('.connections').mmenu().trigger("close.mm");
+
+			});
 
 			$(".left-menu-btn").click(function () {
 				$('.connections').mmenu().trigger( "open.mm" );
