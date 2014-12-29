@@ -3,6 +3,9 @@ node/node_modules/
 node_modules/
 doc/
 .idea/
+client/assets/plugins/enabled/dist/
+client/assets/plugins/enabled/*.html
+client/assets/plugins/plugins_dist.html
 client/assets/libs/engine.io.bundle.*
 client/assets/kiwi.js
 client/assets/kiwi.min.js
