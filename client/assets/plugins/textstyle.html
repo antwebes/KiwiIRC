@@ -1,92 +1,90 @@
-<style>
-    #kiwi .style-grid {
-        position: absolute;
-        display: block;
-        z-index: 1000;
+<script id="tmpl_styles">
+(function() {
+        var styleHtml = "<style>" +
+                    "#kiwi .style-grid {" +
+                    "position: absolute;" +
+                    "display: block;" +
+                    "z-index: 1000;" +
+                    "" +
+                    "background: #121314;" +
+                    "padding: 2px;" +
+                    "width: 120px;" +
+                    "" +
+                    "border-radius: 3px;" +
+                    "" +
+                    "}" +
+                    "" +
+                    "#kiwi .style-colours { overflow: hidden; }" +
+                    "#kiwi .style-colour {" +
+                    "width: 25%;" +
+                    "height: 27px;" +
+                    "display: block;" +
+                    "float: left;" +
+                    "cursor: pointer;" +
+                    "}" +
+                    "#kiwi .style-color-selected {" +
+                    "-webkit-box-shadow: inset 0px 0px 5px 0px rgba(255, 255, 255, 0.75);" +
+                    "-moz-box-shadow:    inset 0px 0px 5px 0px rgba(255, 255, 255, 0.75);" +
+                    "box-shadow:         inset 0px 0px 5px 0px rgba(255, 255, 255, 0.75);" +
+                    "z-index: 10;" +
+                    "position: relative;" +
+                    "}" +
+                    "" +
+                    "#kiwi .style-formats {" +
+                    "margin: 10px 0;" +
+                    "overflow: hidden;" +
+                    "}" +
+                    "" +
+                    "#kiwi .style-format {" +
+                    "width: 33%;" +
+                    "cursor: pointer;" +
+                    "display: block;" +
+                    "float: left;" +
+                    "text-align: center;" +
+                    "}" +
+                    "#kiwi .style-format-bold { font-weight: bold; }" +
+                    "#kiwi .style-format-italic { font-style: italic; }" +
+                    "#kiwi .style-format-underline { text-decoration: underline; }" +
+                    "#kiwi .style-reset {" +
+                    "color: #D6D6D6;" +
+                    "font-size: 20px;" +
+                    "text-align: right;" +
+                    "display: block;" +
+                    "cursor: pointer;" +
+                    "margin: 5px 6px 10px;" +
+                    "}" +
+            "</style>";
 
-        background: #121314;
-        padding: 2px;
-        width: 120px;
+        var gridHtml = '<div class="style-grid">' +
+                '<i class="fa fa-undo style-reset"></i>' +
+                '' +
+                '<div class="style-colours">' +
+                    '<a class="style-colour" style="background:#FFFFFF;border-radius: 3px 0 0 0;" data-colour="0"></a>' +
+                    '<a class="style-colour" style="background:#000000;" data-colour="1"></a>' +
+                    '<a class="style-colour" style="background:#000080;" data-colour="2"></a>' +
+                    '<a class="style-colour" style="background:#008000;border-radius: 0 3px 0 0;" data-colour="3"></a>' +
+                    '<a class="style-colour" style="background:#FF0000;" data-colour="4"></a>' +
+                    '<a class="style-colour" style="background:#800040;" data-colour="5"></a>' +
+                    '<a class="style-colour" style="background:#800080;" data-colour="6"></a>' +
+                    '<a class="style-colour" style="background:#FF8040;" data-colour="7"></a>' +
+                    '<a class="style-colour" style="background:#FFFF00;" data-colour="8"></a>' +
+                    '<a class="style-colour" style="background:#80FF00;" data-colour="9"></a>' +
+                    '<a class="style-colour" style="background:#008080;" data-colour="10"></a>' +
+                    '<a class="style-colour" style="background:#00FFFF;" data-colour="11"></a>' +
+                    '<a class="style-colour" style="background:#0000FF;" data-colour="12"></a>' +
+                    '<a class="style-colour" style="background:#FF55FF;" data-colour="13"></a>' +
+                    '<a class="style-colour" style="background:#808080;" data-colour="14"></a>' +
+                    '<a class="style-colour" style="background:#C0C0C0;" data-colour="15"></a>' +
+                '</div>' +
+                '' +
+                '<div class="style-formats">' +
+                '<a class="style-format style-format-bold">Aa</a>' +
+                '<a class="style-format style-format-italic">Aa</a>' +
+                '<a class="style-format style-format-underline">Aa</a>' +
+                '</div>' +
+            '</div>';
 
-        border-radius: 3px;
-    }
-
-    #kiwi .style-colours { overflow: hidden; }
-    #kiwi .style-colour {
-        width: 25%;
-        height: 27px;
-        display: block;
-        float: left;
-        cursor: pointer;
-    }
-    #kiwi .style-color-selected {
-        -webkit-box-shadow: inset 0px 0px 5px 0px rgba(255, 255, 255, 0.75);
-        -moz-box-shadow:    inset 0px 0px 5px 0px rgba(255, 255, 255, 0.75);
-        box-shadow:         inset 0px 0px 5px 0px rgba(255, 255, 255, 0.75);
-        z-index: 10;
-        position: relative;
-    }
-
-    #kiwi .style-formats {
-        margin: 10px 0;
-        overflow: hidden;
-    }
-
-    #kiwi .style-format {
-        width: 33%;
-        cursor: pointer;
-        display: block;
-        float: left;
-        text-align: center;
-    }
-    #kiwi .style-format-bold { font-weight: bold; }
-    #kiwi .style-format-italic { font-style: italic; }
-    #kiwi .style-format-underline { text-decoration: underline; }
-    #kiwi .style-reset {
-        color: #D6D6D6;
-        font-size: 20px;
-        text-align: right;
-        display: block;
-        cursor: pointer;
-        margin: 5px 6px 10px;
-    }
-</style>
-
-<script type="text/html" id="tmpl_styles">
-<div class="style-grid">
-    <i class="fa fa-undo style-reset"></i>
-
-    <div class="style-colours">
-        <a class="style-colour" style="background:#FFFFFF;border-radius: 3px 0 0 0;" data-colour="0"></a>
-        <a class="style-colour" style="background:#000000;" data-colour="1"></a>
-        <a class="style-colour" style="background:#000080;" data-colour="2"></a>
-        <a class="style-colour" style="background:#008000;border-radius: 0 3px 0 0;" data-colour="3"></a>
-        <a class="style-colour" style="background:#FF0000;" data-colour="4"></a>
-        <a class="style-colour" style="background:#800040;" data-colour="5"></a>
-        <a class="style-colour" style="background:#800080;" data-colour="6"></a>
-        <a class="style-colour" style="background:#FF8040;" data-colour="7"></a>
-        <a class="style-colour" style="background:#FFFF00;" data-colour="8"></a>
-        <a class="style-colour" style="background:#80FF00;" data-colour="9"></a>
-        <a class="style-colour" style="background:#008080;" data-colour="10"></a>
-        <a class="style-colour" style="background:#00FFFF;" data-colour="11"></a>
-        <a class="style-colour" style="background:#0000FF;" data-colour="12"></a>
-        <a class="style-colour" style="background:#FF55FF;" data-colour="13"></a>
-        <a class="style-colour" style="background:#808080;" data-colour="14"></a>
-        <a class="style-colour" style="background:#C0C0C0;" data-colour="15"></a>
-    </div>
-
-    <div class="style-formats">
-        <a class="style-format style-format-bold">Aa</a>
-        <a class="style-format style-format-italic">Aa</a>
-        <a class="style-format style-format-underline">Aa</a>
-    </div>
-</div>
-
-</script>
-
-<script type="text/javascript">
-    (function() {
-        var $list = $($('#tmpl_styles').html());
+        var $list = $(gridHtml);
         var $icon = $('<a><i class="fa fa-font"></i></a>');
         var $inp = $('#kiwi .controlbox .inp');
 
@@ -110,6 +108,8 @@
             $('#kiwi .style-colour').removeClass('style-color-selected');
             $('#kiwi .style-colour[data-colour='+styles.colour+']').addClass('style-color-selected');
         };
+
+        $(styleHtml).appendTo($('head'));
 
 
         // When a message is typed in, add any styling we have enabled

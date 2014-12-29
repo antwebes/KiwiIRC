@@ -241,7 +241,7 @@
                     <div class="basic">
                         <input type="text" class="nick" id="server_select_nick" placeholder="<%= nickname %>" >
                         <input type="text" class="channel" id="server_select_channel" placeholder="<%= channel %>" >
-                        <button type="submit" class="btn btn-primary btn-block btn-large"><%= start %></button>
+                        <button type="submit" data-js="submit" class="btn btn-primary btn-block btn-large"><%= start %></button>
                         
                         <a href="" onclick="return false;" class="show_more"><%= server_network %> <i class="fa fa-caret-down"></i></a>
                         
@@ -545,7 +545,6 @@
                 }
                 
              } else {
-                console.log("mierda", element);
                 callback(element);
              }
     };
