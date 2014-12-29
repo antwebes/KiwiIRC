@@ -28,27 +28,6 @@ Cambios en el kiwi
 	Desactivar ctcp: (Pendiente)
 
 4:
-
-	Incluir los applet:
-		avatar.js
-
-    Añadir   en clientuicommands.js
-    var fn_to_bind = {
-        ...
-        'command:avatar':      avatarCommand
-    };
-
-   
-    function avatarCommand (ev) {
-        var settings = _kiwi.model.Applet.loadOnce('kiwi_avatar');
-        settings.view.show();
-    }
-
-    En build.js en el array source_files meter:
-
-    __dirname + '/src/applets/avatar.js',
-5:
-
     En indext.tmpl.html
 
     en el template tmpl_application

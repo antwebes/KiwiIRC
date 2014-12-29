@@ -204,7 +204,7 @@ conf.client = {
         guest_api:  '//www.chatsfree.net',
         videochat_streamer_url: 'rtmp://webcam.chatsfree.net:1935/videochat',
         videochat_publisher_url: 'https://webcam.chatsfree.net/RtmpPublisher.swf',
-        videochat_subscriber_url: 'https://webcam.chatsfree.net/RtmpPlayer.swf'
+        videochat_subscriber_url: 'https://webcam.chatsfree.net/RtmpPlayer.swf',
         right_menu_items: [
                     {
                         "name": "Avatar",
@@ -215,7 +215,7 @@ conf.client = {
                         "name": "List Channels",
                         "icon": "comments",
                         "command": "/list"
-                    },                    
+                    },
                     {
                         "name": "Find Peple",
                         "icon": "search",
@@ -231,20 +231,20 @@ conf.client = {
                         "icon": "history",
                         "submenu": [
                           
-                        ]                       
-                    }, 
+                        ]
+                    },
                     {
                         "name": "Radio",
                         "icon": "headphones",
                         "submenu": [
                           
-                        ]                       
-                    },                                          
+                        ]
+                    },
                     {
                         "name": "Settings",
                         "icon": "cogs",
                         "command": "/settings"
-                    }                       
+                    }
                 ],
         radio: [
             {
@@ -257,9 +257,9 @@ conf.client = {
                 'id': 2,
                 'name': 'Radio Burbuja',
                 'url': 'http://91.121.144.159:8011/;',
-                'channel': '#mas_de_40'               
+                'channel': '#mas_de_40'
             }
-        ]     
+        ]
     },
     window_title: 'Kiwi IRC'
 };
