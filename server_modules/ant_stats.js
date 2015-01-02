@@ -18,8 +18,6 @@ var antLog = function(tag, log){
     console.log(tag, log);
 };
 
-
-
 // The Client recieves a IRC PRIVMSG command
 /*module.on('rpc irc.privmsg', function(event, data) {
 	var logData = {
@@ -41,14 +39,14 @@ var rpcEvents = ['privmsg', 'join', 'part', 'kick', 'quit', 'nick'];
 
 for(i in rpcEvents){
     // The client recieves an IRC JOIN command
-    
+
     (function(rpcEvent){
         module.on('rpc irc.' + rpcEvent, function(event, data){
             var type = rpcEvent;
 
             var logData = {
                 nick: data.connection.nick,
-                data: data.arguments[0],
+                data: data.arguments[0]
             };
 
             if(rpcEvent == "privmsg") {
@@ -57,15 +55,15 @@ for(i in rpcEvents){
                         privmsg_type = "chan_msg";
                     }else{
                         privmsg_type = "priv_msg";
-                        
+
                         if(data.arguments[0].target.toLowerCase() == "nickserv"){
                             if(!data.arguments[0].msg.indexOf("identifyoauth")) {
                                 privmsg_type = "IDENTIFY";
                             } else {
                                 privmsg_type = "NICKSERV_COMMAND";
                             }
-                        } 
-                        
+                        }
+
                         var logData = {
                             nick: data.connection.nick,
                             data: {target: data.arguments[0].target, msg: "private"},
@@ -74,7 +72,7 @@ for(i in rpcEvents){
 
                     }
                 logData.privmsg_type = privmsg_type;
-            } 
+            }
 
             logData.type = type;
 
@@ -93,7 +91,7 @@ module.on('rpc kiwi.connect_irc', function(event, data){
         },
         type: 'connect'
     };
-   
+
     antLog('connect', logData);
 });
 

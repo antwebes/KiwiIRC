@@ -272,6 +272,13 @@ conf.client_themes = [
     'basic'
 ];
 
+conf.fluentd = {
+    server: "localhost",
+    port: 24220
+};
+
+conf.timeout = 1000;
+
 
 // If set, the client may only connect to this 1 IRC server
 //conf.restrict_server = "irc.kiwiirc.com";
