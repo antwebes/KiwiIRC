@@ -11,10 +11,11 @@
     	window.update_right_menu = function () {
     		var items = window.right_menu_items || [];
     		var itemsLength = items.length;
-
+    		
+    		$('.right-menu').mmenu().trigger("close.mm");
     		$(".right-menu").remove();
 
-			$(".main").append($( "<div class='right-menu'><ul class='right-menu-items'></ul></div>"));
+			$(".main").append($( "<nav class='right-menu'><ul class='right-menu-items'></ul></nav>"));
 
 
 
