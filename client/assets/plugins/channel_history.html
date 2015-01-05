@@ -21,7 +21,7 @@
 	    function buildMenuHistory() {
  			var channelsMenu = [];
  			var enableHistory =  getChannelHistoryStatus();
- 			channelsMenu.push({"name": 'Enable History', "type": "Toggle", "default": enableHistory, "icon": "trash", "command": "/togglehistory"});
+ 			channelsMenu.push({"name": 'Enable History', "type": "Toggle", "options": {"defaultValue": enableHistory }, "icon": "trash", "command": "/togglehistory"});
 
  			var channels = JSON.parse(localStorage.getItem('channel_history')) || [];
  			channels.reverse();
