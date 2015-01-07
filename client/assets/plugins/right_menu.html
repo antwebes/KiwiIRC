@@ -6,9 +6,7 @@
 		$(".main").append($('<li class="right-menu-btn"><i class="fa fa-gear" title="Open Menu"></i></li>'));
 
 
-    	
-
-    	window.update_right_menu = function () {
+    	window.create_right_menu = function () {
     		var items = window.right_menu_items || [];
     		var itemsLength = items.length;
     		
@@ -152,7 +150,7 @@
 		}
 
 
-		window.update_right_menu();
+		window.create_right_menu();
 
     });
 </script>
