@@ -56,10 +56,6 @@
 			    kiwi.events.on('command', function(event, data) {
 			        if (data.command === 'clearhistory') {
 			            localStorage.removeItem("channel_history");
-			            setTimeout(function() {
-			            	buildMenuHistory();
-			            	window.update_right_menu();
-			            }, 250);
 			        }
 			        if (data.command === 'togglehistory') {
 			        	var historyStatus = getChannelHistoryStatus();
@@ -87,7 +83,6 @@
 
 	     				localStorage.setItem("channel_history", JSON.stringify(channels));
 	     				buildMenuHistory();
-	     				window.update_right_menu();
 	     			}
 	     		});
 	     	}
