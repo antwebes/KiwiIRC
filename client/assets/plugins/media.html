@@ -1,5 +1,6 @@
 <script type="text/javascript"> 
  
+
      (function() {
             var $icon = $('<div id="ext-photo"><img id="current_avatar" width="48px" height="48px" src="/kiwi/assets/img/photo.png" /><span><br> <b>Avatar</b></span></div>');
             $(".chat-extensions").append($icon);
@@ -88,7 +89,7 @@
 			$("#current_avatar").attr("src",avatar.src);
         });
 
-		var userData = {};
+		window.mediaUserData = {};
 
 		function calculateAge(birthday){
 			var currentYear = new Date().getFullYear();
@@ -118,24 +119,24 @@
 
 					if (nick.indexOf("@") != -1 || nick.indexOf("+") != -1) nick = nick.slice(1);
 
-					if(typeof userData[nick] == 'undefined') {
+					if(typeof mediaUserData[nick] == 'undefined') {
 						return "";
 					}
 
-					if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.medium != 'undefined'){
-						photo = '<img class="photoUserTooltip" src="' + userData[nick].profile.profile_photo.medium + '"> <br>';
+					if(typeof mediaUserData[nick].profile != 'undefined' && typeof mediaUserData[nick].profile.profile_photo != 'undefined' && typeof mediaUserData[nick].profile.profile_photo.medium != 'undefined'){
+						photo = '<img class="photoUserTooltip" src="' + mediaUserData[nick].profile.profile_photo.medium + '"> <br>';
 					}					
 
-					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.gender) !== 'undefined'){
-						gender = '<i class="fa fa-' + userData[nick].profile.gender + '"></i> ';
+					if(typeof(mediaUserData[nick]) !== 'undefined' && typeof(mediaUserData[nick].profile) !== 'undefined' && typeof(mediaUserData[nick].profile.gender) !== 'undefined'){
+						gender = '<i class="fa fa-' + mediaUserData[nick].profile.gender + '"></i> ';
 					}
 
-					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].country) !== 'undefined'){
-						country = '&nbsp;<span class="tooltip-country"><i class="fa fa-location-arrow"></i> ' + userData[nick].country + '</span>';
+					if(typeof(mediaUserData[nick]) !== 'undefined' && typeof(mediaUserData[nick].country) !== 'undefined'){
+						country = '&nbsp;<span class="tooltip-country"><i class="fa fa-location-arrow"></i> ' + mediaUserData[nick].country + '</span>';
 					}
 
-					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.birthday)){
-						age = '&nbsp;<span class="tooltip-age">' + calculateAge(userData[nick].profile.birthday) + '</span>';
+					if(typeof(mediaUserData[nick]) !== 'undefined' && typeof(mediaUserData[nick].profile) !== 'undefined' && typeof(mediaUserData[nick].profile.birthday)){
+						age = '&nbsp;<span class="tooltip-age">' + calculateAge(mediaUserData[nick].profile.birthday) + '</span>';
 					}
 
 					return photo + gender + age + country;
@@ -194,7 +195,7 @@
 
 				$el = value.view.$el.find('a');
 				
-				if(typeof userData[nick] == 'undefined') {
+				if(typeof mediaUserData[nick] == 'undefined') {
 						src = getRandomSrcAvatarFromNick(nick);
 						if (src){
 							$el.prepend('<img width="20" height="20" class="usericon" src="' + src.src + '"> ');
@@ -202,17 +203,17 @@
 					return "";
 				}
 
-				updateLeftMenu(userData, nick);
+				updateLeftMenu(mediaUserData, nick);
 
-				if(userData[nick].webcam) {
+				if(mediaUserData[nick].webcam) {
 					$el.append('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');
 				}
 
-				if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.icon != 'undefined'){
-					$el.prepend('<img width="20" height="20" class="usericon" src="' + userData[nick].profile.profile_photo.icon + '"> ');
+				if(typeof mediaUserData[nick].profile != 'undefined' && typeof mediaUserData[nick].profile.profile_photo != 'undefined' && typeof mediaUserData[nick].profile.profile_photo.icon != 'undefined'){
+					$el.prepend('<img width="20" height="20" class="usericon" src="' + mediaUserData[nick].profile.profile_photo.icon + '"> ');
 				} else {
-					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.gender) !== 'undefined'){
-						$el.prepend('<i class="meicon fa fa-' + userData[nick].profile.gender + '"></i> ');
+					if(typeof(mediaUserData[nick]) !== 'undefined' && typeof(mediaUserData[nick].profile) !== 'undefined' && typeof(mediaUserData[nick].profile.gender) !== 'undefined'){
+						$el.prepend('<i class="meicon fa fa-' + mediaUserData[nick].profile.gender + '"></i> ');
 					} else {
 						//nick es mi nick actual
 						src = getRandomSrcAvatarFromNick(nick);
@@ -235,6 +236,15 @@
 
 			return avatar;
 
+		}
+
+		window.getAvatarFromNick = function(nick){
+			var userData = window.mediaUserData;
+			if(typeof userData[nick] != 'undefined' && typeof mediaUserData[nick].profile != 'undefined' && typeof mediaUserData[nick].profile.profile_photo != 'undefined' && typeof mediaUserData[nick].profile.profile_photo.icon != 'undefined'){
+				return mediaUserData[nick].profile.profile_photo.icon;
+			}else {
+				return getRandomSrcAvatarFromNick(nick);
+			}
 		}
 
 		function getAvatarFromInteger(id) {
@@ -277,7 +287,7 @@
 		}
 
 		function updateMedia(data) {
-			userData = data.users || [] ;
+			mediaUserData = data.users || [] ;
 
 			updateMembersList();
 		}
