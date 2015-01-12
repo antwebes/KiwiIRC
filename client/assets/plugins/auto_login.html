@@ -5,7 +5,7 @@
 
 
         network.on('message:notice', function(event) {
-           if(event.nick == 'NickServ' && event.msg == "This nickname is registered and protected.  If it is your"){
+           if(event.nick == 'NickServ' && (event.msg == "This nickname is registered and protected.  If it is your" || event.msg == "Este nick está registrado y protegido. Si es tu nick," ) ){
                 network.msg('nickserv', 'identifyoauth '+window.token);
             }
         });
