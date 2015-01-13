@@ -30,7 +30,8 @@ module.exports = function(grunt) {
                     wrapper: ['<script>', '</script>']
                 }
             }
-        }
+        },
+        clean: ["client/assets/plugins/enabled/dist/*.html"]
     });
 
     // Load the plugin that provides the "uglify" task.
@@ -38,8 +39,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-text-replace');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-wrap');
+    grunt.loadNpmTasks('grunt-contrib-clean');
 
     // Default task(s).
-    grunt.registerTask('default', ['replace', 'uglify', 'wrap']);
+    grunt.registerTask('default', ['clean', 'replace', 'uglify', 'wrap']);
 
 };
