@@ -75,7 +75,7 @@
 				if($webcamContainer.length > 0){
 					$("#webcam_container").append($("<div />", {id: "webcam_subscriber_container", style: "width: 100%"}));
 					//insert Modal title of bootstrap to can close the webcam subscriber
-					$("#webcam_subscriber_container").append('<div class="modal-header"><button type="button" class="close" data-dismiss="modal" data-webcam="close"><span aria-hidden="true">×</span><span class="sr-only" >Close</span></button><h4 class="modal-title">Webcam of '+nick+'</h4></div>');
+					$("#webcam_subscriber_container").append('<div class="modal-header"><button type="button" class="close" data-dismiss="modal" data-webcam="close"><span aria-hidden="true">×</span><span class="sr-only" >' + kiwi.i18n.translate('plugin_webcam_close') + '</span></button><h4 class="modal-title">' + kiwi.i18n.translate('plugin_webcam_webcam_of') + ' '+nick+'</h4></div>');
 					$("#webcam_subscriber_container").append($("<div />", {id: "flash_webcham_subs"}));
 
 		            swfobject.embedSWF("https://webcam.chatsfree.net/RtmpPlayer.swf", "flash_webcham_subs", Math.ceil($("#webcam_subscriber_container").width())+'px', "100%", "9.0.0", null, flashVars, params);

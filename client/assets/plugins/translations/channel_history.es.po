@@ -1,0 +1,17 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: Kiwi\n"
+"Language: es\n"
+
+msgid "plugin_channel_history_enable_history"
+msgstr "Habilitar Historial"
+
+msgid "plugin_channel_history_clear_history"
+msgstr "Borrar Historial"
+
+msgid "plugin_channel_history_history"
+msgstr "Historial"

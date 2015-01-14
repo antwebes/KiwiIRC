@@ -53,7 +53,7 @@
                 var control = kiwi.components.ControlInput();
                 var $icon;
                 if (swfobject.hasFlashPlayerVersion("9.0.18")) {
-                    $icon = $('<div id="ext-webcam"><img src="/kiwi/assets/img/webcam.png" /><span><br><i class="fa fa-play"></i> <b>Webcam</b></span></div>');
+                    $icon = $('<div id="ext-webcam"><img src="/kiwi/assets/img/webcam.png" /><span><br><i class="fa fa-play"></i> <b>' + kiwi.i18n.translate('plugin_webcam_webcam') + '</b></span></div>');
                     $(".chat-extensions").append($icon);
                 }
 

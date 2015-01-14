@@ -30,6 +30,9 @@
         model: Avatar
     });
 
+    var translate = function(msgid){
+        return kiwi.i18n.translate(msgid).fetch();
+    };
 
     var AvatarView = Backbone.View.extend({
       tagName: 'li',
@@ -125,8 +128,8 @@
             var self = this;
 
             var data = {
-                avatar_current: "Current Avatar",
-                avatar_category: "Categories",
+                avatar_current: translate('plugin_avatar_current'),
+                avatar_category: translate('plugin_avatar_categories')
             };
 
 
@@ -143,7 +146,7 @@
 
     var Applet = Backbone.Model.extend({
         initialize: function () {
-            this.set('title', "Avatar");
+            this.set('title', translate('plugin_avatar_avatar'));
             this.view = new View();
         }
     });

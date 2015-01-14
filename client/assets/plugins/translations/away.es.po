@@ -1,0 +1,35 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: Kiwi\n"
+"Language: es\n"
+
+msgid "plugin_away_title"
+msgstr "Selecciona tu estado"
+
+msgid "plugin_away_avaiable"
+msgstr "disponible"
+
+msgid "plugin_away_custom"
+msgstr "personalizado"
+
+msgid "plguin_away_out"
+msgstr "estoy ausente"
+
+msgid "plugin_away_eat"
+msgstr "salí a comer"
+
+msgid "plugin_away_no_privates"
+msgstr "no acepto privados"
+
+msgid "plugin_away_eat_message"
+msgstr "No estoy aquí ahora, salí a comer"
+
+msgid "plugin_away_out_message"
+msgstr "No estoy aquí ahora, vuelvo enseguida"
+
+msgid "plugins_away_default_message"
+msgstr "No estoy aquí ahora"
