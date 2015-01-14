@@ -218,7 +218,11 @@ _kiwi.global = {
 
         locale_promise = new Promise(function (resolve) {
             var locale = _kiwi.global.settings.get('locale') || 'magic';
-            $.getJSON(opts.base_path + '/assets/locales/' + locale + '.json', function (locale) {
+            if(typeof opts.base_locale_path == 'undefined'){
+                opts.base_locale_path = opts.base_path;
+            }
+
+            $.getJSON(opts.base_locale_path + '/assets/locales/' + locale + '.json', function (locale) {
                 if (locale) {
                     that.i18n = new Jed(locale);
                 } else {

@@ -98,17 +98,17 @@
      					"options": {"defaultValue": false, "groupName": "radios"}, 
      					"command": "/playradio " +radio[i].id 
      				});
-     			}    			
+     			}
 
-  			 	     		
 
- 			var menuItemsLengt = window.right_menu_items.length;
-			for (var i=0 ; i < menuItemsLengt ; i++)
-			{
-			    if (window.right_menu_items[i].name == "Radio") {
-			        window.right_menu_items[i].submenu = radioMenu;
-			    }
-			}   
+			window.right_menu_items_promise.then(function() {
+				var menuItemsLengt = window.right_menu_items.length;
+				for (var i = 0; i < menuItemsLengt; i++) {
+					if (window.right_menu_items[i].name == kiwi.i18n.translate('plugin_right_menu_radio').fetch()) {
+						window.right_menu_items[i].submenu = radioMenu;
+					}
+				}
+			});
 	};
 
    $( ".right-menu" ).promise().done(function() {

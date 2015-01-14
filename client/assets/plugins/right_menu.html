@@ -2,13 +2,16 @@
 
     kiwi.plugins.on('loaded', function(){
 
+		var translate = function(msgid){
+			return kiwi.i18n.translate(msgid).fetch();
+		};
+
 
 		$(".main").append($('<li class="right-menu-btn"><i class="fa fa-gear" title="Open Menu"></i></li>'));
 
 
-    	window.create_right_menu = function () {
-    		var items = window.right_menu_items || [];
-    		var itemsLength = items.length;
+    	window.create_right_menu = function (items) {
+			var itemsLength = items.length;
     		
     		$('.right-menu').mmenu().trigger("close.mm");
     		$(".right-menu").remove();
@@ -47,7 +50,51 @@
 			);
     	}
 
-    	generateToggle=  function(item) {
+		window.right_menu_items = [
+			{
+				"name": translate('plugin_right_menu_avatar'),
+				"icon": "users",
+				"command": "/avatar"
+			},
+			{
+				"name": translate('plugin_right_menu_list_channels'),
+				"icon": "comments",
+				"command": "/list"
+			},
+			{
+				"name": translate('plugin_right_menu_find_people'),
+				"icon": "search",
+				"command": "/findpeople"
+			},
+			{
+				"name": translate('plugin_right_menu_away'),
+				"icon": "clock-o",
+				"command": "/showaway"
+			},
+			{
+				"name": translate('plugin_right_menu_history'),
+				"icon": "history",
+				"submenu": [
+
+				]
+			},
+			{
+				"name": translate('plugin_right_menu_radio'),
+				"icon": "headphones",
+				"submenu": [
+
+				]
+			},
+			{
+				"name": translate('plugin_right_menu_settings'),
+				"icon": "cogs",
+				"command": "/settings"
+			}
+		];
+
+		window.right_menu_items_deferred.resolve();
+
+		generateToggle=  function(item) {
     		var toggle= '<input type="checkbox" data-name="'+item.name+'"';
     		if(item.options) {
     			
@@ -150,7 +197,9 @@
 		}
 
 
-		window.create_right_menu();
+		window.menu_items_ready_promise.then(function(items){
+			window.create_right_menu(window.right_menu_items);
+		});
 
     });
 </script>
