@@ -239,12 +239,20 @@
 		}
 
 		window.getAvatarFromNick = function(nick){
-			var userData = window.mediaUserData;
-			if(typeof userData[nick] != 'undefined' && typeof mediaUserData[nick].profile != 'undefined' && typeof mediaUserData[nick].profile.profile_photo != 'undefined' && typeof mediaUserData[nick].profile.profile_photo.icon != 'undefined'){
-				return mediaUserData[nick].profile.profile_photo.icon;
-			}else {
-				return getRandomSrcAvatarFromNick(nick);
-			}
+
+			return (function(userData, nick){
+				nick = nick.replace('@', '').replace('+', '');
+
+				userData = userData[nick];
+
+				if(typeof userData != 'undefined' && typeof userData.profile != 'undefined' && typeof userData.profile.profile_photo != 'undefined' && typeof userData.profile.profile_photo.icon != 'undefined'){
+					return {
+						src: userData.profile.profile_photo.icon
+					};
+				}else {
+					return getRandomSrcAvatarFromNick(nick);
+				}
+			})(window.mediaUserData, nick);
 		}
 
 		function getAvatarFromInteger(id) {
