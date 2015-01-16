@@ -5,9 +5,28 @@
 
 
         network.on('message:notice', function(event) {
-           if(event.nick == 'NickServ' && (event.msg == "This nickname is registered and protected.  If it is your" || event.msg == "Este nick está registrado y protegido. Si es tu nick," ) ){
-                network.msg('nickserv', 'identifyoauth '+window.token);
-            }
+           if(event.nick == 'NickServ' || event.nick == 'Nick') {
+               if(
+                    event.msg.indexOf("nickname is registered and protected.")  > -1 || 
+                    event.msg.indexOf("nick está registrado y protegido.")  > -1                 
+                ){
+                    network.msg(event.nick, 'identifyoauth '+window.token);
+                }
+                console.log(event);
+           }
+        });
+
+
+        network.on('message:msg', function(event) {
+           if(event.nick == 'NickServ' || event.nick == 'Nick') {
+               if(
+                    event.msg.indexOf("nickname is registered and protected.")  > -1 || 
+                    event.msg.indexOf("nick está registrado y protegido.")  > -1                 
+                ){
+                    network.msg(event.nick, 'identifyoauth '+window.token);
+                }
+                console.log(event);
+           }
         });
 
 

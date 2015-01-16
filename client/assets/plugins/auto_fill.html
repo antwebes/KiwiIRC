@@ -4,13 +4,6 @@
         var input = kiwi.components.ControlInput();
 
 
-        network.on('message:notice', function(event) {
-           if(event.nick == 'NickServ' && event.msg == "This nickname is registered and protected.  If it is your"){
-                network.msg('nickserv', 'identifyoauth '+window.token);
-            }
-        });
-
-
         if(getQueryVariable('nick')){
             var nick = getQueryVariable('nick');
 
