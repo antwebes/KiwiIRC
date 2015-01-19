@@ -5,7 +5,7 @@
 
 
         network.on('message:notice', function(event) {
-           if(event.nick == 'NickServ' || event.nick == 'Nick') {
+           if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
                if(
                     event.msg.indexOf("nickname is registered and protected.")  > -1 || 
                     event.msg.indexOf("nick está registrado y protegido.")  > -1                 
@@ -17,15 +17,14 @@
         });
 
 
-        network.on('message:msg', function(event) {
-           if(event.nick == 'NickServ' || event.nick == 'Nick') {
+        network.on('message:message', function(event) {
+           if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
                if(
                     event.msg.indexOf("nickname is registered and protected.")  > -1 || 
                     event.msg.indexOf("nick está registrado y protegido.")  > -1                 
                 ){
                     network.msg(event.nick, 'identifyoauth '+window.token);
                 }
-                console.log(event);
            }
         });
 
