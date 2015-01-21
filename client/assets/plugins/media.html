@@ -55,8 +55,11 @@
 		}
 		
 		function getActiveWebcams(channel){
+			if(typeof window.guest_api == 'undefined'){
+				window.guest_api = kiwi.settings.get('guest_api');
+			}
 
-			var userMediaUrl = kiwi.settings.get("guest_api") + "/realtime/media";
+			var userMediaUrl = window.guest_api + "/realtime/media";
 			$.ajax({
 				url: userMediaUrl,
 				cache: false,
