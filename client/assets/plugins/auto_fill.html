@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    kiwi.plugins.on('loaded', function(){
+    (function(){
         var network = kiwi.components.Network();
         var input = kiwi.components.ControlInput();
 
@@ -15,29 +15,29 @@
             channels = channels.map(function(channel){
                 return channel;
             });
-            
+
             $('.server_select').hide();
             $('#server_select_channel').val(channels.join(','));
         }
 
         if(getQueryVariable('private')){
             var private = getQueryVariable('private');
-            
+
             $('.server_select').hide();
 
             network.on('connect', function(){
                 input.run('/query '+private);
-                
+
                 //To show panel active chat room chatsfree
                 if (kiwi.connections.active_connection.panels.getByName('#chatsfree')){
                     kiwi.connections.active_connection.panels.getByName('#chatsfree').view.show()
                 }else{
                     kiwi.connections.active_connection.panels.find(function(panel){
-                        return panel.isChannel(); 
+                        return panel.isChannel();
                     }).view.show();
                 }
             });
         }
-        
-    });
+
+    })();
 </script>

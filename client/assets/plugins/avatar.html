@@ -147,16 +147,17 @@
             this.view = new View();
         }
     });
-   
-    kiwi.components.Applet.register('kiwi_avatar', Applet);
 
-    kiwi.events.on('command', function(event, data) {
-        if (data.command === 'avatar') {
-            var a = kiwi.components.Applet.loadOnce('kiwi_avatar');
-            a.view.show();
-        }
+    kiwi.events.on('loaded', function() {
+        kiwi.components.Applet.register('kiwi_avatar', Applet);
+
+        kiwi.events.on('command', function (event, data) {
+            if (data.command === 'avatar') {
+                var a = kiwi.components.Applet.loadOnce('kiwi_avatar');
+                a.view.show();
+            }
+        });
     });
-
 
 })();
 </script>

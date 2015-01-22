@@ -1,7 +1,5 @@
 <script type="text/javascript"> 
- 
-
-
+	(function(){
 		   var View = Backbone.View.extend({
 
 		        template: _.template([
@@ -42,16 +40,16 @@
 		        }
 		    });
 
-		    kiwi.components.Applet.register('find_people', Applet);
+		   kiwi.events.on('loaded', function() {
+			   kiwi.components.Applet.register('find_people', Applet);
 
 
-		    kiwi.events.on('command', function(event, data) {
-		        if (data.command == "findpeople") {
-		            var a = kiwi.components.Applet.loadOnce('find_people');       
-		            a.view.show();
-		        }
-		    });
-
-
-
+			   kiwi.events.on('command', function (event, data) {
+				   if (data.command == "findpeople") {
+					   var a = kiwi.components.Applet.loadOnce('find_people');
+					   a.view.show();
+				   }
+			   });
+		   });
+	})();
 </script>

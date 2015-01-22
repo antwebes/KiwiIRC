@@ -1,12 +1,7 @@
 <script type="text/javascript">
 
-    kiwi.plugins.on('loaded', function(){
-
-
-		$(".main").append($('<li class="right-menu-btn"><i class="fa fa-gear" title="Open Menu"></i></li>'));
-
-
-    	window.create_right_menu = function () {
+	(function(){
+		window.create_right_menu = function () {
     		var items = window.right_menu_items || [];
     		var itemsLength = items.length;
     		
@@ -149,9 +144,11 @@
 			return $itemMenu;
 		}
 
+		kiwi.events.on('loaded', function(){
+			$(".main").append($('<li class="right-menu-btn"><i class="fa fa-gear" title="Open Menu"></i></li>'));
+			window.create_right_menu();
+		});
 
-		window.create_right_menu();
-
-    });
+    })();
 </script>
 

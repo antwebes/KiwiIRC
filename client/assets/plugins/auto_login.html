@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    kiwi.plugins.on('loaded', function(){
+    (function(){
         var network = kiwi.components.Network();
         var input = kiwi.components.ControlInput();
 
@@ -7,8 +7,8 @@
         network.on('message:notice', function(event) {
            if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
                if(
-                    event.msg.indexOf("nickname is registered and protected.")  > -1 || 
-                    event.msg.indexOf("nick está registrado y protegido.")  > -1                 
+                    event.msg.indexOf("nickname is registered and protected.")  > -1 ||
+                    event.msg.indexOf("nick está registrado y protegido.")  > -1
                 ){
                     network.msg(event.nick, 'identifyoauth '+window.token);
                 }
@@ -20,52 +20,53 @@
         network.on('message:message', function(event) {
            if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
                if(
-                    event.msg.indexOf("nickname is registered and protected.")  > -1 || 
-                    event.msg.indexOf("nick está registrado y protegido.")  > -1                 
+                    event.msg.indexOf("nickname is registered and protected.")  > -1 ||
+                    event.msg.indexOf("nick está registrado y protegido.")  > -1
                 ){
                     network.msg(event.nick, 'identifyoauth '+window.token);
                 }
            }
         });
 
+        kiwi.events.on('loaded', function(){
+            if (getQueryVariable('nick')) {
+                var nick = getQueryVariable('nick');
 
-        if(getQueryVariable('nick')){
-            var nick = getQueryVariable('nick');
+                $('#server_select_nick').val(nick);
+            }
 
-            $('#server_select_nick').val(nick);
-        }
+            if (getQueryVariable('channel')) {
+                var channels = getQueryVariable('channel').split(',');
+                channels = channels.map(function (channel) {
+                    return channel;
+                });
 
-        if(getQueryVariable('channel')){
-            var channels = getQueryVariable('channel').split(',');
-            channels = channels.map(function(channel){
-                return channel;
-            });
-            
-            $('.server_select').hide();
-            $('#server_select_channel').val(channels.join(','));
-        }
+                $('.server_select').hide();
+                $('#server_select_channel').val(channels.join(','));
+            }
 
-        if(getQueryVariable('private')){
-            var private = getQueryVariable('private');
-            
-            $('.server_select').hide();
+            if (getQueryVariable('private')) {
+                var private = getQueryVariable('private');
 
-            network.on('connect', function(){
-                input.run('/query '+private);
-                
-                //To show panel active chat room chatsfree
-                if (kiwi.connections.active_connection.panels.getByName('#chatsfree')){
-                    kiwi.connections.active_connection.panels.getByName('#chatsfree').view.show()
-                }else{
-                    kiwi.connections.active_connection.panels.find(function(panel){
-                        return panel.isChannel(); 
-                    }).view.show();
-                }
-            });
-        }
+                $('.server_select').hide();
 
-        if(getQueryVariable('channel') || getQueryVariable('private')){
-            $('[data-js=submit]').click();
-        }
-    });
+                network.on('connect', function () {
+                    input.run('/query ' + private);
+
+                    //To show panel active chat room chatsfree
+                    if (kiwi.connections.active_connection.panels.getByName('#chatsfree')) {
+                        kiwi.connections.active_connection.panels.getByName('#chatsfree').view.show()
+                    } else {
+                        kiwi.connections.active_connection.panels.find(function (panel) {
+                            return panel.isChannel();
+                        }).view.show();
+                    }
+                });
+            }
+
+            if (getQueryVariable('channel') || getQueryVariable('private')) {
+                $('[data-js=submit]').click();
+            }
+        });
+    })();
 </script>

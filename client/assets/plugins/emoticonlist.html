@@ -71,7 +71,9 @@ var styleHtml = "<style>" +
             $list.hide();
         });
 
-        var control = kiwi.components.ControlInput();
-        control.addPluginIcon($icon);
+        kiwi.events.on('loaded', function() {
+            var control = kiwi.components.ControlInput();
+            control.addPluginIcon($icon);
+        });
     })();
 </script>
