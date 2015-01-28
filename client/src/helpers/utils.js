@@ -218,6 +218,8 @@ function hsl2rgb(h, s, l) {
  * Formats a kiwi message to IRC format
  */
 function formatToIrcMsg(message) {
+    message = message || "";
+
     // Format any colour codes (eg. $c4)
     message = message.replace(/%C(\d)/ig, function(match, colour_number) {
         return String.fromCharCode(3) + colour_number.toString();
