@@ -1,0 +1,465 @@
+Cambios en el kiwi
+------------------
+1:
+	_kiwi.view.Application:
+
+		this.$el.appendTo($('body'));
+
+		reemplazado por:
+
+		this.$el.appendTo($(this.model.get('container') || 'body'));
+
+	Nota: a ver porque es necesario y si se puede hacer pull request.
+
+
+2: Volvemos a la versión original de kiwi y el onbuferedUnload lo sobrescribimos en el plugin de tracker
+
+	src/translations/en-gb.po
+
+	This will close all conversations. Are you sure you want to close this window and exit of chat?
+
+     msgid "client_views_application_close_notice"
+	-msgstr "This will close all KiwiIRC conversations. Are you sure you want to close this window?"
+	+msgstr "This will close all conversations. Are you sure you want to close this window and exit of chat?"
+
+
+3:
+
+	Desactivar ctcp: (Pendiente)
+
+4:
+    En indext.tmpl.html
+
+    en el template tmpl_application
+
+    debadro de
+
+    <div class="memberlists"></div>
+
+    poner
+
+    <div class="chat-extensions"></div>
+
+    En el script antes de la lineas: window.loadExternalLib = function(element, url, callback){
+
+    poner
+
+    window.handledServerErrors = {
+                'Closing link: (.+) [No more connections allowed from your host via this connect class (.+)]' : 'server_to_many_connections'
+            };
+
+
+    En la función function afterPromiseAvailable poner la variable opts justo debajo de la variable scripts de la siguiente manera
+
+    ```
+    opts = {
+            container: $('body'),
+            base_path: base_path,
+            settings_path: base_path + '/assets/settings.json',
+            locales_base_path: base_path
+        }
+    ```
+
+    En la función settings_promise dentro antes de poner antes de resolve este código:
+
+    ```
+    window.kiwi_server = "//" + opts.server_settings.client.server;
+    window.gest_api = opts.server_settings.client.settings.guest_api;
+    window.right_menu_items= opts.server_settings.client.settings.right_menu_items;
+    ```
+
+    Añadir <link rel="stylesheet" href="<%base_path%>/assets/libs/mmenu/css/jquery.mmenu.all.css"> en el head
+
+    Sustituir:
+
+    ```
+    // Debugging will get a list of debugging scripts from settings.json (below)
+    if (!getQueryVariable('debug')) {
+        scripts.push(['assets/libs/lodash.min.js?t=<%build_time%>']);
+        scripts.push([
+            'assets/libs/backbone.min.js?t=<%build_time%>',
+            'assets/libs/jed.js?t=<%build_time%>',
+            ]);
+        scripts.push([
+            'assets/kiwi.min.js?t=<%build_time%>',
+            'assets/libs/engine.io.bundle.min.js?t=<%build_time%>'
+            ]);
+
+        script_promise_resolve();
+    }
+    ```
+
+    Por:
+
+    ```
+    // Debugging will get a list of debugging scripts from settings.json (below)
+    if (!getQueryVariable('debug')) {
+        scripts.push(['assets/libs/lodash.min.js?t=<%build_time%>']);
+        scripts.push([
+            'assets/libs/backbone.min.js?t=<%build_time%>',
+            'assets/libs/jed.js?t=<%build_time%>',
+            'assets/libs/mmenu/js/jquery.mmenu.min.all.js?t=<%build_time%>'
+            ]);
+        scripts.push([
+            'assets/kiwi.min.js?t=<%build_time%>',
+            'assets/libs/engine.io.bundle.min.js?t=<%build_time%>'
+            ]);
+
+        script_promise_resolve();
+    }
+    ```
+
+    Antes de la funcioncion normalizeConsole poner:
+
+    ```
+    window.handledServerErrors = {
+        'Closing link: (.+) [No more connections allowed from your host via this connect class (.+)]' : 'server_to_many_connections'
+    };
+
+    window.loadExternalLib = function(element, url, callback){
+        if(typeof element == 'undefined') {
+            var numResources = url.length;
+            var headTag = document.getElementsByTagName("head")[0];
+            var tag = null;
+            var loaded = 0;
+
+            for(var i = 0; i < numResources; i++) {
+                var resource = url[i];
+                if(resource.match(/.css$/)) {
+                    var jqlinkTag = document.createElement('link');
+                    jqlinkTag.rel = 'stylesheet';
+                    jqlinkTag.href = resource;
+                    headTag.appendChild(jqlinkTag);
+                    tag = jqlinkTag;
+                }
+                if(resource.match(/.js$/)) {
+                    var jqTag = document.createElement('script');
+                    jqTag.type = 'text/javascript';
+                    jqTag.src = resource;
+                    headTag.appendChild(jqTag);
+                    tag = jqTag;
+                    tag.onload = function(){
+                        callback();
+                    }
+                }
+            }
+        } else {
+            callback(element);
+        }
+    };
+    ```
+
+    En el template tmp_server_select poner:
+
+    ```
+    <script type="text/html" id="tmpl_server_select">
+            <style>
+                #kiwi .btn { display: inline-block; *display: inline; *zoom: 1; padding: 4px 10px 4px; margin-bottom: 0; font-size: 13px; line-height: 18px; color: #333333; text-align: center;text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); vertical-align: middle; background-color: #f5f5f5; background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6); background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6)); background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6); background-image: -o-linear-gradient(top, #ffffff, #e6e6e6); background-image: linear-gradient(top, #ffffff, #e6e6e6); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#ffffff, endColorstr=#e6e6e6, GradientType=0); border-color: #e6e6e6 #e6e6e6 #e6e6e6; border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25); border: 1px solid #e6e6e6; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); cursor: pointer; *margin-left: .3em; }
+                #kiwi .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: #e6e6e6; }
+                #kiwi .btn-large { padding: 9px 14px; font-size: 15px; line-height: normal; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
+                #kiwi .btn:hover { color: #333333; text-decoration: none; background-color: #e6e6e6; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear; }
+                #kiwi .btn-primary, .btn-primary:hover { text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); color: #ffffff; }
+                #kiwi .btn-primary.active { color: rgba(255, 255, 255, 0.75); }
+                #kiwi .btn-primary { background-color: #4a77d4; background-image: -moz-linear-gradient(top, #6eb6de, #4a77d4); background-image: -ms-linear-gradient(top, #6eb6de, #4a77d4); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#6eb6de), to(#4a77d4)); background-image: -webkit-linear-gradient(top, #6eb6de, #4a77d4); background-image: -o-linear-gradient(top, #6eb6de, #4a77d4); background-image: linear-gradient(top, #6eb6de, #4a77d4); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#6eb6de, endColorstr=#4a77d4, GradientType=0); border: 1px solid #3762bc; text-shadow: 1px 1px 1px rgba(0,0,0,0.4); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.5); }
+                #kiwi .btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] { filter: none; background-color: #4a77d4; }
+                #kiwi .btn-block { width: 100%; display:block; }
+                #kiwi * { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; -o-box-sizing:border-box; box-sizing:border-box; }
+                #kiwi html { width: 100%; height:100%; overflow:hidden; }
+                #kiwi body {
+                    width: 100%;
+                    height:100%;
+                    background: #092756;
+                    background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%),-moz-linear-gradient(top, rgba(57,173,219,.25) 0%, rgba(42,60,87,.4) 100%), -moz-linear-gradient(-45deg, #670d10 0%, #092756 100%);
+                    background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -webkit-linear-gradient(top, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -webkit-linear-gradient(-45deg, #670d10 0%,#092756 100%);
+                    background: -o-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -o-linear-gradient(top, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -o-linear-gradient(-45deg, #670d10 0%,#092756 100%);
+                    background: -ms-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -ms-linear-gradient(top, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -ms-linear-gradient(-45deg, #670d10 0%,#092756 100%);
+                    background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), linear-gradient(to bottom, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), linear-gradient(135deg, #670d10 0%,#092756 100%);
+                    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3E1D6D', endColorstr='#092756',GradientType=1 );
+                }
+                @media (min-width: 768px){
+                    #kiwi .login {
+                        position: absolute;
+                        top: 20%;
+                        left: 33%;
+                        width:30%;
+                    }
+                }
+                @media (max-width: 767px) {
+                    #kiwi .login {
+                        position: absolute;
+                        top: 10%;
+                        left: 15%;
+                        width:70%;
+                    }
+                }
+                @media (max-width: 480px) {
+                    #kiwi .login {
+                        position: absolute;
+                        top: 4%;
+                        left: 5%;
+                        width: 90%;
+                    }
+                }
+                #kiwi .login h1 { color: #bfbfbf; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing:1px; text-align:center; font-weight: bold;}
+                #kiwi input {
+                    width: 100%;
+                    margin-bottom: 10px;
+                    border: none;
+                    outline: none;
+                    padding: 10px;
+                    border: 1px solid rgba(0,0,0,0.3);
+                    border-radius: 4px;
+                    box-shadow: inset 0 -5px 45px rgba(100,100,100,0.2), 0 1px 1px rgba(255,255,255,0.2);
+                    -webkit-transition: box-shadow .5s ease;
+                    -moz-transition: box-shadow .5s ease;
+                    -o-transition: box-shadow .5s ease;
+                    -ms-transition: box-shadow .5s ease;
+                    transition: box-shadow .5s ease;
+                }
+                #kiwi input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); }
+                #kiwi .login img {
+                    width:60px;
+                    float:right;
+                    margin-right:20%;
+                }
+            </style>
+            <div style="display: block;" class="panel applet">
+                <div class="login">
+                    <img src="https://www.chatsfree.net/images/pachatea.png" style="align:right"/>
+                    <h1>Join chat</h1>
+                    <div class="server_details">
+                        <p><div class="status"><%= think_nick %></div></p>
+                    </div>
+                    <form>
+                        <div class="basic">
+                            <input type="text" class="nick" id="server_select_nick" placeholder="<%= nickname %>" >
+                            <input type="text" class="channel" id="server_select_channel" placeholder="<%= channel %>" >
+                            <button type="submit" data-js="submit" class="btn btn-primary btn-block btn-large"><%= start %></button>
+                            <a href="" onclick="return false;" class="show_more"><%= server_network %> <i class="fa fa-caret-down"></i></a>
+                        </div>
+                        <div class="more" style="display:none;">
+                            <table>
+                                <tr class="server">
+                                    <td><label for="server_select_server"><%= server %></label></td>
+                                    <td><input type="text" class="server" id="server_select_server"></td>
+                                <tr>
+                                <tr class="port">
+                                    <td><label for="server_select_port"><%= port %></label></td>
+                                    <td><input type="text" class="port" id="server_select_port"></td>
+                                </tr>
+                                <tr class="ssl">
+                                    <td><label for="server_select_ssl">SSL</label></td>
+                                    <td><input type="checkbox" class="ssl" id="server_select_ssl"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </script>
+        ```
+5:
+    En client/src/views/serverselect.js
+
+    En el switch del metodo showError en el caso default poner:
+
+    opts = {
+        container: $('body'),
+        base_path: base_path,
+        settings_path: base_path + '/assets/settings.json',
+        locales_base_path: base_path
+     }
+
+
+Cambios en el kiwi, que sería recomendable cambiar a plugin
+-----------------------------------------------------------
+
+1:
+	Archivo: rightbar.js
+
+	Nueva función de show:
+
+	    show: function(channelMode) {
+	        if(typeof(channelMode) == 'undefined'){
+	            channelMode = true;
+	        }
+
+	        this.hidden = false;
+
+	        if(channelMode){
+	            $('.right_bar .channel_info, .right_bar .channel_part').show();
+	        }else{
+	            $('.right_bar .channel_info, .right_bar .channel_part').hide();
+	        }
+
+	        if (!this.keep_hidden)
+	            this.$el.removeClass('disabled');
+
+	        this.updateIcon();
+	    },
+
+	Archivo: client/src/models/application.js
+
+		Se añade:
+		_kiwi.global.components.Applet = _kiwi.model.Applet;
+
+2:
+
+	Archivo: client/src/views/memberlist.js
+	Commit: https://github.com/antwebes/KiwiIRC/commit/3ea1c8bcdf81cab28af7f9b27a384e7c26e5af17
+
+	Cambiar función show:
+
+	    show: function () {
+	        $('#kiwi .memberlists').children().removeClass('active');
+	        $(this.el).addClass('active');
+
+
+	        $('#kiwi .memberlists').empty();
+	        this.$el.appendTo('#kiwi .memberlists');
+
+	        //we need to assign the handlers
+	        this.model.forEach(function (member) {
+	            member.view.$el.data('member', member);
+	        });
+
+	        this.delegateEvents();
+	    }
+
+Cambios en la parte server
+--------------------------
+
+En server/cliente.js cambiar los siguientes metos.
+
+- Client.prototype.sendIrcCommand por:
+
+```
+Client.prototype.sendIrcCommand = function (command, data, callback) {
+    var c = {command: command, data: data};
+    connection = this.state.irc_connections[data.connection_id];
+    global.modules.emit('rpc irc.'+command, {
+            arguments: [data],
+            client: this,
+            connection: connection
+        });
+    this.rpc('irc', c, callback);
+};
+```
+
+- Client.prototype.attachKiwiCommands por:
+
+```
+Client.prototype.attachKiwiCommands = function() {
+    var that = this;
+
+    function doAttachKiwiCommand(commandName, handler){
+        var handlerWrapper = function(){
+            var args = Array.prototype.slice.call(arguments)
+            global.modules.emit('rpc '+commandName, args[1]);
+            handler.apply(null, args);
+        };
+
+        that.rpc.on(commandName, handlerWrapper);
+    }
+
+    doAttachKiwiCommand('kiwi.connect_irc', function(callback, command) {
+        if (command.hostname && command.port && command.nick) {
+            var options = {};
+
+            // Get any optional parameters that may have been passed
+            if (command.encoding)
+                options.encoding = command.encoding;
+
+            options.password = global.config.restrict_server_password || command.password;
+
+            that.state.connect(
+                (global.config.restrict_server || command.hostname),
+                (global.config.restrict_server_port || command.port),
+                (typeof global.config.restrict_server_ssl !== 'undefined' ?
+                    global.config.restrict_server_ssl :
+                    command.ssl),
+                command.nick,
+                {hostname: that.websocket.meta.revdns, address: that.websocket.meta.real_address},
+                options,
+                callback);
+        } else {
+            return callback('Hostname, port and nickname must be specified');
+        }
+    });
+
+
+    doAttachKiwiCommand('kiwi.client_info', function(callback, args) {
+        // keep hold of selected parts of the client_info
+        that.client_info = {
+            build_version: args.build_version.toString() || undefined
+        };
+    });
+
+
+    // Just to let us know the client is still there
+    doAttachKiwiCommand('kiwi.heartbeat', function(callback, args) {
+        that.heartbeat();
+    });
+};
+```
+En server/irc/connection.js cambiar el siguiente metodo:
+
+- IrcConnection.prototype.end:
+
+```
+IrcConnection.prototype.end = function (data, afterDisconect) {
+    var that = this;
+
+    if (!this.socket) {
+        return;
+    }
+
+    this.requested_disconnect = true;
+
+    if (data) {
+        // Once the last bit of data has been sent, then re-run this function to close the socket
+        this.write(data, true, function() {
+            if(afterDisconect){
+                afterDisconect();
+            }
+
+            that.end();
+        });
+
+        return;
+    }
+
+    this.socket.end();
+};
+```
+
+En server/irc/state.js cambiar el constructor por:
+
+```
+var State = function (client, save_state) {
+    var that = this;
+
+    events.EventEmitter.call(this);
+    this.client = client;
+    this.save_state = save_state || false;
+
+    this.irc_connections = [];
+    this.next_connection = 0;
+
+    this.client.on('dispose', function () {
+        if (!that.save_state) {
+            _.each(that.irc_connections, function (irc_connection, i, cons) {
+                if (irc_connection) {
+                    irc_connection.end('QUIT :' + (irc_connection.quit_message || global.config.quit_message || ''), function(){
+                        console.close('finished');
+                        global.servers.removeConnection(irc_connection);
+                        cons[i] = null;
+                    });
+                }
+            });
+
+            that.dispose();
+        }
+    });
+};
+```
