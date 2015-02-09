@@ -30,15 +30,68 @@ Cambios en el kiwi
 4:
     En indext.tmpl.html
 
-    en el template tmpl_application
+    Importar los siguientes estilos:
 
-    debadro de
+    ```
+    <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/custom.css?t=<%build_time%>" />
+    <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/style.css?t=<%build_time%>" />
+    <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/font-awesome.min.css" />
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="<%base_path%>/assets/libs/mmenu/css/jquery.mmenu.all.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    ```
 
-    <div class="memberlists"></div>
+    en el template tmpl_application poner
 
-    poner
+    ```
+    <script type="text/html" id="tmpl_application">
+        <div id="kiwi" class="theme_relaxed">
+            <div class="toolbar">
+                <div class="app_tools">
+                    <ul class="main">
+                    </ul>
+                </div>
 
-    <div class="chat-extensions"></div>
+                <div class="tabs"></div>
+
+                <div class="topic">
+                    <div contenteditable="true"></div>
+                </div>
+
+                <div class="status_message"></div>
+            </div>
+
+            <div class="memberlists_resize_handle"></div>
+
+            <div class="panels">
+                <div class="panel_container container1"></div>
+            </div>
+
+            <div class="right_bar disabled">
+                <div class="right-bar-toggle"><i class=""></i></div>
+                <div class="right-bar-content">
+                    <div class="channel_tools">
+                        <i class="fa fa-info-circle channel_info" title="Channel Info"></i>
+                        <i class="fa fa-sign-out channel_part" title="Leave Channel"></i>
+                        <i class="fa fa-angle-double-right right-bar-toggle-inner" title="Hide"></i>
+                    </div>
+                    <div class="memberlists"></div>
+                    <div class="chat-extensions"></div>
+                </div>
+            </div>
+
+            <div class="controlbox">
+                <div class="input">
+                    <span class="nick"> </span>
+                    <div class="input_wrap"><textarea class="inp"></textarea></div>
+                    <div class="input_tools"></div>
+                </div>
+            </div>
+        </div>
+    </script>
+    ```
 
     En el script antes de la lineas: window.loadExternalLib = function(element, url, callback){
 
@@ -269,6 +322,134 @@ Cambios en el kiwi
         settings_path: base_path + '/assets/settings.json',
         locales_base_path: base_path
      }
+
+6:
+    client/src/views/networktabs.js:
+
+    En el método networkAdded sustituir
+
+    ```
+    $('<li class="connection"></li>')
+    ```
+
+    por:
+
+    ```
+    $('<li class="connection mm-menu mm-horizontal mm-offcanvas mm-current mm-opened"></li>')
+    ```
+
+    Añadir el siguiente metodo:
+
+    ```
+    updateCounters: function() {
+        var countPrivates = 0;
+        var countRooms = 0;
+        var count = true;
+        this.model.forEach(function (panel) {
+            var name = panel.get('name');
+            if(name.indexOf('applet_') == -1) {
+                if(name[0] == "#") countRooms++;
+                else {
+                    if(name != "Server")
+                        countPrivates++;
+                }
+            } else {
+                //en el caso de que exista algún applet es que estamos en la tab de applets, no contamos
+                count = false;;
+            }
+        });
+        if(count) {
+            $("#countRooms").html(countRooms);
+            $("#countPrivates").html(countPrivates);
+        }
+    },
+    ```
+
+    En el método panelAdded sustituir:
+
+    ```
+    panel.tab = $('<li><span>' + (panel.get('title') || panel.get('name')) + '</span><div class="activity"></div></li>');
+    ```
+
+    por
+
+    ```
+    panel.tab = $('<li><span>' + (panel.get('title') || panel.get('name')) + '<b class="activity badge"></b></span></li>');
+    ```
+
+    y dentro del if:
+
+    ```
+    panel.tab.addClass('fa-nonexistant');
+    ```
+
+    por
+
+    ```
+    panel.tab.addClass('fa-bolt');
+    ```
+
+    En el método panelRemoved poner this.updateCounters(); antes de_kiwi.app.view.doLayout();
+
+    En el método panelActive sustituir
+
+    ```
+    _kiwi.app.view.$el.find('.panellist .part').remove();
+    _kiwi.app.view.$el.find('.panellist .active').removeClass('active');
+    ```
+
+    por
+
+    ```
+    $('.panellist .part').remove();
+    $('.panellist .active').removeClass('active mm-selected');
+    ```
+
+    Sustituir
+
+    ```
+    panel.tab.addClass('active');
+    ```
+
+    por
+
+    ```
+    panel.tab.addClass('active mm-selected');
+
+    $("#activePanelName").html(panel.get('title') || panel.get('name'));
+    ```
+
+    Y sustituir
+
+    ```
+    panel.tab.append('<span class="part fa fa-nonexistant"></span>');
+    ```
+
+    por
+
+    ```
+    $("span",panel.tab).append('<i class="part fa fa-times"></i>');
+    ```
+
+    En el método partClick sustituir
+
+    ```
+    var tab = $(e.currentTarget).parent();
+    ```
+
+    por
+
+    ```
+    var tab = $(e.currentTarget).parent().parent();
+    ```
+
+7:
+
+    client/src/views/tabs.js:
+
+    Cambiar className: "panellist" por className: 'panellist mm-list mm-panel mm-opened mm-current'
+
+    En event: { ... } cambiar 'click li .part': 'partClick' por 'click .part': 'partClick'
 
 
 Cambios en el kiwi, que sería recomendable cambiar a plugin
