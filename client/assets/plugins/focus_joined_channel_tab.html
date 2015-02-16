@@ -2,13 +2,18 @@
     (function(){
         var network = kiwi.components.Network();
 
-        network.on("channel:join", function(event){
-            var channel_names = [event.channel];
-            panels = kiwi.connections.active_connection.createAndJoinChannels(channel_names);
+        kiwi.events.on('panel:created', function(event, data){
+            var panel = data.panel;
+            var channel_name = panel.get('name');
 
-            // Show the last channel if we have one
-            if (panels.length)
-                panels[panels.length - 1].view.show();
+            if(panel.isChannel()){
+                panel.on("change", function focusTab(){
+                    if(panel.hasChanged('panel_list')){
+                        panel.view.show();
+                        panel.off("change", focusTab);
+                    }
+                })
+            }
         });
     })();
 </script>
