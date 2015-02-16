@@ -1,0 +1,14 @@
+<script>
+    (function(){
+        var network = kiwi.components.Network();
+
+        network.on("channel:join", function(event){
+            var channel_names = [event.channel];
+            panels = kiwi.connections.active_connection.createAndJoinChannels(channel_names);
+
+            // Show the last channel if we have one
+            if (panels.length)
+                panels[panels.length - 1].view.show();
+        });
+    })();
+</script>
