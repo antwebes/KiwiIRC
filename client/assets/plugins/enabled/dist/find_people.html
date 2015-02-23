@@ -1,0 +1,56 @@
+ 
+ 
+
+
+		   var View = Backbone.View.extend({
+
+		        template: _.template([
+		            '<style> #kiwi [data-role="applet-away"] .col-md-offset-3 {margin-left: 25%} #kiwi [data-role="applet-away"] { margin-top: 5px;} </style>',
+		            '<span data-role="applet-away">',
+		            '<div class="control-group col-md-6 col-md-offset-3">',
+		            '<h6><%= title %></h6>',
+		            '<div class="radio"> <label> <input type="radio" name="away_list_type" value="available"> <img src="http://webchat.chateagratis.net/flashv1/data/estados/disponible.png" /> <%= available %> </label> </div>',
+		            '<div class="radio" data-radio="custom"> <label> <input type="radio" name="away_list_type" value="custom"> <img src="http://webchat.chateagratis.net/flashv1/data/estados/ausente.png" /> <%= custom %> </label> </div>',
+		            '<div class="radio"> <label> <input type="radio" name="away_list_type" value="out"> <img src="http://webchat.chateagratis.net/flashv1/data/estados/nodisponible.png" /> <%= out %> </label> </div>',
+		            '<div class="radio"> <label> <input type="radio" name="away_list_type" value="eat"> <img src="http://webchat.chateagratis.net/flashv1/data/estados/saliacomer.png" /> <%= eat %> </label> </div>',
+		            '<button type="submit" class="btn btn-primary" data-away="save">Save</button>',
+		            '</div>'
+		        ].join('')),
+
+		        initialize: function (options) {
+		            var text = {
+		                title: "Selecciona tu estado",
+		                available: "disponible",
+		                custom: "personalizado",
+		                out: "estoy ausente",
+		                eat: "salí a comer",
+		                no_privates: "no acepto privados"
+		            };
+
+		            // this.$el = $(_.template($('#tmpl_applet_away').html().trim(), text));
+		            this.$el = $(this.template(text));
+		        } 	
+
+		    });
+
+
+		    var Applet = Backbone.Model.extend({
+		        initialize: function () {
+		            //title of window of kiwii
+		            this.set('title', 'FindPeople');
+		            this.view = new View();
+		        }
+		    });
+
+		    kiwi.components.Applet.register('find_people', Applet);
+
+
+		    kiwi.events.on('command', function(event, data) {
+		        if (data.command == "findpeople") {
+		            var a = kiwi.components.Applet.loadOnce('find_people');       
+		            a.view.show();
+		        }
+		    });
+
+
+

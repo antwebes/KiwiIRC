@@ -1,0 +1,25 @@
+
+    (function($){
+        kiwi.plugins.on('loaded', function(){
+            var network = kiwi.components.Network();
+            var input = kiwi.components.ControlInput();
+
+            $('body').bind("DOMSubtreeModified", function(obj){
+                if(obj.target.className == 'messages'){
+                    $(obj.target).find('.nick').each(function(){
+                        var $elem = $(this);
+
+
+                        if($elem.find('.avatar').length == 0){
+                            src = window.getAvatarFromNick($elem.html());
+                            if (src){
+                                $elem.prepend('<img width="20" height="20" class="usericon avatar" src="' + src.src + '"> ');
+                            }else{
+                                $elem.prepend('<i class="meicon fa fa-user avatar"></i> ');
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    })(jQuery);

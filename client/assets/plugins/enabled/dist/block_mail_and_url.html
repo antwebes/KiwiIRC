@@ -1,0 +1,27 @@
+
+    (function() {
+        kiwi.blockUrlsAndEmails = function(){
+            var $inp = $('.controlbox .inp');
+            var currentVal = '';
+            
+            $inp.keydown(function(e){
+                var urlRegex = /[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi;
+                var mailRegex = /(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/gi;
+
+                if(e.keyCode == 13){
+                    currentVal = $.trim($inp.val());
+                    var containsEmailOrUrl = urlRegex.test(currentVal) == true || mailRegex.test(currentVal);
+                    var isntCommanOrMsgCommand = currentVal[0] != '/' || currentVal.substring(0, 5).toLowerCase() == '/msg ';
+
+                    if(isntCommanOrMsgCommand && containsEmailOrUrl){
+                        alert(kiwi.i18n.translate("email_or_url_forbidden").fetch());
+                        $inp.val(currentVal);
+                        return false;
+                    }
+                }else{
+                    currentVal = $inp.val();
+                }
+            })
+        };
+    })();
+

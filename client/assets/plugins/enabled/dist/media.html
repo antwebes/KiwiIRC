@@ -1,0 +1,310 @@
+ 
+ 
+
+     (function() {
+            var $icon = $('<div id="ext-photo"><img id="current_avatar" width="48px" height="48px" src="/kiwi/assets/img/photo.png" /><span><br> <b>Avatar</b></span></div>');
+            $(".chat-extensions").append($icon);
+
+            $icon.click(function () {
+            	var settings = kiwi.components.Applet.loadOnce('kiwi_avatar');
+        		settings.view.show();
+            });
+    })();
+
+    kiwi.plugins.on('loaded', function(){
+    	function supports_html5_storage() {
+	      try {
+	        return 'localStorage' in window && window['localStorage'] !== null;
+	      } catch (e) {
+	        return false;
+	      }
+	    }
+
+    	function onJqueryUILoaded(callback){
+		    if(typeof jQuery.ui == 'undefined') {
+		    	var headTag = document.getElementsByTagName("head")[0];
+		    	var jqlinkTag = document.createElement('link');
+                jqlinkTag.rel = 'stylesheet';
+                jqlinkTag.href = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css';
+
+		    	if ( typeof define === "function" && define.amd ){
+		    		headTag.appendChild(jqlinkTag);
+
+		    		require(['jquery', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js'], function(jq){
+
+		    			callback(jq);
+		    		});
+		    		return;
+		    	}
+
+                var jqTag = document.createElement('script');
+                jqTag.type = 'text/javascript';
+                jqTag.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js';
+                jqTag.onload = function(){
+             	    callback($);
+                }
+            
+                jqlinkTag.onload = function(){
+                    headTag.appendChild(jqTag);
+                }
+
+                headTag.appendChild(jqlinkTag);
+		     } else {
+		        callback($);
+		     }
+		}
+		
+		function getActiveWebcams(channel){
+
+			var userMediaUrl = kiwi.settings.get("guest_api") + "/realtime/media";
+			$.ajax({
+				url: userMediaUrl,
+				cache: false,
+				dataType: 'json',
+				headers: {
+			        "X-Requested-With": "XMLHttpRequest"
+			    }
+			})
+			.done(function( data ){
+				updateMedia(data);
+			});
+		}
+
+		var network = kiwi.components.Network();
+		network.on('connect', function(){
+            
+			var avatar = null;
+
+			if(supports_html5_storage()){
+				avatar = localStorage.getItem('chatsfree.avatar');
+				if(avatar){
+					avatar = { src: avatar };
+				}
+			}
+
+			if(avatar == null){
+				avatar = getRandomSrcAvatarFromNick(network.get('nick'));	
+			}
+			
+			$("#current_avatar").attr("src",avatar.src);
+        });
+
+		window.mediaUserData = {};
+
+		function calculateAge(birthday){
+			var currentYear = new Date().getFullYear();
+        	var yearUser = new Date(birthday).getFullYear().toString().substring(0,4);
+        	var yearsOld = currentYear - yearUser;
+	        
+	        if(yearsOld <=0){
+	            yearsOld = '>18';
+	        }else if(isNaN(yearsOld)){
+	            yearsOld = '';
+	        }
+
+	        return yearsOld;
+		}
+
+		onJqueryUILoaded(function($){
+			$(document).tooltip({
+				items: ".memberlists a",
+				position: { my: "left+15 center", at: "right center" },
+				tooltipClass: 'user-tooltip',
+				content: function(){
+					var nick = $.trim($( this ).text());
+					var country = '';
+					var age = '';
+					var gender = '';
+					var photo = '';
+
+					if (nick.indexOf("@") != -1 || nick.indexOf("+") != -1) nick = nick.slice(1);
+
+					if(typeof mediaUserData[nick] == 'undefined') {
+						return "";
+					}
+
+					if(typeof mediaUserData[nick].profile != 'undefined' && typeof mediaUserData[nick].profile.profile_photo != 'undefined' && typeof mediaUserData[nick].profile.profile_photo.medium != 'undefined'){
+						photo = '<img class="photoUserTooltip" src="' + mediaUserData[nick].profile.profile_photo.medium + '"> <br>';
+					}					
+
+					if(typeof(mediaUserData[nick]) !== 'undefined' && typeof(mediaUserData[nick].profile) !== 'undefined' && typeof(mediaUserData[nick].profile.gender) !== 'undefined'){
+						gender = '<i class="fa fa-' + mediaUserData[nick].profile.gender + '"></i> ';
+					}
+
+					if(typeof(mediaUserData[nick]) !== 'undefined' && typeof(mediaUserData[nick].country) !== 'undefined'){
+						country = '&nbsp;<span class="tooltip-country"><i class="fa fa-location-arrow"></i> ' + mediaUserData[nick].country + '</span>';
+					}
+
+					if(typeof(mediaUserData[nick]) !== 'undefined' && typeof(mediaUserData[nick].profile) !== 'undefined' && typeof(mediaUserData[nick].profile.birthday)){
+						age = '&nbsp;<span class="tooltip-age">' + calculateAge(mediaUserData[nick].profile.birthday) + '</span>';
+					}
+
+					return photo + gender + age + country;
+				}
+			});
+		});
+
+		function updateLeftMenu(userData, nick) {
+			$.each(kiwi.panels(), function (key, panel) {
+				var nick = panel.get("name");
+				if(typeof userData[nick] == 'undefined') {
+					return "";
+				}
+
+				$(".usericon", panel.tab).remove();
+				$("span", panel.tab).prepend(getPhoto(userData, nick));
+
+			});
+		}
+
+		function getPhoto (userData, nick) {
+				var content = '';
+
+				if(typeof userData[nick].profile != 'undefined' && typeof userData[nick].profile.profile_photo != 'undefined' && typeof userData[nick].profile.profile_photo.icon != 'undefined'){
+					content = '<img width="20" height="20" class="usericon" src="' + userData[nick].profile.profile_photo.icon + '"> ';
+				} else {
+					if(typeof(userData[nick]) !== 'undefined' && typeof(userData[nick].profile) !== 'undefined' && typeof(userData[nick].profile.gender) !== 'undefined'){
+						content = '<i class="meicon fa fa-' + userData[nick].profile.gender + '"></i> ';
+					} else {
+						//nick es mi nick actual
+						src = getRandomSrcAvatarFromNick(nick);
+						if (src){
+							content = '<img width="20" height="20" class="usericon" src="' + src.src + '"> ';
+						}else{
+							content = '<i class="meicon fa fa-user"></i> ';
+						}
+					}
+				}
+				return content;
+		}
+
+		function updateMembersList(){
+			$( ".memberlists a .webcam_nick_subscriber, .memberlists a .usericon, .memberlists a .gendericon, .meicon").remove();
+
+			var members = kiwi.panels().active.get('members');
+
+			if(typeof(members) == 'undefined' || typeof(members.models) == 'undefined'){
+				return;
+			}
+
+
+
+			$.each(members.models, function(key, value){
+
+				var nick = value.get('nick');
+
+				$el = value.view.$el.find('a');
+				
+				if(typeof mediaUserData[nick] == 'undefined') {
+						src = getRandomSrcAvatarFromNick(nick);
+						if (src){
+							$el.prepend('<img width="20" height="20" class="usericon" src="' + src.src + '"> ');
+						}
+					return "";
+				}
+
+				updateLeftMenu(mediaUserData, nick);
+
+				if(mediaUserData[nick].webcam) {
+					$el.append('<i class="fa fa-video-camera webcam_nick_subscriber" data-nick="'+nick+'"></i> ');
+				}
+
+				if(typeof mediaUserData[nick].profile != 'undefined' && typeof mediaUserData[nick].profile.profile_photo != 'undefined' && typeof mediaUserData[nick].profile.profile_photo.icon != 'undefined'){
+					$el.prepend('<img width="20" height="20" class="usericon" src="' + mediaUserData[nick].profile.profile_photo.icon + '"> ');
+				} else {
+					if(typeof(mediaUserData[nick]) !== 'undefined' && typeof(mediaUserData[nick].profile) !== 'undefined' && typeof(mediaUserData[nick].profile.gender) !== 'undefined'){
+						$el.prepend('<i class="meicon fa fa-' + mediaUserData[nick].profile.gender + '"></i> ');
+					} else {
+						//nick es mi nick actual
+						src = getRandomSrcAvatarFromNick(nick);
+						if (src){
+							$el.prepend('<img width="20" height="20" class="usericon" src="' + src.src + '"> ');
+						}else{
+							$( this ).prepend('<i class="meicon fa fa-user"></i> ');
+						}
+					}
+				}
+			});
+		}
+
+		function getRandomSrcAvatarFromNick(nick) {
+			//aquí obtengo todos los nicks de mi sala actual
+
+			ascii = getAsciiFromString(nick);
+			
+			avatar = getAvatarFromInteger(ascii);
+
+			return avatar;
+
+		}
+
+		window.getAvatarFromNick = function(nick){
+			var userData = window.mediaUserData;
+			if(typeof userData[nick] != 'undefined' && typeof mediaUserData[nick].profile != 'undefined' && typeof mediaUserData[nick].profile.profile_photo != 'undefined' && typeof mediaUserData[nick].profile.profile_photo.icon != 'undefined'){
+				return mediaUserData[nick].profile.profile_photo.icon;
+			}else {
+				return getRandomSrcAvatarFromNick(nick);
+			}
+		}
+
+		function getAvatarFromInteger(id) {
+			avatars = [ 
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04c2513ec_icon.png'}, 
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04c47ca73_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04c634e5d_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04c83385f_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04c999398_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04cbc9d1d_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04ce8ddad_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d0236f7_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d21200f_icon.png'},	
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d3c0388_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d592ff7_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d703e26_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04d8ac71e_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04da6f51b_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04dd96b14_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04df679af_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04e14882b_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04e2a934a_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04e472727_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04e5d9ec4_icon.png'},
+				{'src': 'https://s3.amazonaws.com/images-chatsfree/2014/11/18/546b04e776fa3_icon.png'}
+			];
+
+			modulo = id % avatars.length;
+
+			return avatars[modulo];
+		}
+
+		function getAsciiFromString(nick) {
+			suma = 0;
+			for (var i=0; i<nick.length; i++){
+				var c = nick[i];
+				suma = suma + c.charCodeAt(0);
+			}
+			return suma;
+		}
+
+		function updateMedia(data) {
+			mediaUserData = data.users || [] ;
+
+			updateMembersList();
+		}
+
+		kiwi.panels.on('active', function(){
+			setTimeout(updateMembersList, 100);
+		});
+
+		function getMedia(){
+			var activePannel = kiwi.panels().active;
+
+			if(activePannel.isChannel()){
+				getActiveWebcams(activePannel.get('name'));
+			}
+		}
+
+		setInterval(getMedia, 30000);
+		setTimeout(getMedia, 5000);
+
+    });

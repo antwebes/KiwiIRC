@@ -1,0 +1,161 @@
+
+(function () {
+    var Mediator = {};
+    _.extend(Mediator, Backbone.Events);
+
+
+    function supports_html5_storage() {
+      try {
+        return 'localStorage' in window && window['localStorage'] !== null;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    var Avatar = Backbone.Model.extend({
+        urlRoot : function() {
+          return kiwi.settings.get('guest_api') + '/api/changeAvatar';
+
+        },
+        selectAvatar: function () {
+           this.set({
+             nick: kiwi.components.Network().get("nick")
+           });           
+           this.save(); 
+           Mediator.trigger('avatar:select', this.attributes);
+        }
+    });
+
+    var AvatarsCollection = Backbone.Collection.extend({
+        model: Avatar
+    });
+
+
+    var AvatarView = Backbone.View.extend({
+      tagName: 'li',
+      events: {
+        'click' : 'addAvatar'
+      },
+
+
+      template: _.template( $('#tmpl_avatar_item').html()),
+
+
+      render: function(){
+        this.$el.html( this.template(this.model.toJSON()));
+        return this;  
+      },
+
+      addAvatar: function() {
+        this.model.selectAvatar();
+      }
+    });
+
+
+    var AvatarsView = Backbone.View.extend({
+      tagName: 'ul',
+      className: 'list-inline',
+
+      render: function(){
+
+        this.collection.each(function(avatar){
+            var avatarView = new AvatarView({ model: avatar });
+            this.$el.append(avatarView.render().el); 
+        }, this);
+        
+        return this; 
+      }
+    });
+
+
+
+    var View = Backbone.View.extend({
+        avatarsCollection: {},
+
+        events: {
+          "click .avatar_category": 'changeAvatarCategory'
+        },
+
+        changeAvatarCategory: function (ev) {
+          this.loadAvatar($(ev.currentTarget).data("filters"));
+        },
+
+        loadAvatar: function (filters) {
+            filters = filters || "";
+            if(filters === "") filters += "discriminator=avatar,category=animals";
+            else filters += ",discriminator=avatar";
+
+            $("#avatar_container", this.$el).empty();
+
+            $.ajax({
+              url: kiwi.settings.get('guest_api') + '/photos?filters=' + filters,
+              dataType: 'json',
+              contentType: "application/json"
+            })
+            .done(function( data ){
+
+              var avatars = data.resources.map(function(avatar) {
+                  delete avatar.participant;
+                  return avatar;
+              });
+
+              avatarsCollection = new AvatarsCollection(avatars);
+
+
+              var avatarsView = new AvatarsView({ collection: avatarsCollection });
+
+              $("#avatar_container", this.$el).append(avatarsView.render().el);
+              $("#img_avatar", this.$el).attr("src", $("#current_avatar").attr("src"));
+            });
+        },
+
+        selectAvatar: function(avatar){
+            $("#img_avatar", this.$el).attr("src", avatar.path_medium);
+            $('#current_avatar').attr("src", avatar.path_medium);
+
+            if(supports_html5_storage()){
+              localStorage.setItem('chatsfree.avatar', avatar.path_medium);
+            }
+        },
+
+        render: function() {
+            Mediator.on("avatar:select", this.selectAvatar);
+
+
+            var self = this;
+
+            var data = {
+                avatar_current: "Current Avatar",
+                avatar_category: "Categories",
+            };
+
+
+            this.$el = $(_.template($('#tmpl_avatar_config').html().trim(), data));
+            this.loadAvatar();
+
+        },
+
+        initialize: function (options) {
+            this.render();
+        }
+
+    });
+
+    var Applet = Backbone.Model.extend({
+        initialize: function () {
+            this.set('title', "Avatar");
+            this.view = new View();
+        }
+    });
+   
+    kiwi.components.Applet.register('kiwi_avatar', Applet);
+
+    kiwi.events.on('command', function(event, data) {
+        if (data.command === 'avatar') {
+            var a = kiwi.components.Applet.loadOnce('kiwi_avatar');
+            a.view.show();
+        }
+    });
+
+
+})();

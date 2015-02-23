@@ -1,0 +1,108 @@
+<script>
+/*
+     (function() {
+        $('.main').append('<li data-away="icon"><i class="fa fa-sitemap" title="Ant"></i></li>');   
+        $('[data-away="icon"]').click(function(){
+            var input = kiwi.components.ControlInput();
+            input.run('/showaway');
+        });
+    })();
+*/
+    (function() {
+		var translate = function(msgid){
+            return kiwi.i18n.translate(msgid).fetch();
+        };
+        kiwi.events.on('loaded', function () {
+            var View = Backbone.View.extend({
+                events: {
+                    'click [data-away="save"]': 'saveAway',
+                    'click input[value="custom"]': 'selectCustom'
+                },
+
+                template: _.template([
+                    '<style> #kiwi [data-role="applet-away"] .col-md-offset-3 {margin-left: 25%} #kiwi [data-role="applet-away"] { margin-top: 5px;} </style>',
+                    '<span data-role="applet-away">',
+                    '<div class="control-group col-md-6 col-md-offset-3">',
+                    '<h6><%= title %></h6>',
+                    '<div class="radio"> <label> <input type="radio" name="away_list_type" value="available"> <img src="http://webchat.chateagratis.net/flashv1/data/estados/disponible.png" /> <%= available %> </label> </div>',
+                    '<div class="radio" data-radio="custom"> <label> <input type="radio" name="away_list_type" value="custom"> <img src="http://webchat.chateagratis.net/flashv1/data/estados/ausente.png" /> <%= custom %> </label> </div>',
+                    '<div class="radio"> <label> <input type="radio" name="away_list_type" value="out"> <img src="http://webchat.chateagratis.net/flashv1/data/estados/nodisponible.png" /> <%= out %> </label> </div>',
+                    '<div class="radio"> <label> <input type="radio" name="away_list_type" value="eat"> <img src="http://webchat.chateagratis.net/flashv1/data/estados/saliacomer.png" /> <%= eat %> </label> </div>',
+                    '<button type="submit" class="btn btn-primary" data-away="save">Save</button>',
+                    '</div>'
+                ].join('')),
+
+                initialize: function (options) {
+                    var text = {
+                        title: translate("plugin_away_title"),
+                        available: translate("plugin_away_avaiable"),
+                        custom: translate("plugin_away_custom"),
+                        out: translate("plguin_away_out"),
+                        eat: translate("plugin_away_eat"),
+                        no_privates: translate("plugin_away_no_privates")
+                    };
+
+                    // this.$el = $(_.template($('#tmpl_applet_away').html().trim(), text));
+                    this.$el = $(this.template(text));
+                },
+
+                saveAway: function (event) {
+                    event.preventDefault();
+
+                    //get the radio checked and its value
+                    var value = $('input[name=away_list_type]:checked').val();
+
+                    if (value) {
+                        switch (value) {
+                            case 'eat':
+                                message = translate("plugin_away_eat_message");
+                                break;
+                            case 'out':
+                                message = translate("plugin_away_out_message");
+                                break;
+                            case 'custom':
+                                message = $('[data-away="custom"]').val();
+                                break;
+                            case 'available':
+                                message = '';
+                                break;
+                            default:
+                                message = translate("plugins_away_default_message");
+                                break;
+                        }
+
+                        var n = kiwi.components.Network();
+                        n.raw('AWAY :' + message);
+                    }
+
+                    var a = kiwi.components.Applet.loadOnce('kiwi_away');
+                    a.close();
+                },
+
+                selectCustom: function (event) {
+                    if ($('[data-away="custom"]').length === 0) {
+                        $('[data-radio="custom"]').append('<input type="text" data-away="custom">');
+                    }
+                }
+
+            });
+
+            var Applet = Backbone.Model.extend({
+                initialize: function () {
+                    //title of window of kiwii
+                    this.set('title', 'Away');
+                    this.view = new View();
+                }
+            });
+
+            kiwi.components.Applet.register('kiwi_away', Applet);
+
+            kiwi.events.on('command', function (event, data) {
+                if (data.command === 'showaway') {
+                    var a = kiwi.components.Applet.loadOnce('kiwi_away');
+                    a.view.show();
+                }
+            });
+        });
+    })();
+</script>

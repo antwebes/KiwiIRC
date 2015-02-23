@@ -1,0 +1,147 @@
+
+    (function () {
+        function onJqueryUILoaded(callback){
+            if(typeof jQuery.ui == 'undefined') {
+                var headTag = document.getElementsByTagName("head")[0];
+                var jqlinkTag = document.createElement('link');
+                jqlinkTag.rel = 'stylesheet';
+                jqlinkTag.href = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css';
+
+                if ( typeof define === "function" && define.amd ){
+                    headTag.appendChild(jqlinkTag);
+
+                    require(['jquery', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js'], function(jq){
+
+                        callback(jq);
+                    });
+                    return;
+                }
+
+                var jqTag = document.createElement('script');
+                jqTag.type = 'text/javascript';
+                jqTag.src = '//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js';
+                jqTag.onload = function(){
+                    callback($);
+                }
+            
+                jqlinkTag.onload = function(){
+                    headTag.appendChild(jqTag);
+                }
+
+                headTag.appendChild(jqlinkTag);
+             } else {
+                callback($);
+             }
+        }
+
+        function onSwfobjectLoaded(callback){
+             if(typeof swfobject == 'undefined') {
+                         var headTag = document.getElementsByTagName("head")[0];
+                         var jqTag = document.createElement('script');
+                         jqTag.type = 'text/javascript';
+                         jqTag.src = '//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js';
+                         jqTag.onload = callback;
+                         headTag.appendChild(jqTag);
+             } else {
+                         callback();
+             }
+        }
+
+        onSwfobjectLoaded(function () {
+            onJqueryUILoaded(function($){
+                var network = kiwi.components.Network();
+                var control = kiwi.components.ControlInput();
+                var $icon;
+                if (swfobject.hasFlashPlayerVersion("9.0.18")) {
+                    $icon = $('<div id="ext-webcam"><img src="/kiwi/assets/img/webcam.png" /><span><br><i class="fa fa-play"></i> <b>Webcam</b></span></div>');
+                    $(".chat-extensions").append($icon);
+                }
+
+                //var $wcam;
+
+                function openWebcam(){
+                    var $webcamContainer = $("#webcam_container");
+                    var myNick = network.get('nick');
+                    var flashVars = {
+                        streamer: kiwi.settings.get('videochat_streamer_url')
+                    };
+
+                    flashVars.file = myNick;
+
+                    //no exist div to insert webcam
+                    if($webcamContainer.length == 0){
+                        console.log('$webcamContainer.length == 0');
+                        $('body').append($("<div />", {id: "webcam_publisher_container"}));;
+
+                        swfobject.embedSWF(kiwi.settings.get('videochat_publisher_url'), "webcam_publisher_container", "300px", "250px", "9.0.0", null, flashVars);
+                        $("#webcam_publisher_container").dialog({
+                            dialogClass: "no-close",   
+                            title: "My webcam",
+                            close: closeWebcam,
+                            resizable: false,      
+                        });
+
+                        window.eventBus.trigger("webcam_pub:on");
+
+                        return;
+                    }
+
+                    $webcamContainer.append($("<div />", {id: "webcam_publisher_container", style: "width: 100%"}));
+                    $("#webcam_publisher_container").append($("<div />", {id: "flash_webcham_pub"}));
+
+                    //modify the icon to publish webcam
+                    $("#ext-webcam span").css("color" , "red");
+                    $("#ext-webcam span b").html("Stop");
+                    $("#ext-webcam span i").switchClass( "fa-play", "fa-stop");
+                    //end modify the icon to publish webcam
+                    
+                    swfobject.embedSWF(kiwi.settings.get('videochat_publisher_url'), "flash_webcham_pub", Math.ceil($("#webcam_publisher_container").width())+'px', "100%", "9.0.0", null, flashVars);
+
+                    $(window).resize(function() {
+                        $("#flash_webcham_pub").width(Math.ceil($("#webcam_publisher_container").width()));
+                    });
+
+                    window.eventBus.trigger("webcam_pub:on");
+                }
+
+                function closeWebcam(){
+                    if($("#webcam_publisher_container").closest('.ui-dialog').length > 0){
+                        $("#webcam_publisher_container").closest('.ui-dialog').remove();
+                        $("#webcam_publisher_container").remove();
+                        window.eventBus.trigger("webcam_pub:off");
+
+                        return;
+                    }
+
+                    $('#webcam_publisher_container').remove();
+
+                    $("#ext-webcam span").css("color" , "black");
+                    $("#ext-webcam span b").html("Webcam");
+                    $("#ext-webcam span i").switchClass( "fa-stop", "fa-play");
+                    window.eventBus.trigger("webcam_pub:off");
+                }
+         
+                $icon.click(function(){
+
+                    if($("#webcam_publisher_container").length > 0){
+                        closeWebcam(); 
+                    }else{
+                        openWebcam(); 
+                    }
+                });
+
+                // A plugin
+                kiwi.events.on('command', function (event, data) {
+                    if(data.command == 'nick' && swfobject.getObjectById("webcam_publisher_container")){
+                        setTimeout(function(){
+                            closeWebcam();
+                            window.eventBus.trigger("webcam_pub:off");
+                            openWebcam();
+                            window.eventBus.trigger("webcam_pub:on");
+                        },3000);
+                    }
+                });
+            });
+        });
+        
+    })();

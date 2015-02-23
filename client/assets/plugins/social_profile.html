@@ -1,0 +1,97 @@
+<script>
+    kiwi.plugins.on('loaded', function(){
+        var usrTmpl = "<%\n" +
+        "var currentYear, yearUser, yearsOld;\n" +
+        "\n" +
+        "if(typeof(profile) != 'undefined'){\n" +
+        "    currentYear = new Date().getFullYear();\n" +
+        "    yearUser = new Date(profile.birthday).getFullYear().toString().substring(0,4);\n" +
+        "    yearsOld = currentYear - yearUser;\n" +
+        "    if (yearsOld <=0){\n" +
+        "        yearsOld = '>18';\n" +
+        "}else if(isNaN(yearsOld)){\n" +
+        "        yearsOld = null;\n" +
+        "    }\n" +
+        "}else{\n" +
+        "    yearsOld = null;\n" +
+        "}\n" +
+        "%>\n" +
+        "\n" +
+        "<% if(typeof(profile) != 'undefined' &&\n" +
+        "    typeof(profile.profile_photo) != 'undefined' &&\n" +
+        "    typeof(profile.profile_photo.path_medium) != 'undefined'){ %>\n" +
+        "    <img src=\"<%= profile.profile_photo.path_medium %>\" width=\"199px\">\n" +
+        "<% } %>\n" +
+        "<ul id=\"user-info\" style=\"margin-left:15px;\">\n" +
+        "    <% if(yearsOld != null){ %>\n" +
+        "        <li><i class=\"fa fa-calendar-o\"></i>  " + kiwi.i18n.translate('plugin_social_profile_age') + ": <%= yearsOld %></li>\n" +
+        "    <% } %>\n" +
+        "    <% if(typeof(profile) != 'undefined' && typeof(profile.gender) != 'undefined' && profile.gender != ''){ %>\n" +
+        "        <li><i class=\"fa <%if(profile.gender == 'female'){%>fa-female<% }else{ %>fa-male<% } %>\"></i> " + kiwi.i18n.translate('plugin_social_profile_gender') + ": <%= profile.gender || '' %></li>\n" +
+        "    <% } %>\n" +
+        "    <% if(typeof(city) != 'undefined'){ %>\n" +
+        "        <li><i class=\"fa fa-location-arrow\"></i> " + kiwi.i18n.translate('plugin_social_profile_location') + ": <% if(city.name != 'no_city'){ %><%= city.name %>, <% } %><%= city.country.name %></li>\n" +
+        "    <% } %>\n" +
+        "    <li><center><a href=\"/users/<%= username_canonical %>-<%= id %>\" <% if(typeof(window.user_id) == 'undefined') { %> target=\"_blank\"<% } %>> <i class=\"fa fa-info\"></i> " + kiwi.i18n.translate('plugin_social_profile_full_profile') + "</a></center></li>\n" +
+        "</ul>";
+
+        var renderUser = function(user){
+            var tmpl = usrTmpl.trim();
+
+            return _.template(tmpl, user);
+        };
+
+        var getUserInfo = function(panel){
+            var url = window.gest_api+ "/users/"+panel.get('name');
+            var deferred = $.Deferred();
+            var userData = panel.get('userData');
+
+            //we haven't yet fetched the userdata from the server
+            if(!userData){
+                $.ajax({
+                    dataType: 'json',
+                    headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    crossDomain: true,
+                    url: url,
+                    success: function(data){
+                        panel.set('userData', data);
+                        deferred.resolve(data);
+                    },
+                    error: function(){
+                        deferred.reject();
+                    }
+                });
+            }else{
+                deferred.resolve(userData);
+            }
+
+            return deferred.promise();
+        };
+
+        var showUserInfoOnSideBar = function(panel){
+            var fetchingUserData = getUserInfo(panel);
+
+            $.when(fetchingUserData).done(function(data){
+                kiwi.components.RightBar.show(false);
+                $('.memberlists').html(renderUser(data));
+            });
+        };
+
+
+        var net = kiwi.components.Network();
+
+        //if(typeof(window.api_endpoint) != 'undefined'){
+            net.on('connect', function(e){
+                var panels = kiwi.connections.active_connection.panels;
+
+                panels.bind('add', function(panel){
+                    if(panel.isQuery()){
+                        panel.on('active', function(){
+                            showUserInfoOnSideBar(panel);
+                        });
+                    }
+                });
+            });
+        //}
+    });
+</script>
