@@ -59,7 +59,6 @@
 				.parent()
 				.removeClass( _c.wrapper );
 
-			
 			//	Setup the page
 			this.setPage( glbl.$page );
 
@@ -297,11 +296,12 @@
 	{
 		if ( !$page )
 		{
+			
 			$page = $(this.conf[ _ADDON_ ].pageSelector, glbl.$body);
-			if ( $page.length > 1 )
+			/*if ( $page.length > 1 )
 			{
 				$page = $page.wrapAll( '<' + this.conf[ _ADDON_ ].pageNodetype + ' />' ).parent();
-			}
+			}*/
 		}
 
 		$page.addClass( _c.page + ' ' + _c.slideout );

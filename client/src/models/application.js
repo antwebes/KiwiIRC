@@ -11,6 +11,8 @@
         kiwi_server: null,
 
         initialize: function (options) {
+            this.app_options = options;
+
             if (options.container) {
                 this.set('container', options.container);
             }

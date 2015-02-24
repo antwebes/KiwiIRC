@@ -1,120 +1,156 @@
+#kiwi .controlbox .input_tools .active { margin:0 1em; display:inline; background-color: #DEDEDE}
 
-#kiwi .controlbox .input_tools .active {
-    background-color: #dedede;
-    display: inline;
-    margin: 0 1em;
-}
 #kiwi {
-    background: none repeat scroll 0 0 #ffffff !important;
+    background: #FFFFFF !important;
 }
-#kiwi .memberlists {
+
+#kiwi .memberlists{
     margin-bottom: 70px;
 }
+
 #kiwi .chat-extensions {
-    border-top: 1px solid #8a8a8a;
-    bottom: 0;
-    height: 70px;
-    padding-top: 2px;
     position: absolute;
+    bottom: 0px;
     width: 100%;
+    height: 70px;
+    border-top: 1px solid #8A8A8A;
+    padding-top: 2px;
 }
+
 #kiwi #ext-photo {
-    cursor: pointer;
-    float: left;
-    padding-left: 10px;
-    text-align: center;
+    cursor:pointer; cursor: hand;
     width: 50%;
+    text-align: center;
+    float:left;
+    padding-left: 10px;
 }
+
+
 #kiwi #ext-webcam {
-    cursor: pointer;
-    float: left;
-    padding-left: 10px;
-    text-align: center;
+    cursor:pointer; cursor: hand;
     width: 50%;
+    text-align: center;
+    float:left;
+    padding-left: 10px;
 }
-#kiwi .ext-webcam img {
+
+#kiwi .ext-webcam img{
     display: block;
     margin-left: auto;
-    margin-right: auto;
+    margin-right: auto
+
 }
-.webcam_nick_subscriber {
+
+.webcam_nick_subscriber{
     float: right;
 }
+
 .meicon {
     min-width: 20px;
 }
-#kiwi .ext-webcam span {
-    clear: both;
+
+#kiwi .ext-webcam span{
+    clear:both;
     font-weight: bold;
 }
+
+
 #kiwi .memberlists {
     overflow-x: hidden;
 }
+
+
 .user-tooltip {
-    font-size: 1.1em !important;
     padding: 2px 6px !important;
+    font-size: 1.1em !important;
 }
-#kiwi {
-    background: none repeat scroll 0 0 #fff;
-}
+
+#kiwi {background: #fff}
+
 #kiwi .right-menu-btn {
-    border: 1px solid #fff;
-    border-radius: 5px;
-    color: #fff;
-    font-size: 14px !important;
     margin-top: 5px;
     padding: 5px;
-}
-#kiwi .left-menu-btn {
+    color: #fff;
+    font-size: 14px !important;
     border: 1px solid #fff;
     border-radius: 5px;
-    color: #fff;
-    cursor: pointer;
-    display: inline-block;
+}
+
+#kiwi .left-menu-btn {
+    margin-top: 5px;
+    padding: 5px;
     font-size: 14px !important;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    display:inline-block;
+    color: #fff;
+    margin-left: 10px;
+    cursor: pointer;
     height: 28px;
     margin-bottom: 3px;
-    margin-left: 10px;
-    margin-top: 5px;
-    padding: 5px;
 }
+
+
 #kiwi .main {
     margin-top: 10px;
 }
+
 #kiwi .toolbar .app_tools {
     width: 100px !important;
 }
+
 #kiwi .toolbar .tabs {
     height: auto;
 }
+
 .panellist b {
-    float: right;
+    float:right;
     margin-left: 10px;
 }
+
 .panellist li {
-    cursor: pointer;
+    cursor:pointer;
 }
+
 .panellist .active {
+
 }
+
 #kiwi .left-menu-btn i {
     margin-left: 9px;
 }
+
 .part {
-    float: right;
+    float:right;
 }
+
 #kiwi .menuCounters {
-    color: #fff;
-    display: inline-block;
+    display:inline-block;
     margin-left: 10px;
+    color:#fff;
 }
+
 #kiwi .tabs ul {
     display: inline-block;
-    float: left;
+    float:left;
 }
+
 #kiwi .applets li:after {
+    border-bottom-width: 0px;
     border-bottom-style: none;
-    border-bottom-width: 0;
 }
+
 .right-menu li {
     cursor: pointer;
+}
+.right-menu-external-link:link, .right-menu-external-link:visited, .right-menu-external-link:hover, .right-menu-external-link:active, .right-menu-external-link {
+    color: inherit;
+    display: block;
+    line-height: 20px;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    padding: 10px 10px 10px 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

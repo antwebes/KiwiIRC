@@ -553,41 +553,6 @@
     };
 
 
-    window.loadExternalLib = function(element, url, callback){
-            if(typeof element == 'undefined') {
-                var numResources = url.length;
-                var headTag = document.getElementsByTagName("head")[0];
-                var tag = null;
-                var loaded = 0;
-
-                for(var i = 0; i < numResources; i++) {
-                    var resource = url[i];
-                    if(resource.match(/.css$/)) {
-                        var jqlinkTag = document.createElement('link');
-                        jqlinkTag.rel = 'stylesheet';
-                        jqlinkTag.href = resource;
-                        headTag.appendChild(jqlinkTag);
-                        tag = jqlinkTag;
-                    } 
-                    if(resource.match(/.js$/)) {
-                        var jqTag = document.createElement('script');
-                        jqTag.type = 'text/javascript';
-                        jqTag.src = resource;
-                        headTag.appendChild(jqTag);
-                        tag = jqTag;
-
-                        tag.onload = function(){
-                            callback();
-                        }
-                    }
-                }
-                
-             } else {
-                callback(element);
-             }
-    };
-
-
     // Avoid `console` errors in browsers that lack a console. (https://github.com/h5bp/html5-boilerplate)
     function normalizeConsole() {
         var method;
@@ -729,54 +694,11 @@
                     window.menu_items_ready_deffered.resolve(window.right_menu_items);
                 });
 
-                window.gest_api = opts.server_settings.client.settings.guest_api;
-                window.right_menu_items = [
-                    {
-                        "name": "Avatar",
-                        "icon": "users",
-                        "command": "/avatar"
-                    },
-                    {
-                        "name": "List Channels",
-                        "icon": "comments",
-                        "command": "/list"
-                    },                    
-                    {
-                        "name": "Find Peple",
-                        "icon": "search",
-                        "command": "/findpeople"
-                    },
-                    {
-                        "name": "Away",
-                        "icon": "clock-o",
-                        "command": "/showaway"
-                    },
-                    {
-                        "name": "History",
-                        "icon": "history",
-                        "submenu": [
-                          
-                        ]                       
-                    }, 
-                    {
-                        "name": "Radio",
-                        "icon": "headphones",
-                        "submenu": [
-                          
-                        ]                       
-                    },                                          
-                    {
-                        "name": "Settings",
-                        "icon": "cogs",
-                        "command": "/settings"
-                    }                       
-                ];
-
                 resolve();
 
                 // If debugging, grab the debug scripts and load them
                 if (getQueryVariable('debug')) {
-                    scripts = scripts.concat(data.scripts);
+                    scripts = scripts.concat(data.scripts).concat(['assets/libs/mmenu/js/jquery.mmenu.min.all.js?t=<%build_time%>']);
                     script_promise_resolve();
                 }
 

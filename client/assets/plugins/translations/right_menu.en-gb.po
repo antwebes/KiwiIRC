@@ -27,3 +27,12 @@ msgstr "Radio"
 
 msgid "plugin_right_menu_settings"
 msgstr "Settings"
+
+msgid "plugin_right_menu_help"
+msgstr "Help"
+
+msgid "plugin_right_menu_help_web"
+msgstr "Web help"
+
+msgid "plugin_right_menu_help_irc"
+msgstr "IRC help"
