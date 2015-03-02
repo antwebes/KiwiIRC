@@ -57,8 +57,10 @@
 					var menuItemsLengt = window.right_menu_items.length;
 				}
 
+				var historialItem = kiwi.i18n.translate('plugin_right_menu_history').fetch();
+
 				for (var i = 0; i < menuItemsLengt; i++) {
-					if (window.right_menu_items[i].name == "History") {
+					if(window.right_menu_items[i].name == historialItem){
 						window.right_menu_items[i].submenu = channelsMenu;
 					}
 				}
@@ -98,7 +100,7 @@
 				});
 			}
 
-			$(".right-menu").promise().done(function () {
+			window.menu_items_ready_promise.promise().done(function(){
 				buildMenuHistory();
 			});
 		});
