@@ -1,0 +1,38 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: Kiwi\n"
+"Language: es-419\n"
+
+msgid "plugin_right_menu_avatar"
+msgstr "Avatar"
+
+msgid "plugin_right_menu_list_channels"
+msgstr "Listar canales"
+
+msgid "plugin_right_menu_find_people"
+msgstr "Buscar personas"
+
+msgid "plugin_right_menu_away"
+msgstr "Ausente"
+
+msgid "plugin_right_menu_history"
+msgstr "Historial"
+
+msgid "plugin_right_menu_radio"
+msgstr "Radio"
+
+msgid "plugin_right_menu_settings"
+msgstr "Ajustes"
+
+msgid "plugin_right_menu_help"
+msgstr "Ayuda"
+
+msgid "plugin_right_menu_help_web"
+msgstr "Ayuda web"
+
+msgid "plugin_right_menu_help_irc"
+msgstr "Ayuda IRC"

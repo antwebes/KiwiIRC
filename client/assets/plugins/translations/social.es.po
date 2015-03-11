@@ -10,8 +10,8 @@ msgstr ""
 msgid "plugin_social_profile_gender"
 msgstr "Genero"
 
-msgid "plugin_social_profile_localtion"
-msgstr "Locaoización"
+msgid "plugin_social_profile_location"
+msgstr "Localización"
 
 msgid "plugin_social_profile_age"
 msgstr "Edad"

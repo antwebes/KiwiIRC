@@ -32,13 +32,33 @@
         "    <% if(typeof(city) != 'undefined'){ %>\n" +
         "        <li><i class=\"fa fa-location-arrow\"></i> " + kiwi.i18n.translate('plugin_social_profile_location').fetch() + ": <% if(city.name != 'no_city'){ %><%= city.name %>, <% } %><%= city.country.name %></li>\n" +
         "    <% } %>\n" +
-        "    <li><center><a href=\"/users/<%= username_canonical %>-<%= id %>\" <% if(typeof(window.user_id) == 'undefined') { %> target=\"_blank\"<% } %>> <i class=\"fa fa-info\"></i> " + kiwi.i18n.translate('plugin_social_profile_full_profile').fetch() + "</a></center></li>\n" +
+        "    <li><center><a href=\"<%= url_user_profile %>\" <% if(typeof(window.user_id) == 'undefined') { %> target=\"_blank\"<% } %>> <i class=\"fa fa-info\"></i> " + kiwi.i18n.translate('plugin_social_profile_full_profile').fetch() + "</a></center></li>\n" +
         "</ul>";
 
         var renderUser = function(user){
             var tmpl = usrTmpl.trim();
 
-            return _.template(tmpl, user);
+            var user_path_profile;
+            var social_endpoint;
+
+            if (!getQueryVariable('social_endpoint')){
+                social_endpoint = kiwi.settings.get('social_endpoint');
+            }else{
+                social_endpoint = getQueryVariable('social_endpoint');
+            }
+            if (!getQueryVariable('user_path_profile')){
+                user_path_profile = kiwi.settings.get('user_path_profile');
+            }else{
+                user_path_profile = getQueryVariable('user_path_profile');
+            }
+            
+            user_path_profile = user_path_profile.replace("$username$", user.username);
+            user_path_profile = user_path_profile.replace("$id$", user.id);
+
+            var url_user_profile = social_endpoint + user_path_profile;
+            var data = _.extend(user, {url_user_profile : url_user_profile});
+
+            return _.template(tmpl, data);
         };
 
         var getUserInfo = function(panel){

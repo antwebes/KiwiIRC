@@ -5,16 +5,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: Kiwi\n"
-"Language: en\n"
+"Language: es-419\n"
 
 msgid "plugin_social_profile_gender"
-msgstr "Gender"
+msgstr "Genero"
 
 msgid "plugin_social_profile_location"
-msgstr "Location"
+msgstr "Localización"
 
 msgid "plugin_social_profile_age"
-msgstr "Age"
+msgstr "Edad"
 
 msgid "plugin_social_profile_full_profile"
-msgstr "Full profile"
+msgstr "Perfil completo"

@@ -5,13 +5,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: POEditor.com\n"
 "Project-Id-Version: Kiwi\n"
-"Language: es\n"
+"Language: es-419\n"
 
-msgid "plugin_webcam_webcam"
-msgstr "Webcam"
-
-msgid "plugin_webcam_webcam_of"
-msgstr "Webcam de"
-
-msgid "plugin_webcam_webcam_close"
-msgstr "Cerrar"
+msgid "plugin_get_token_error_token_retrieve"
+msgstr "no se ha podido recuperar el token de usuario"
