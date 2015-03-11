@@ -91,7 +91,7 @@
             $("#avatar_container", this.$el).empty();
 
             $.ajax({
-              url: kiwi.settings.get('guest_api') + '/photos?filters=' + filters,
+              url: kiwi.settings.get('guest_api') + '/api/photos?filters=' + filters,
               dataType: 'json',
               contentType: "application/json"
             })
