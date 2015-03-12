@@ -51,7 +51,11 @@
             }else{
                 user_path_profile = getQueryVariable('user_path_profile');
             }
-            
+
+            if (!user_path_profile){
+                console.log('If necessary declare param user_path_profile in config.js');
+            }
+
             user_path_profile = user_path_profile.replace("$username$", user.username);
             user_path_profile = user_path_profile.replace("$id$", user.id);
 
