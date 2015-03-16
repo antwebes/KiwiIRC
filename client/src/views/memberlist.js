@@ -112,15 +112,6 @@ _kiwi.view.MemberList = Backbone.View.extend({
         $('#kiwi .memberlists').children().removeClass('active');
         $(this.el).addClass('active');
 
-
-        $('#kiwi .memberlists').empty();
-        this.$el.appendTo('#kiwi .memberlists');
-
-        //we need to assign the handlers
-        this.model.forEach(function (member) {
-            member.view.$el.data('member', member);
-        });
-
-        this.delegateEvents();
+        this.renderMeta();
     }
 });

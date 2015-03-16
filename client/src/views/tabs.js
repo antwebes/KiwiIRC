@@ -1,11 +1,11 @@
 // Model for this = _kiwi.model.PanelList
 _kiwi.view.Tabs = Backbone.View.extend({
     tagName: 'ul',
-    className: 'panellist mm-list mm-panel mm-opened mm-current',
+    className: 'panellist',
 
     events: {
         'click li': 'tabClick',
-        'click .part': 'partClick'
+        'click li .part': 'partClick'
     },
 
     initialize: function () {
@@ -67,38 +67,15 @@ _kiwi.view.Tabs = Backbone.View.extend({
         $('span', panel.tab).text(new_title);
     },
 
-    updateCounters: function() {
-        var countPrivates = 0;
-        var countRooms = 0;
-        var count = false;
-        this.model.forEach(function (panel) {
-            var name = panel.get('name');
-            if(name.indexOf('applet_') == -1) {
-                if(name[0] == "#") countRooms++;
-                else {
-                    if(name != "Server")
-                        countPrivates++; 
-                }
-                count = true;
-            } else {
-                //en el caso de que exista algún applet es que estamos en la tab de applets, no contamos
-                count = false;
-                return;
-            }
-        });
-        if(count) {
-            $("#countRooms").html(countRooms);
-            $("#countPrivates").html(countPrivates);
-        }
-    },
-
     panelAdded: function (panel) {
         // Add a tab to the panel
-        panel.tab = $('<li><span>' + (panel.get('title') || panel.get('name')) + '<b class="activity badge"></b></span></li>');
+        panel.tab = $('<li><span></span><div class="activity"></div></li>');
+        panel.tab.find('span').text(panel.get('title') || panel.get('name'));
 
         if (panel.isServer()) {
             panel.tab.addClass('server');
-            $("span",panel.tab).addClass('fa fa-bolt');
+            panel.tab.addClass('fa');
+            panel.tab.addClass('fa-nonexistant');
         }
 
         panel.tab.data('panel', panel);
@@ -111,7 +88,6 @@ _kiwi.view.Tabs = Backbone.View.extend({
         panel.bind('change:title', this.updateTabTitle);
         panel.bind('change:name', this.updateTabTitle);
 
-        this.updateCounters();
         _kiwi.app.view.doLayout();
     },
     panelRemoved: function (panel) {
@@ -121,24 +97,18 @@ _kiwi.view.Tabs = Backbone.View.extend({
         delete panel.tab;
 
         _kiwi.app.panels.trigger('remove', panel);
-        
-        this.updateCounters();
+
         _kiwi.app.view.doLayout();
     },
 
     panelActive: function (panel, previously_active_panel) {
         // Remove any existing tabs or part images
-        $('.panellist .part').remove();
-        $('.panellist .active').removeClass('active mm-selected');
+        _kiwi.app.view.$el.find('.panellist .part').remove();
+        _kiwi.app.view.$el.find('.panellist .active').removeClass('active');
 
-        panel.tab.addClass('active mm-selected');
-        
-        $("#activePanelName").html(panel.get('title') || panel.get('name'));
+        panel.tab.addClass('active');
 
-        // Only show the part image on non-server tabs
-        if (!panel.isServer()) {
-            $("span",panel.tab).append('<i class="part fa fa-times"></i>');
-        }
+        panel.tab.append('<span class="part fa fa-nonexistant"></span>');
     },
 
     tabClick: function (e) {
@@ -154,15 +124,24 @@ _kiwi.view.Tabs = Backbone.View.extend({
     },
 
     partClick: function (e) {
-        var tab = $(e.currentTarget).parent().parent();
+        var tab = $(e.currentTarget).parent();
         var panel = tab.data('panel');
 
         if (!panel) return;
 
-        // Only need to part if it's a channel
         // If the nicklist is empty, we haven't joined the channel as yet
+        // If we part a server, then we need to disconnect from server, close channel tabs,
+        // close server tab, then bring client back to homepage
         if (panel.isChannel() && panel.get('members').models.length > 0) {
             this.model.network.gateway.part(panel.get('name'));
+
+        } else if(panel.isServer()) {
+            if (!this.model.network.get('connected') || confirm(translateText('disconnect_from_server'))) {
+                this.model.network.gateway.quit("Leaving");
+                _kiwi.app.connections.remove(this.model.network);
+                _kiwi.app.startup_applet.view.show();
+            }
+
         } else {
             panel.close();
         }
