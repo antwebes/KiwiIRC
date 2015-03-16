@@ -456,6 +456,8 @@ Cambios en el kiwi
 Cambios en el kiwi, que sería recomendable cambiar a plugin
 -----------------------------------------------------------
 
+Mostrar el menu de usuario cuando se abre un privado, al igual que se hace con canal, seguir los 2 pasos:
+
 1:
 	Archivo: rightbar.js
 
@@ -480,10 +482,10 @@ Cambios en el kiwi, que sería recomendable cambiar a plugin
 	        this.updateIcon();
 	    },
 
-	Archivo: client/src/models/application.js
+	Archivo: client/src/models/application.js in method initializeGlobals()
 
 		Se añade:
-		_kiwi.global.components.Applet = _kiwi.model.Applet;
+		_kiwi.global.components.RightBar = this.rightbar;
 
 2:
 
