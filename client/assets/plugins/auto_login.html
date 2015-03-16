@@ -72,7 +72,9 @@
                 });
             }
 
-            if (getQueryVariable('channel') || getQueryVariable('private')) {
+            var auto_connect = getQueryVariable('auto_connect');
+
+            if (typeof auto_connect == 'undefined' || auto_connect =='true') {
                 $('[data-js=submit]').click();
             }
         });
