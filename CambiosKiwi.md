@@ -30,15 +30,427 @@ Cambios en el kiwi
 4:
     En indext.tmpl.html
 
-    en el template tmpl_application
+    Importar los siguientes estilos:
 
-    debadro de
+    ```
+    <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/custom.css?t=<%build_time%>" />
+    <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/style.css?t=<%build_time%>" />
+    <link rel="stylesheet" type="text/css" href="<%base_path%>/assets/css/font-awesome.min.css" />
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="<%base_path%>/assets/libs/mmenu/css/jquery.mmenu.all.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+    ```
 
-    <div class="memberlists"></div>
+    en el template tmpl_application poner
+
+    ```
+    <script type="text/html" id="tmpl_application">
+        <div id="kiwi" class="theme_relaxed">
+            <div class="toolbar">
+                <div class="app_tools">
+                    <ul class="main">
+                    </ul>
+                </div>
+
+                <div class="tabs"></div>
+
+                <div class="topic">
+                    <div contenteditable="true"></div>
+                </div>
+
+                <div class="status_message"></div>
+            </div>
+
+            <div class="memberlists_resize_handle"></div>
+
+            <div class="panels">
+                <div class="panel_container container1"></div>
+            </div>
+
+            <div class="right_bar disabled">
+                <div class="right-bar-toggle"><i class=""></i></div>
+                <div class="right-bar-content">
+                    <div class="channel_tools">
+                        <i class="fa fa-info-circle channel_info" title="Channel Info"></i>
+                        <i class="fa fa-sign-out channel_part" title="Leave Channel"></i>
+                        <i class="fa fa-angle-double-right right-bar-toggle-inner" title="Hide"></i>
+                    </div>
+                    <div class="memberlists"></div>
+                    <div class="chat-extensions"></div>
+                </div>
+            </div>
+
+            <div class="controlbox">
+                <div class="input">
+                    <span class="nick"> </span>
+                    <div class="input_wrap"><textarea class="inp"></textarea></div>
+                    <div class="input_tools"></div>
+                </div>
+            </div>
+        </div>
+    </script>
+    ```
+
+    En el script antes de la lineas: window.loadExternalLib = function(element, url, callback){
 
     poner
-    
-    <div class="chat-extensions"></div>
+
+    window.handledServerErrors = {
+                'Closing link: (.+) [No more connections allowed from your host via this connect class (.+)]' : 'server_to_many_connections'
+            };
+
+
+    En la función function afterPromiseAvailable poner la variable opts justo debajo de la variable scripts de la siguiente manera
+
+    ```
+    opts = {
+            container: $('body'),
+            base_path: base_path,
+            settings_path: base_path + '/assets/settings.json',
+            locales_base_path: base_path
+        }
+    ```
+
+    En la función settings_promise dentro antes de poner antes de resolve este código:
+
+    ```
+    window.kiwi_server = "//" + opts.server_settings.client.server;
+    window.gest_api = opts.server_settings.client.settings.guest_api;
+    window.right_menu_items= opts.server_settings.client.settings.right_menu_items;
+    ```
+
+    Añadir <link rel="stylesheet" href="<%base_path%>/assets/libs/mmenu/css/jquery.mmenu.all.css"> en el head
+
+    Sustituir:
+
+    ```
+    // Debugging will get a list of debugging scripts from settings.json (below)
+    if (!getQueryVariable('debug')) {
+        scripts.push(['assets/libs/lodash.min.js?t=<%build_time%>']);
+        scripts.push([
+            'assets/libs/backbone.min.js?t=<%build_time%>',
+            'assets/libs/jed.js?t=<%build_time%>',
+            ]);
+        scripts.push([
+            'assets/kiwi.min.js?t=<%build_time%>',
+            'assets/libs/engine.io.bundle.min.js?t=<%build_time%>'
+            ]);
+
+        script_promise_resolve();
+    }
+    ```
+
+    Por:
+
+    ```
+    // Debugging will get a list of debugging scripts from settings.json (below)
+    if (!getQueryVariable('debug')) {
+        scripts.push(['assets/libs/lodash.min.js?t=<%build_time%>']);
+        scripts.push([
+            'assets/libs/backbone.min.js?t=<%build_time%>',
+            'assets/libs/jed.js?t=<%build_time%>',
+            'assets/libs/mmenu/js/jquery.mmenu.min.all.js?t=<%build_time%>'
+            ]);
+        scripts.push([
+            'assets/kiwi.min.js?t=<%build_time%>',
+            'assets/libs/engine.io.bundle.min.js?t=<%build_time%>'
+            ]);
+
+        script_promise_resolve();
+    }
+    ```
+
+    Antes de la funcioncion normalizeConsole poner:
+
+    ```
+    window.handledServerErrors = {
+        'Closing link: (.+) [No more connections allowed from your host via this connect class (.+)]' : 'server_to_many_connections'
+    };
+
+    window.loadExternalLib = function(element, url, callback){
+        if(typeof element == 'undefined') {
+            var numResources = url.length;
+            var headTag = document.getElementsByTagName("head")[0];
+            var tag = null;
+            var loaded = 0;
+
+            for(var i = 0; i < numResources; i++) {
+                var resource = url[i];
+                if(resource.match(/.css$/)) {
+                    var jqlinkTag = document.createElement('link');
+                    jqlinkTag.rel = 'stylesheet';
+                    jqlinkTag.href = resource;
+                    headTag.appendChild(jqlinkTag);
+                    tag = jqlinkTag;
+                }
+                if(resource.match(/.js$/)) {
+                    var jqTag = document.createElement('script');
+                    jqTag.type = 'text/javascript';
+                    jqTag.src = resource;
+                    headTag.appendChild(jqTag);
+                    tag = jqTag;
+                    tag.onload = function(){
+                        callback();
+                    }
+                }
+            }
+        } else {
+            callback(element);
+        }
+    };
+    ```
+
+    En el template tmp_server_select poner:
+
+    ```
+    <script type="text/html" id="tmpl_server_select">
+            <style>
+                #kiwi .btn { display: inline-block; *display: inline; *zoom: 1; padding: 4px 10px 4px; margin-bottom: 0; font-size: 13px; line-height: 18px; color: #333333; text-align: center;text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); vertical-align: middle; background-color: #f5f5f5; background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6); background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6)); background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6); background-image: -o-linear-gradient(top, #ffffff, #e6e6e6); background-image: linear-gradient(top, #ffffff, #e6e6e6); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#ffffff, endColorstr=#e6e6e6, GradientType=0); border-color: #e6e6e6 #e6e6e6 #e6e6e6; border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25); border: 1px solid #e6e6e6; -webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); cursor: pointer; *margin-left: .3em; }
+                #kiwi .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: #e6e6e6; }
+                #kiwi .btn-large { padding: 9px 14px; font-size: 15px; line-height: normal; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
+                #kiwi .btn:hover { color: #333333; text-decoration: none; background-color: #e6e6e6; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear; }
+                #kiwi .btn-primary, .btn-primary:hover { text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); color: #ffffff; }
+                #kiwi .btn-primary.active { color: rgba(255, 255, 255, 0.75); }
+                #kiwi .btn-primary { background-color: #4a77d4; background-image: -moz-linear-gradient(top, #6eb6de, #4a77d4); background-image: -ms-linear-gradient(top, #6eb6de, #4a77d4); background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#6eb6de), to(#4a77d4)); background-image: -webkit-linear-gradient(top, #6eb6de, #4a77d4); background-image: -o-linear-gradient(top, #6eb6de, #4a77d4); background-image: linear-gradient(top, #6eb6de, #4a77d4); background-repeat: repeat-x; filter: progid:dximagetransform.microsoft.gradient(startColorstr=#6eb6de, endColorstr=#4a77d4, GradientType=0); border: 1px solid #3762bc; text-shadow: 1px 1px 1px rgba(0,0,0,0.4); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.5); }
+                #kiwi .btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] { filter: none; background-color: #4a77d4; }
+                #kiwi .btn-block { width: 100%; display:block; }
+                #kiwi * { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; -o-box-sizing:border-box; box-sizing:border-box; }
+                #kiwi html { width: 100%; height:100%; overflow:hidden; }
+                #kiwi body {
+                    width: 100%;
+                    height:100%;
+                    background: #092756;
+                    background: -moz-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%),-moz-linear-gradient(top, rgba(57,173,219,.25) 0%, rgba(42,60,87,.4) 100%), -moz-linear-gradient(-45deg, #670d10 0%, #092756 100%);
+                    background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -webkit-linear-gradient(top, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -webkit-linear-gradient(-45deg, #670d10 0%,#092756 100%);
+                    background: -o-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -o-linear-gradient(top, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -o-linear-gradient(-45deg, #670d10 0%,#092756 100%);
+                    background: -ms-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), -ms-linear-gradient(top, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), -ms-linear-gradient(-45deg, #670d10 0%,#092756 100%);
+                    background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), linear-gradient(to bottom, rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), linear-gradient(135deg, #670d10 0%,#092756 100%);
+                    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3E1D6D', endColorstr='#092756',GradientType=1 );
+                }
+                @media (min-width: 768px){
+                    #kiwi .login {
+                        position: absolute;
+                        top: 20%;
+                        left: 33%;
+                        width:30%;
+                    }
+                }
+                @media (max-width: 767px) {
+                    #kiwi .login {
+                        position: absolute;
+                        top: 10%;
+                        left: 15%;
+                        width:70%;
+                    }
+                }
+                @media (max-width: 480px) {
+                    #kiwi .login {
+                        position: absolute;
+                        top: 4%;
+                        left: 5%;
+                        width: 90%;
+                    }
+                }
+                #kiwi .login h1 { color: #bfbfbf; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing:1px; text-align:center; font-weight: bold;}
+                #kiwi input {
+                    width: 100%;
+                    margin-bottom: 10px;
+                    border: none;
+                    outline: none;
+                    padding: 10px;
+                    border: 1px solid rgba(0,0,0,0.3);
+                    border-radius: 4px;
+                    box-shadow: inset 0 -5px 45px rgba(100,100,100,0.2), 0 1px 1px rgba(255,255,255,0.2);
+                    -webkit-transition: box-shadow .5s ease;
+                    -moz-transition: box-shadow .5s ease;
+                    -o-transition: box-shadow .5s ease;
+                    -ms-transition: box-shadow .5s ease;
+                    transition: box-shadow .5s ease;
+                }
+                #kiwi input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); }
+                #kiwi .login img {
+                    width:60px;
+                    float:right;
+                    margin-right:20%;
+                }
+            </style>
+            <div style="display: block;" class="panel applet">
+                <div class="login">
+                    <img src="https://www.chatsfree.net/images/pachatea.png" style="align:right"/>
+                    <h1>Join chat</h1>
+                    <div class="server_details">
+                        <p><div class="status"><%= think_nick %></div></p>
+                    </div>
+                    <form>
+                        <div class="basic">
+                            <input type="text" class="nick" id="server_select_nick" placeholder="<%= nickname %>" >
+                            <input type="text" class="channel" id="server_select_channel" placeholder="<%= channel %>" >
+                            <button type="submit" data-js="submit" class="btn btn-primary btn-block btn-large"><%= start %></button>
+                            <a href="" onclick="return false;" class="show_more"><%= server_network %> <i class="fa fa-caret-down"></i></a>
+                        </div>
+                        <div class="more" style="display:none;">
+                            <table>
+                                <tr class="server">
+                                    <td><label for="server_select_server"><%= server %></label></td>
+                                    <td><input type="text" class="server" id="server_select_server"></td>
+                                <tr>
+                                <tr class="port">
+                                    <td><label for="server_select_port"><%= port %></label></td>
+                                    <td><input type="text" class="port" id="server_select_port"></td>
+                                </tr>
+                                <tr class="ssl">
+                                    <td><label for="server_select_ssl">SSL</label></td>
+                                    <td><input type="checkbox" class="ssl" id="server_select_ssl"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </script>
+        ```
+5:
+    En client/src/views/serverselect.js
+
+    En el switch del metodo showError en el caso default poner:
+
+    opts = {
+        container: $('body'),
+        base_path: base_path,
+        settings_path: base_path + '/assets/settings.json',
+        locales_base_path: base_path
+     }
+
+6:
+    client/src/views/networktabs.js:
+
+    En el método networkAdded sustituir
+
+    ```
+    $('<li class="connection"></li>')
+    ```
+
+    por:
+
+    ```
+    $('<li class="connection mm-menu mm-horizontal mm-offcanvas mm-current mm-opened"></li>')
+    ```
+
+    Añadir el siguiente metodo:
+
+    ```
+    updateCounters: function() {
+        var countPrivates = 0;
+        var countRooms = 0;
+        var count = true;
+        this.model.forEach(function (panel) {
+            var name = panel.get('name');
+            if(name.indexOf('applet_') == -1) {
+                if(name[0] == "#") countRooms++;
+                else {
+                    if(name != "Server")
+                        countPrivates++;
+                }
+            } else {
+                //en el caso de que exista algún applet es que estamos en la tab de applets, no contamos
+                count = false;;
+            }
+        });
+        if(count) {
+            $("#countRooms").html(countRooms);
+            $("#countPrivates").html(countPrivates);
+        }
+    },
+    ```
+
+    En el método panelAdded sustituir:
+
+    ```
+    panel.tab = $('<li><span>' + (panel.get('title') || panel.get('name')) + '</span><div class="activity"></div></li>');
+    ```
+
+    por
+
+    ```
+    panel.tab = $('<li><span>' + (panel.get('title') || panel.get('name')) + '<b class="activity badge"></b></span></li>');
+    ```
+
+    y dentro del if:
+
+    ```
+    panel.tab.addClass('fa-nonexistant');
+    ```
+
+    por
+
+    ```
+    panel.tab.addClass('fa-bolt');
+    ```
+
+    En el método panelRemoved poner this.updateCounters(); antes de_kiwi.app.view.doLayout();
+
+    En el método panelActive sustituir
+
+    ```
+    _kiwi.app.view.$el.find('.panellist .part').remove();
+    _kiwi.app.view.$el.find('.panellist .active').removeClass('active');
+    ```
+
+    por
+
+    ```
+    $('.panellist .part').remove();
+    $('.panellist .active').removeClass('active mm-selected');
+    ```
+
+    Sustituir
+
+    ```
+    panel.tab.addClass('active');
+    ```
+
+    por
+
+    ```
+    panel.tab.addClass('active mm-selected');
+
+    $("#activePanelName").html(panel.get('title') || panel.get('name'));
+    ```
+
+    Y sustituir
+
+    ```
+    panel.tab.append('<span class="part fa fa-nonexistant"></span>');
+    ```
+
+    por
+
+    ```
+    $("span",panel.tab).append('<i class="part fa fa-times"></i>');
+    ```
+
+    En el método partClick sustituir
+
+    ```
+    var tab = $(e.currentTarget).parent();
+    ```
+
+    por
+
+    ```
+    var tab = $(e.currentTarget).parent().parent();
+    ```
+
+7:
+
+    client/src/views/tabs.js:
+
+    Cambiar className: "panellist" por className: 'panellist mm-list mm-panel mm-opened mm-current'
+
+    En event: { ... } cambiar 'click li .part': 'partClick' por 'click .part': 'partClick'
+
 
 
 Cambios en el kiwi, que sería recomendable cambiar a plugin
