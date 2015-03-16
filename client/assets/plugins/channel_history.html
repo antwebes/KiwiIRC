@@ -2,6 +2,9 @@
  
      (function() {
 		kiwi.events.on('loaded', function () {
+			var historialItem = kiwi.i18n.translate('plugin_right_menu_history').fetch();
+			var chatInput = kiwi.components.ControlInput();
+
 			function supports_html5_storage() {
 				try {
 					return 'localStorage' in window && window['localStorage'] !== null;
@@ -58,7 +61,7 @@
 				}
 
 				for (var i = 0; i < menuItemsLengt; i++) {
-					if (window.right_menu_items[i].name == "History") {
+					if(window.right_menu_items[i].name == historialItem){
 						window.right_menu_items[i].submenu = channelsMenu;
 					}
 				}
@@ -90,7 +93,25 @@
 						var channel = event.channel.toLowerCase();
 						var enableHistory = getChannelHistoryStatus();
 						if (channels.indexOf(channel) == -1) {
+							var $historyItem = $('<li><span><i class="fa fa-comments"></i> ' + channel + '</span></li>');
+							var $historySubtitle = $('.mm-subtitle:contains("' + historialItem + '")').parent();
+							var $historyCounter = $('.right-menu-items > li:contains("' + historialItem + '") .mm-counter');
+
 							channels.push(channel);
+
+							$historyItem.on("click", function(){
+								chatInput.run('/join ' + channel);
+
+								$('.right-menu').mmenu().trigger("close.mm");
+							});
+
+
+							$historySubtitle
+								.append($historyItem)
+								.show();
+
+							var count = parseInt($historyCounter.html()) + 1;
+							$historyCounter.html(count);
 						}
 
 						localStorage.setItem("channel_history", JSON.stringify(channels));
@@ -98,9 +119,9 @@
 				});
 			}
 
-			$(".right-menu").promise().done(function () {
+			window.menu_items_ready_promise.promise().done(function(){
 				buildMenuHistory();
 			});
 		});
     })();
-</script>
+</script>	
