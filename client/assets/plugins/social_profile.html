@@ -25,10 +25,18 @@
             show: function() {
                 this.hidden = false;
 
+                $('.right_bar .channel_info, .right_bar .channel_part').hide();
+
                 if (!this.keep_hidden)
                     this.$el.removeClass('disabled');
 
-                this.updateIcon();
+                $('.right-bar-toggle i.fa')
+                        .removeClass('fa-angle-double-right')
+                        .addClass('fa-users');
+
+                this.updateIcon(function(){
+                        $('.right_bar').removeClass('disabled');
+                    });
             },
 
 
@@ -54,14 +62,18 @@
             },
 
 
-            updateIcon: function() {
+            updateIcon: function(callback) {
                 var $toggle = this.$('.right-bar-toggle'),
                         $icon = $toggle.find('i');
 
+                if(typeof callback == 'undefined'){
+                    callback = function(){};
+                }
+
                 if (!this.hidden && this.keep_hidden) {
-                    $toggle.show();
+                    $toggle.show(400, callback);
                 } else {
-                    $toggle.hide();
+                    $toggle.hide(400, callback);
                 }
 
                 if (this.keep_hidden) {
@@ -193,7 +205,6 @@
             $.when(fetchingUserData).done(function(data){
                 rightBarPannel.show();
                 $('.memberlists .active').removeClass('active'); //ocultamos el memberlist
-                $('.channel_info, .channel_part').hide();
                 $(renderUser(data)).appendTo($('.memberlists')); //metemos el perfil justo debajo del memberlist
             });
         };
