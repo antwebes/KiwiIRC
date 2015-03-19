@@ -72,8 +72,11 @@ HttpHandler.prototype.serve = function (request, response) {
         Stats.incr('http.homepage');
     }
 
-    response.setHeader('Access-Control-Allow-Origin', '*');
-    response.setHeader('Access-Control-Allow-Headers', 'Authorization');
+    if (global.config.headers) {
+        for (var key in global.config.headers) {
+            response.setHeader(key, global.config.headers[key]);
+        }
+    }
 
     // If the 'magic' translation is requested, figure out the best language to use from
     // the Accept-Language HTTP header. If nothing is suitible, fallback to our en-gb default translation
@@ -179,13 +182,18 @@ function serveSettings(request, response) {
             response.writeHead(304, 'Not Modified');
             return response.end();
         }
-
-        response.writeHead(200, {
+        var head = {
             'ETag': settings.hash,
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Authorization'
-        });
+            'Content-Type': 'application/json'
+        };
+
+        if (global.config.headers) {
+            for (var key in global.config.headers) {
+                head[key] = global.config.headers[key];
+            }
+        }
+
+        response.writeHead(200, head);
         response.end(settings.settings);
     });
 }
