@@ -1,132 +1,43 @@
 <script>
     kiwi.plugins.on('loaded', function(){
-        var RightBar = Backbone.View.extend({
-            events: {
-                'click .right-bar-toggle': 'onClickToggle',
-                'click .right-bar-toggle-inner': 'onClickToggle'
-            },
-
-            initialize: function() {
-                this.keep_hidden = false;
-                this.hidden = this.$el.hasClass('disabled');
-
-                this.updateIcon();
-            },
-
-
-            hide: function() {
-                this.hidden = true;
-                this.$el.addClass('disabled');
-
-                this.updateIcon();
-            },
-
-
-            show: function() {
-                this.hidden = false;
-
-                if (!this.keep_hidden)
-                    this.$el.removeClass('disabled');
-
-                this.updateIcon();
-            },
-
-
-            // Toggle if the rightbar should be shown or not
-            toggle: function(keep_hidden) {
-                // Hacky, but we need to ignore the toggle() call from doLayout() as we are overriding it
-                if (this.ignore_layout)
-                    return true;
-
-                if (typeof keep_hidden === 'undefined') {
-                    this.keep_hidden = !this.keep_hidden;
-                } else {
-                    this.keep_hidden = keep_hidden;
-                }
-
-                if (this.keep_hidden || this.hidden) {
-                    this.$el.addClass('disabled');
-                } else {
-                    this.$el.removeClass('disabled');
-                }
-
-                this.updateIcon();
-            },
-
-
-            updateIcon: function() {
-                var $toggle = this.$('.right-bar-toggle'),
-                        $icon = $toggle.find('i');
-
-                if (!this.hidden && this.keep_hidden) {
-                    $toggle.show();
-                } else {
-                    $toggle.hide();
-                }
-
-                if (this.keep_hidden) {
-                    $icon.removeClass('fa fa-angle-double-right').addClass('fa fa-users');
-                } else {
-                    $icon.removeClass('fa fa-users').addClass('fa fa-angle-double-right');
-                }
-            },
-
-
-            onClickToggle: function(event) {
-                this.toggle();
-
-                // Hacky, but we need to ignore the toggle() call from doLayout() as we are overriding it
-                this.ignore_layout = true;
-                //_kiwi.app.view.doLayout();
-
-                // No longer ignoring the toggle() call from doLayout()
-                delete this.ignore_layout;
-            }
-        });
-
-        var rightBarPannel = new RightBar({el: $('.right_bar')[0]});
-
         var usrTmpl = "<%\n" +
-        "var currentYear, yearUser, yearsOld;\n" +
-        "\n" +
-        "if(typeof(profile) != 'undefined'){\n" +
-        "    currentYear = new Date().getFullYear();\n" +
-        "    yearUser = new Date(profile.birthday).getFullYear().toString().substring(0,4);\n" +
-        "    yearsOld = currentYear - yearUser;\n" +
-        "    if (yearsOld <=0){\n" +
-        "        yearsOld = '>18';\n" +
-        "}else if(isNaN(yearsOld)){\n" +
-        "        yearsOld = null;\n" +
-        "    }\n" +
-        "}else{\n" +
-        "    yearsOld = null;\n" +
-        "}\n" +
-        "%>\n" +
-        "\n" +
-        "<% if(typeof(profile) != 'undefined' &&\n" +
-        "    typeof(profile.profile_photo) != 'undefined' &&\n" +
-        "    typeof(profile.profile_photo.path_medium) != 'undefined'){ %>\n" +
-        "    <img class=\"kiwi-user-info\" src=\"<%= profile.profile_photo.path_medium %>\" width=\"199px\">\n" +
-        "<% } %>\n" +
-        "<ul class=\"kiwi-user-info\" id=\"user-info\" style=\"margin-left:15px;\">\n" +
-        "     <% if(yearsOld != null){ %>\n" +
-        "        <li><i class=\"fa fa-calendar-o\"></i>  " + kiwi.i18n.translate('plugin_social_profile_age').fetch() + ": <%= yearsOld %></li>\n" +
-        "     <% } %>\n" +
-        "     <% if(typeof(profile) != 'undefined' && typeof(profile.gender) != 'undefined' && profile.gender != ''){ %>\n" +
-        "         <li><i class=\"fa <%if(profile.gender == 'female'){%>fa-female<% }else{ %>fa-male<% } %>\"></i> " + kiwi.i18n.translate('plugin_social_profile_gender').fetch() + ": <%= profile.gender || '' %></li>\n" +
-        "    <% } %>\n" +
-        "    <% if(typeof(city) != 'undefined'){ %>\n" +
-        "        <li><i class=\"fa fa-location-arrow\"></i> " + kiwi.i18n.translate('plugin_social_profile_location').fetch() + ": <% if(city.name != 'no_city'){ %><%= city.name %>, <% } %><%= city.country.name %></li>\n" +
-        "    <% } %>\n" +
-        "    <li><center><a href=\"<%= url_user_profile %>\" <% if(typeof(window.user_id) == 'undefined') { %> target=\"_blank\"<% } %>> <i class=\"fa fa-info\"></i> " + kiwi.i18n.translate('plugin_social_profile_full_profile').fetch() + "</a></center></li>\n" +
-        "</ul>\n";
-
+                "var currentYear, yearUser, yearsOld;\n" +
+                "\n" +
+                "if(typeof(profile) != 'undefined'){\n" +
+                " currentYear = new Date().getFullYear();\n" +
+                " yearUser = new Date(profile.birthday).getFullYear().toString().substring(0,4);\n" +
+                " yearsOld = currentYear - yearUser;\n" +
+                " if (yearsOld <=0){\n" +
+                " yearsOld = '>18';\n" +
+                "}else if(isNaN(yearsOld)){\n" +
+                " yearsOld = null;\n" +
+                " }\n" +
+                "}else{\n" +
+                " yearsOld = null;\n" +
+                "}\n" +
+                "%>\n" +
+                "\n" +
+                "<% if(typeof(profile) != 'undefined' &&\n" +
+                " typeof(profile.profile_photo) != 'undefined' &&\n" +
+                " typeof(profile.profile_photo.path_medium) != 'undefined'){ %>\n" +
+                " <img src=\"<%= profile.profile_photo.path_medium %>\" width=\"199px\">\n" +
+                "<% } %>\n" +
+                "<ul id=\"user-info\" style=\"margin-left:15px;\">\n" +
+                " <% if(yearsOld != null){ %>\n" +
+                " <li><i class=\"fa fa-calendar-o\"></i> " + kiwi.i18n.translate('plugin_social_profile_age').fetch() + ": <%= yearsOld %></li>\n" +
+                " <% } %>\n" +
+                " <% if(typeof(profile) != 'undefined' && typeof(profile.gender) != 'undefined' && profile.gender != ''){ %>\n" +
+                " <li><i class=\"fa <%if(profile.gender == 'female'){%>fa-female<% }else{ %>fa-male<% } %>\"></i> " + kiwi.i18n.translate('plugin_social_profile_gender').fetch() + ": <%= profile.gender || '' %></li>\n" +
+                " <% } %>\n" +
+                " <% if(typeof(city) != 'undefined'){ %>\n" +
+                " <li><i class=\"fa fa-location-arrow\"></i> " + kiwi.i18n.translate('plugin_social_profile_location').fetch() + ": <% if(city.name != 'no_city'){ %><%= city.name %>, <% } %><%= city.country.name %></li>\n" +
+                " <% } %>\n" +
+                " <li><center><a href=\"<%= url_user_profile %>\" <% if(typeof(window.user_id) == 'undefined') { %> target=\"_blank\"<% } %>> <i class=\"fa fa-info\"></i> " + kiwi.i18n.translate('plugin_social_profile_full_profile').fetch() + "</a></center></li>\n" +
+                "</ul>";
         var renderUser = function(user){
             var tmpl = usrTmpl.trim();
-
             var user_path_profile;
             var social_endpoint;
-
             if (!getQueryVariable('social_endpoint')){
                 social_endpoint = kiwi.settings.get('social_endpoint');
             }else{
@@ -137,20 +48,15 @@
             }else{
                 user_path_profile = getQueryVariable('user_path_profile');
             }
-
             if (!user_path_profile){
                 console.log('If necessary declare param user_path_profile in config.js');
             }
-
             user_path_profile = user_path_profile.replace("$username$", user.username);
             user_path_profile = user_path_profile.replace("$id$", user.id);
-
             var url_user_profile = social_endpoint + user_path_profile;
             var data = _.extend(user, {url_user_profile : url_user_profile});
-
             return _.template(tmpl, data);
         };
-
         var getUserInfo = function(panel){
             var guest_api;
             if(typeof(window.gest_api) != 'undefined'){
@@ -160,12 +66,10 @@
             }else{
                 guest_api = kiwi.settings.get('guest_api')
             }
-
             var url = guest_api+ "/users/"+panel.get('name');
             var deferred = $.Deferred();
             var userData = panel.get('userData');
-
-            //we haven't yet fetched the userdata from the server
+//we haven't yet fetched the userdata from the server
             if(!userData){
                 $.ajax({
                     dataType: 'json',
@@ -183,42 +87,27 @@
             }else{
                 deferred.resolve(userData);
             }
-
             return deferred.promise();
         };
-
         var showUserInfoOnSideBar = function(panel){
             var fetchingUserData = getUserInfo(panel);
-
             $.when(fetchingUserData).done(function(data){
-                rightBarPannel.show();
-                $('.memberlists .active').removeClass('active'); //ocultamos el memberlist
-                $('.channel_info, .channel_part').hide();
-                $(renderUser(data)).appendTo($('.memberlists')); //metemos el perfil justo debajo del memberlist
+                kiwi.components.RightBar.show(false);
+                $('.memberlists').html(renderUser(data));
             });
         };
-
         var net = kiwi.components.Network();
-
-        //if(typeof(window.api_endpoint) != 'undefined'){
-            net.on('connect', function(e){
-                var panels = kiwi.connections.active_connection.panels;
-
-                panels.bind('add', function(panel){
-                    if(panel.isQuery()){
-                        panel.on('active', function(){
-                            showUserInfoOnSideBar(panel);
-                        });
-                    }
-                });
+//if(typeof(window.api_endpoint) != 'undefined'){
+        net.on('connect', function(e){
+            var panels = kiwi.connections.active_connection.panels;
+            panels.bind('add', function(panel){
+                if(panel.isQuery()){
+                    panel.on('active', function(){
+                        showUserInfoOnSideBar(panel);
+                    });
+                }
             });
-        //}
-
-        kiwi.panels.on('active', function(model, active){ //esto ocurre cuando cambiamos de pestaña
-            if(model.isChannel()){ //si es pestaña canal
-                $('.channel_info, .channel_part').show();
-                $('.memberlists').find('.kiwi-user-info').remove(); //quitamos los detalles de usuario
-            }
         });
+//}
     });
 </script>
