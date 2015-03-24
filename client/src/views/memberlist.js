@@ -107,11 +107,19 @@ _kiwi.view.MemberList = Backbone.View.extend({
         new _kiwi.model.ChannelInfo({channel: this.model.channel});
     },
 
-
     show: function () {
         $('#kiwi .memberlists').children().removeClass('active');
         $(this.el).addClass('active');
 
-        this.renderMeta();
+
+        $('#kiwi .memberlists').empty();
+        this.$el.appendTo('#kiwi .memberlists');
+
+        //we need to assign the handlers
+        this.model.forEach(function (member) {
+            member.view.$el.data('member', member);
+        });
+
+        this.delegateEvents();
     }
 });
