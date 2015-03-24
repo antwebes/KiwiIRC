@@ -7,5 +7,5 @@
     - Añadir plugin de social_profile, Al abrir un privado se muestra el perfil del usuario. (Commit: 7baf595a029d7102e62003a56816f70e638831cd)  
         - Se añáde el rightbar como como componente global en src/models/application.js #L128 y #L129
         - Modificar function show de src/views/rightbar.js 
-    - Añadir traducción a social_profile
+    - Añadir traducción a social_profile (Commit: 1204118e976c4fb2b95f45c9d6790e87744a6840)
         - Se modifico server/helpers/build.js
