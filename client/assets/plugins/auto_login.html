@@ -6,8 +6,15 @@
 
 
             network.on('message:notice', function(event) {
+                var token = '';
                 if(typeof window.token == 'undefined'){
-                    return;
+                    if (getQueryVariable('token') =='undefined'){
+                        return;
+                    }else{
+                        token = getQueryVariable('token');
+                    }
+                }else{
+                    token = window.token;
                 }
 
                 if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
@@ -15,7 +22,7 @@
                             event.msg.indexOf("nickname is registered and protected.")  > -1 ||
                             event.msg.indexOf("nick está registrado y protegido.")  > -1
                     ){
-                        network.msg(event.nick, 'identifyoauth '+window.token);
+                        network.msg(event.nick, 'identifyoauth '+token);
                     }
                     console.log(event);
                 }
@@ -23,8 +30,15 @@
 
 
             network.on('message:message', function(event) {
+                var token = '';
                 if(typeof window.token == 'undefined'){
-                    return;
+                    if (getQueryVariable('token') =='undefined'){
+                        return;
+                    }else{
+                        token = getQueryVariable('token');
+                    }
+                }else{
+                    token = window.token;
                 }
                 
                 if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
@@ -32,7 +46,7 @@
                             event.msg.indexOf("nickname is registered and protected.")  > -1 ||
                             event.msg.indexOf("nick está registrado y protegido.")  > -1
                     ){
-                        network.msg(event.nick, 'identifyoauth '+window.token);
+                        network.msg(event.nick, 'identifyoauth '+token);
                     }
                 }
             });
