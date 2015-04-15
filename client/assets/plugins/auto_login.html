@@ -1,11 +1,27 @@
 <script type="text/javascript">
     (function(){
+
+        function getToken() {
+            var token = '';
+            if(typeof window.token == 'undefined'){
+                if (getQueryVariable('token') =='undefined'){
+                    return;
+                }else{
+                    token = getQueryVariable('token');
+                }
+            }else{
+                token = window.token;
+            }
+            return token;
+        }
+
         kiwi.events.on('loaded', function(){
             var network = kiwi.components.Network();
             var input = kiwi.components.ControlInput();
 
 
             network.on('message:notice', function(event) {
+<<<<<<< Updated upstream
                 var token = '';
                 if(typeof window.token == 'undefined'){
                     if (getQueryVariable('token') =='undefined'){
@@ -16,6 +32,9 @@
                 }else{
                     token = window.token;
                 }
+=======
+                var token = getToken();
+>>>>>>> Stashed changes
 
                 if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
                     if(
@@ -30,6 +49,7 @@
 
 
             network.on('message:message', function(event) {
+<<<<<<< Updated upstream
                 var token = '';
                 if(typeof window.token == 'undefined'){
                     if (getQueryVariable('token') =='undefined'){
@@ -40,6 +60,9 @@
                 }else{
                     token = window.token;
                 }
+=======
+                var token = getToken();
+>>>>>>> Stashed changes
                 
                 if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
                     if(
@@ -87,6 +110,13 @@
             }
 
             var auto_connect = getQueryVariable('auto_connect');
+
+            network.on('connect', function(event) {
+                if(getQueryVariable('nick') == getQueryVariable('token_nick')) {
+                    var token = getToken();
+                    network.msg("NiCK", 'identifyoauth '+token);
+                } 
+            });
 
             if (typeof auto_connect == 'undefined' || auto_connect =='true') {
                 $('[data-js=submit]').click();
