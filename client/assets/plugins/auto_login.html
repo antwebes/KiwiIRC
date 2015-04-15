@@ -21,20 +21,7 @@
 
 
             network.on('message:notice', function(event) {
-<<<<<<< Updated upstream
-                var token = '';
-                if(typeof window.token == 'undefined'){
-                    if (getQueryVariable('token') =='undefined'){
-                        return;
-                    }else{
-                        token = getQueryVariable('token');
-                    }
-                }else{
-                    token = window.token;
-                }
-=======
                 var token = getToken();
->>>>>>> Stashed changes
 
                 if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
                     if(
@@ -49,20 +36,8 @@
 
 
             network.on('message:message', function(event) {
-<<<<<<< Updated upstream
-                var token = '';
-                if(typeof window.token == 'undefined'){
-                    if (getQueryVariable('token') =='undefined'){
-                        return;
-                    }else{
-                        token = getQueryVariable('token');
-                    }
-                }else{
-                    token = window.token;
-                }
-=======
+
                 var token = getToken();
->>>>>>> Stashed changes
                 
                 if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
                     if(
