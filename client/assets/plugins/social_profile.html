@@ -75,12 +75,15 @@
                 guest_api = kiwi.settings.get('guest_api')
             }
 
-            var url = guest_api+ "/users/"+panel.get('name');
+            var username = panel.get('name');
+            var network = kiwi.components.Network();
+            var url = guest_api+ "/users/"+username;
             var deferred = $.Deferred();
             var userData = panel.get('userData');
+            var isRegisteredInIRC = false;
 
-            //we haven't yet fetched the userdata from the server
-            if(!userData){
+            //this function calls the api for fetching the profile and resolves the promise
+            var getProfileFomApi = function(){
                 $.ajax({
                     dataType: 'json',
                     headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -91,9 +94,29 @@
                         deferred.resolve(data);
                     },
                     error: function(){
+                        panel.set('userData', true);
                         deferred.reject();
                     }
                 });
+            };
+
+            //we haven't yet fetched the userdata from the server
+            if(!userData){
+                //comprobamos que el usuario este registrado en el irc
+                network.on('whois', function(response) {
+                    //si el whois es del usuario actual y recibimos un mensage de que esta registrado llamamos al api para obtener perfil
+                    if (response.nick == username && response.msg == 'is a registered nick'){
+                        isRegisteredInIRC = true;
+                        getProfileFomApi();
+                    }
+
+                    //si estamos al final del whois y no lo hemos marcado como registrado, marcamos que la pestaña tiene datos para no volver a hacer whois al volver
+                    if(response.end && !isRegisteredInIRC){
+                        panel.set('userData', true);
+                    }
+                });
+
+                network.raw('whois '+username);
             }else{
                 deferred.resolve(userData);
             }
