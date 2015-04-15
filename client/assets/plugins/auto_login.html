@@ -1,21 +1,34 @@
 <script type="text/javascript">
     (function(){
+
+        function getToken() {
+            var token = '';
+            if(typeof window.token == 'undefined'){
+                if (getQueryVariable('token') =='undefined'){
+                    return;
+                }else{
+                    token = getQueryVariable('token');
+                }
+            }else{
+                token = window.token;
+            }
+            return token;
+        }
+
         kiwi.events.on('loaded', function(){
             var network = kiwi.components.Network();
             var input = kiwi.components.ControlInput();
 
 
             network.on('message:notice', function(event) {
-                if(typeof window.token == 'undefined'){
-                    return;
-                }
+                var token = getToken();
 
                 if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
                     if(
                             event.msg.indexOf("nickname is registered and protected.")  > -1 ||
                             event.msg.indexOf("nick está registrado y protegido.")  > -1
                     ){
-                        network.msg(event.nick, 'identifyoauth '+window.token);
+                        network.msg(event.nick, 'identifyoauth '+token);
                     }
                     console.log(event);
                 }
@@ -23,16 +36,15 @@
 
 
             network.on('message:message', function(event) {
-                if(typeof window.token == 'undefined'){
-                    return;
-                }
+
+                var token = getToken();
                 
                 if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
                     if(
                             event.msg.indexOf("nickname is registered and protected.")  > -1 ||
                             event.msg.indexOf("nick está registrado y protegido.")  > -1
                     ){
-                        network.msg(event.nick, 'identifyoauth '+window.token);
+                        network.msg(event.nick, 'identifyoauth '+token);
                     }
                 }
             });
@@ -73,6 +85,13 @@
             }
 
             var auto_connect = getQueryVariable('auto_connect');
+
+            network.on('connect', function(event) {
+                if(getQueryVariable('nick') == getQueryVariable('token_nick')) {
+                    var token = getToken();
+                    network.msg("NiCK", 'identifyoauth '+token);
+                } 
+            });
 
             if (typeof auto_connect == 'undefined' || auto_connect =='true') {
                 $('[data-js=submit]').click();
