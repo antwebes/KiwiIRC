@@ -87,7 +87,7 @@
             var auto_connect = getQueryVariable('auto_connect');
 
             network.on('connect', function(event) {
-                if(getQueryVariable('nick') == getQueryVariable('token_nick')) {
+                if(getQueryVariable('nick') && getQueryVariable('nick') == getQueryVariable('token_nick')) {
                     var token = getToken();
                     network.msg("NiCK", 'identifyoauth '+token);
                 } 
