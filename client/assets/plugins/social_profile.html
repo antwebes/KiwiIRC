@@ -1,5 +1,6 @@
 <script>
     kiwi.plugins.on('loaded', function(){
+
         var usrTmpl = "<%\n" +
                 "var currentYear, yearUser, yearsOld;\n" +
                 "\n" +
@@ -34,6 +35,7 @@
                 " <% } %>\n" +
                 " <li><center><a href=\"<%= url_user_profile %>\" <% if(typeof(window.user_id) == 'undefined') { %> target=\"_blank\"<% } %>> <i class=\"fa fa-info\"></i> " + kiwi.i18n.translate('plugin_social_profile_full_profile').fetch() + "</a></center></li>\n" +
                 "</ul>";
+
         var renderUser = function(user){
             var tmpl = usrTmpl.trim();
             var user_path_profile;
@@ -57,6 +59,7 @@
             var data = _.extend(user, {url_user_profile : url_user_profile});
             return _.template(tmpl, data);
         };
+
         var getUserInfo = function(panel){
             var guest_api;
             if(typeof(window.gest_api) != 'undefined'){
@@ -66,11 +69,17 @@
             }else{
                 guest_api = kiwi.settings.get('guest_api')
             }
-            var url = guest_api+ "/users/"+panel.get('name');
+
             var deferred = $.Deferred();
+            //we created a field userData to check if we have data of user from api or this user is not registered 
             var userData = panel.get('userData');
-//we haven't yet fetched the userdata from the server
-            if(!userData){
+            var username = panel.get('name');
+            var network = kiwi.components.Network();
+            var url = guest_api+ "/users/"+username;
+            var isRegisteredInIRC = false; 
+
+            //this function calls the api for fetching the profile and resolves the promise
+            var getProfileFomApi = function(){
                 $.ajax({
                     dataType: 'json',
                     headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -81,23 +90,43 @@
                         deferred.resolve(data);
                     },
                     error: function(){
+                        panel.set('userData', true); 
                         deferred.reject();
                     }
                 });
+            };
+            //we haven't yet fetched the userdata from the server
+            if(!userData){
+                //check if user is registered in irc 
+                network.on('whois', function(response) {
+                    //if whois is of the user actually and we recived a message that this user is registered call to api to get profile 
+                    if (response.nick.toLowerCase() == username.toLowerCase() && response.msg == 'is a registered nick'){ 
+                        isRegisteredInIRC = true;
+                        getProfileFomApi();
+                    }
+                    //if we are in finish of whois and it not marked as registered, we marked that tab has data to not to do whois again 
+                    if(response.end && !isRegisteredInIRC){
+                        panel.set('userData', true);
+                    }
+                });
+                network.raw('whois '+username);
             }else{
                 deferred.resolve(userData);
             }
             return deferred.promise();
         };
+
         var showUserInfoOnSideBar = function(panel){
             var fetchingUserData = getUserInfo(panel);
             $.when(fetchingUserData).done(function(data){
-                kiwi.components.RightBar.show(false);
-                $('.memberlists').html(renderUser(data));
+                if (!(typeof(data) === 'boolean')){ 
+                    kiwi.components.RightBar.show(false);
+                    $('.memberlists').html(renderUser(data));
+                }
             });
         };
+
         var net = kiwi.components.Network();
-//if(typeof(window.api_endpoint) != 'undefined'){
         net.on('connect', function(e){
             var panels = kiwi.connections.active_connection.panels;
             panels.bind('add', function(panel){
@@ -108,6 +137,5 @@
                 }
             });
         });
-//}
     });
 </script>
