@@ -79,6 +79,7 @@
             var network = kiwi.components.Network();
             var url = guest_api+ "/users/"+username;
             var deferred = $.Deferred();
+            //we created a field userData to check if we have data of user from api or this user is not registered
             var userData = panel.get('userData');
             var isRegisteredInIRC = false;
 
@@ -102,15 +103,15 @@
 
             //we haven't yet fetched the userdata from the server
             if(!userData){
-                //comprobamos que el usuario este registrado en el irc
+                //check if user is registered in irc
                 network.on('whois', function(response) {
-                    //si el whois es del usuario actual y recibimos un mensage de que esta registrado llamamos al api para obtener perfil
-                    if (response.nick == username && response.msg == 'is a registered nick'){
+                    //if whois is of the user actually and we recived a message that this user is registered call to api to get profile
+                    if (response.nick.toLowerCase() == username.toLowerCase() && response.msg == 'is a registered nick'){
                         isRegisteredInIRC = true;
                         getProfileFomApi();
                     }
 
-                    //si estamos al final del whois y no lo hemos marcado como registrado, marcamos que la pestaña tiene datos para no volver a hacer whois al volver
+                    //if we are in finish of whois and it not marked as registered, we marked that tab has data to not to do whois again
                     if(response.end && !isRegisteredInIRC){
                         panel.set('userData', true);
                     }
@@ -128,8 +129,10 @@
             var fetchingUserData = getUserInfo(panel);
 
             $.when(fetchingUserData).done(function(data){
-                kiwi.components.RightBar.show(false);
-                $('.memberlists').html(renderUser(data));
+                if (!(typeof(data) === 'boolean')){
+                    kiwi.components.RightBar.show(false);
+                    $('.memberlists').html(renderUser(data));
+                }
             });
         };
 
