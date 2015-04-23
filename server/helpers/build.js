@@ -193,7 +193,7 @@ if (!fs.existsSync(global.config.public_http + '/assets/locales')) {
 console.log('reading plugin translations');
 console.log(global.config.public_http + 'assets/plugins/translations');
 
-
+//we make a promise so when the kiwi translations are done they can wait for the plugins tanslations to mix them.
 var pluginsTransPromise = new Promise(function(resolve, reject){
     var pluginsTrans = {};
     var proccessedFiles = 0;
@@ -204,6 +204,7 @@ var pluginsTransPromise = new Promise(function(resolve, reject){
                 var parts = file.split('.'); // parts[0] = plugin name, parts[1] = language, parts[2] = .po
                 var locale = parts[1];
 
+                //check if it is a .po file
                 if (parts[2] === 'po'){
                     if(typeof pluginsTrans[locale] == 'undefined'){
                         pluginsTrans[locale] = {};
@@ -220,6 +221,7 @@ var pluginsTransPromise = new Promise(function(resolve, reject){
 
                         proccessedFiles++;
 
+                        //if all files were translated, we resolve the promise
                         if(proccessedFiles == translation_files.length){
                             resolve(pluginsTrans);
                         }
@@ -235,6 +237,7 @@ fs.readdir(global.config.public_http + '/src/translations', function (err, trans
         var tanslatedLanguages = {};
         var proccessedFiles = 0;
 
+        //we make a promise to know when the translations are done to then merge the translations with the plugin translations
         var finalTransPromise = new Promise(function(resolve, reject) {
             translation_files.forEach(function (file) {
                 var locale = file.slice(0, -3);
@@ -256,6 +259,7 @@ fs.readdir(global.config.public_http + '/src/translations', function (err, trans
                                     tanslatedLanguages[locale] = json;
                                     proccessedFiles++;
 
+                                    //we finished to translate all files
                                     if(proccessedFiles == translation_files.length){
                                         resolve(tanslatedLanguages);
                                     }
@@ -275,12 +279,14 @@ fs.readdir(global.config.public_http + '/src/translations', function (err, trans
             });
         });
 
+        //when all is translated, we write all to tranlations to json
         finalTransPromise.then(function(translations){
             var defaultLanguage = translations['en-gb'].locale_data['en-gb'];
 
             for(translation in translations){
                 (function(translations, translation){
                     for(translationKey in defaultLanguage){
+                        // if we have not translated a given key we take the english as the default language
                         if(typeof translations[translation].locale_data[translation][translationKey] == 'undefined'){
                             translations[translation].locale_data[translation][translationKey] = defaultLanguage[translationKey];
                         }
