@@ -1,7 +1,6 @@
 *.DS_*
 node/node_modules/
 node_modules/
-doc/
 .idea/
 client/assets/plugins/enabled/dist/
 client/assets/plugins/enabled/*.html
