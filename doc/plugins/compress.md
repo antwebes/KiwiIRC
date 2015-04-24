@@ -10,6 +10,13 @@ Under the directroy ```client/assets/plugins/``` there is a directory ```enabled
 
 To enable/disable plugins just create/remove symlinks to the original plugin in the ```client/assets/plugins/enabled``` directory.
 
+There are to commands in kiwi to enable and disable multiple plugins:
+
+* ``` $ ./kiwi enable-plugins plugin1 plugin2 plugin3```
+* ``` $ ./kiwi disable-plugins plugin1 plugin2 plugin3```
+ 
+Notice that the name of the plugins are written without the **.html** extension.
+
 Compress plugins
 ----------------
 

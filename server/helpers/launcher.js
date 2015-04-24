@@ -64,6 +64,14 @@ switch (process.argv[2]) {
         require('./build.js');
         break;
 
+    case 'enable-plugins':
+        require('./pluginenable.js')(process.argv.slice(3));
+        break;
+
+    case 'disable-plugins':
+        require('./plugindisable.js')(process.argv.slice(3));
+        break;
+
     default:
         console.log('Usage: [-f|start|stop|restart|status|reconfig|build [-c <config file>] [-p <pid file>]]');
 }
