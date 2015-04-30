@@ -111,6 +111,7 @@
 			}
 		];
 
+		// now that the menus are configured, we inform the promise that is done
 		window.right_menu_items_deferred.resolve();
 
 		generateToggle=  function(item) {
@@ -226,6 +227,8 @@
 		}
 
 
+		// this promise is resolved outside this plugins, so, the app could load move items
+		// once the promise is resolved, then whe render the items
 		window.menu_items_ready_promise.then(function(items){
 			window.create_right_menu(window.right_menu_items);
 		});

@@ -681,15 +681,18 @@
                 
                 window.kiwi_server = "//" + opts.server_settings.client.server;
                 window.gest_api = opts.server_settings.client.settings.guest_api;
-                //promesa para cuando esta creada la configuración del right_menu
+
+                // promise that awaits the right menu to be configured because the menu can be dinamic and depends on
+                // the plugins that are loaded
                 window.right_menu_items_deferred = new $.Deferred();
                 window.right_menu_items_promise = window.right_menu_items_deferred.promise();
                 
-                //promesa para cuando el plugin del menu lo puede renderizar
+                // promise that awaits for the menu to be rendered after the items are configured
                 window.menu_items_ready_deffered = new $.Deferred();
                 window.menu_items_ready_promise = window.menu_items_ready_deffered.promise();
 
-                //cuando esta configurado que items van al menu, si tengo menu personalizado sobreescribo, despues resuelvo promesa para poder renderizar menu
+                // when the window.right_menu_items_promise is resolved, it means that all menu items are configured so
+                // the menu can be rendereed. So when the promise is done we resolve this promise with the menu items as parameter
                 window.right_menu_items_promise.then(function(){
                     window.menu_items_ready_deffered.resolve(window.right_menu_items);
                 });
