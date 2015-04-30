@@ -15,7 +15,7 @@ module.exports = function(plugins){
 
         fs.symlink(srcPlugin, linkPlugin, 'file', function(err, path){
             if(err){
-                console.log(err);
+                console.log(plugin+' plugin is allready enabled');
             }else{
                 console.log(plugin+' plugin enabled successfully');
             }

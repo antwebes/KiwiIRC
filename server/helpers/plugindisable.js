@@ -13,7 +13,7 @@ module.exports = function(plugins){
 
         fs.unlink(linkPlugin, function(err){
             if(err){
-                console.log(err);
+                console.log(plugin+' plugin allready disabled');
             }else{
                 console.log(plugin+' plugin disabled successfully');
             }
