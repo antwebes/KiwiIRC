@@ -1,0 +1,120 @@
+<script type="text/javascript">
+    (function(){
+
+    	function getParamFromWindowOrUrl(param) {
+    		var value = '';
+            if(typeof window[param] == 'undefined'){
+                if (typeof getQueryVariable(param) == 'undefined'){
+                    return false;
+                }else{
+                    value = getQueryVariable(param);
+                }
+            }else{
+                value = window[param];
+            }
+            return value;
+    	}
+
+        //return false or token
+        function getToken() {
+            return getParamFromWindowOrUrl('token');
+        }
+
+        //return false or token_nick
+        function getTokenNick() {
+            return getParamFromWindowOrUrl('token_nick');
+        }
+
+        //We have param token_nick and is the same of the nick
+        function mustSendIdentifyoauth(nick) {
+            var token_nick = getTokenNick();
+        	if (token_nick){
+                if (nick == token_nick){
+                    return true;
+                }else{
+                	return false;
+                }
+            }else{
+                return true;
+            }
+        }
+
+
+        kiwi.events.on('loaded', function(){
+            var network = kiwi.components.Network();
+            var input = kiwi.components.ControlInput();
+            var token = getToken();
+
+            //if token so we listen event to do identify with token
+            if (token) {
+                network.on('message:notice', function(event) {
+                    if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
+                        if(
+                                event.msg.indexOf("nickname is registered and protected.")  > -1 ||
+                                event.msg.indexOf("nick está registrado y protegido.")  > -1
+                        ){
+                        	if (mustSendIdentifyoauth(event.nick)){
+                        		network.msg(event.nick, 'identifyoauth '+token);
+                        	}
+                        }
+                    }
+                });
+
+                network.on('message:message', function(event) {
+                    if(event.nick.toLowerCase() == 'nickserv' || event.nick.toLowerCase() == 'nick') {
+                        if(
+                                event.msg.indexOf("nickname is registered and protected.")  > -1 ||
+                                event.msg.indexOf("nick está registrado y protegido.")  > -1
+                        ){
+                            if (mustSendIdentifyoauth(event.nick)){
+                        		network.msg(event.nick, 'identifyoauth '+token);
+                        	}
+                        }
+                    }
+                });
+
+                //ToDo, Refine this function to only identify the user when is not still in anope
+	            network.on('connect', function(event) {
+	                if(getQueryVariable('nick') && mustSendIdentifyoauth(getQueryVariable('nick'))) {
+	                    var token = getToken();
+	                    if (token){
+	                        network.msg("NiCK", 'identifyoauth '+token);
+	                    }
+	                }
+	            });
+            }
+
+            if (getQueryVariable('nick')) {
+                var nick = getQueryVariable('nick');
+
+                $('#server_select_nick').val(nick);
+            }
+
+            if (getQueryVariable('channel')) {
+                var channels = getQueryVariable('channel').split(',');
+                channels = channels.map(function (channel) {
+                    return channel;
+                });
+
+                $('.server_select').hide();
+                $('#server_select_channel').val(channels.join(','));
+            }
+
+            if (getQueryVariable('private')) {
+                var private = getQueryVariable('private');
+
+                $('.server_select').hide();
+
+                network.on('connect', function () {
+                    input.run('/query ' + private);
+                });
+            }
+
+            var auto_connect = getQueryVariable('auto_connect');
+
+            if (typeof auto_connect == 'undefined' || auto_connect =='true') {
+                $('[data-js=submit]').click();
+            }
+        });
+    })();
+</script>
