@@ -134,6 +134,8 @@
             _kiwi.global.components.MenuBox = _kiwi.view.MenuBox;
             _kiwi.global.components.DataStore = _kiwi.model.DataStore;
             _kiwi.global.components.Notification = _kiwi.view.Notification;
+            //Globales añadidas por nosotros
+            _kiwi.global.components.RightBar = this.rightbar;
             _kiwi.global.components.Events = function() {
                 return _kiwi.global.events.createProxy();
             };
