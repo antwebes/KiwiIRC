@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: Kiwi\n"
+"Language: es\n"
+
+msgid "plugin_social_profile_gender"
+msgstr "Genero"
+
+msgid "plugin_social_profile_location"
+msgstr "Localización"
+
+msgid "plugin_social_profile_age"
+msgstr "Edad"
+
+msgid "plugin_social_profile_full_profile"
+msgstr "Perfil completo"

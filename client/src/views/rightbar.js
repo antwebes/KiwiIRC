@@ -19,12 +19,22 @@ _kiwi.view.RightBar = Backbone.View.extend({
         this.updateIcon();
     },
 
+    show: function(channelMode) {
+        if(typeof(channelMode) == 'undefined'){
+            channelMode = true;
+        }
 
-    show: function() {
         this.hidden = false;
 
-        if (!this.keep_hidden)
+        if(channelMode){
+            $('.right_bar .channel_info, .right_bar .channel_part').show();
+        }else{
+            $('.right_bar .channel_info, .right_bar .channel_part').hide();
+        }
+
+        if(!this.keep_hidden) {
             this.$el.removeClass('disabled');
+        }
 
         this.updateIcon();
     },
