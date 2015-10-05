@@ -430,10 +430,18 @@
                                 <%= emoticons %>
                             </label>
                         </div>
-                        <label>
-                            <input data-setting="scrollback" class="input-small" type="text" size="4" pattern="\d*">
-                            <span><%= scroll_history %></span>
-                        </label>
+                        <div>
+                            <label>
+                                <input data-setting="scrollback" class="input-small" type="text" size="4" pattern="\d*">
+                                <span><%= scroll_history %></span>
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                <div><%= custom_highlights %></div>
+                                <input data-setting="custom_highlights" class="input-small" type="text" size="20">
+                            </label>
+                        </div>
                     </div>
                 </section>
 
@@ -561,7 +569,8 @@
             opts = {
                 container: $('body'),
                 base_path: base_path,
-                settings_path: base_path + '/assets/settings.json'
+                settings_path: base_path + '/assets/settings.json',
+                locale: getQueryVariable('locale')
             },
             script_promise, script_promise_resolve,
             onload_promise,
@@ -636,7 +645,6 @@
                 opts.server_settings = data.server_settings;
                 opts.client_plugins = data.client_plugins;
                 opts.translations = data.translations;
-                opts.locale = data.locale;
                 opts.themes = data.themes;
 
                 if (typeof data.kiwi_server !== 'undefined') {
