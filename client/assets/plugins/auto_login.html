@@ -55,9 +55,14 @@
                 $('#server_select_nick').val(nick);
             }
 
-            if (getQueryVariable('channel')) {
-                var channels = getQueryVariable('channel').split(',');
+
+            var channelStr = getQueryVariable('channel') || getQueryVariable('channels');
+            if (channelStr) {
+                var channels = channelStr.split(',');
                 channels = channels.map(function (channel) {
+		    channel = channel.replace("%2523","#");
+                    channel = channel.replace("%23","#");
+
                     return channel;
                 });
 
