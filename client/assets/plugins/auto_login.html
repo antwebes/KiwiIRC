@@ -90,10 +90,11 @@
                 $('#server_select_nick').val(nick);
             }
 
-            if (getQueryVariable('channel')) {
-                var channels = getQueryVariable('channel').split(',');
+            var channels_str = getQueryVariable('channel') || getQueryVariable('channels');
+            if (channels_str) {
+                var channels = channels_str.split(',');
                 channels = channels.map(function (channel) {
-                    return channel;
+                    return channel.replace("%2523", "#").replace("%23", "#");
                 });
 
                 $('.server_select').hide();
