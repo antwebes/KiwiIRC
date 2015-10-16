@@ -76,7 +76,7 @@
             var username = panel.get('name');
             var network = kiwi.components.Network();
             var url = guest_api+ "/users/"+username;
-            var isRegisteredInIRC = false; 
+            var isRegisteredInIRC = false;
 
             //this function calls the api for fetching the profile and resolves the promise
             var getProfileFomApi = function(){
@@ -95,21 +95,25 @@
                     }
                 });
             };
+            
             //we haven't yet fetched the userdata from the server
             if(!userData){
-                //check if user is registered in irc 
-                network.on('whois', function(response) {
-                	console.log('whois');
-                    //if whois is of the user actually and we recived a message that this user is registered call to api to get profile 
-                    if (response.nick.toLowerCase() == username.toLowerCase() && response.msg == 'is a registered nick'){ 
+                var isNickRegistered = function(response) {
+                    //if whois is of the user actually and we recived a message that this user is registered call to api to get profile
+                    if (response.nick.toLowerCase() == username.toLowerCase() && response.msg == 'is a registered nick'){
                         isRegisteredInIRC = true;
                         getProfileFomApi();
+                        network.off('whois', isNickRegistered)
                     }
-                    //if we are in finish of whois and it not marked as registered, we marked that tab has data to not to do whois again 
+                    //if we are in finish of whois and it not marked as registered, we marked that tab has data to not to do whois again
                     if(response.end && !isRegisteredInIRC){
                         panel.set('userData', true);
+                        network.off('whois', isNickRegistered);
                     }
-                });
+                };
+
+                //check if user is registered in irc
+                network.on('whois', isNickRegistered);
                 network.raw('whois '+username);
             }else{
                 deferred.resolve(userData);
