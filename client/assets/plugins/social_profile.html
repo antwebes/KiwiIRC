@@ -108,6 +108,7 @@
                     //if we are in finish of whois and it not marked as registered, we marked that tab has data to not to do whois again
                     if(response.end && !isRegisteredInIRC){
                         panel.set('userData', true);
+                        network.off('whois', isNickRegistered);
                     }
                 };
 
