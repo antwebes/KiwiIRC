@@ -31,7 +31,7 @@
                 " <li><i class=\"fa <%if(profile.gender == 'female'){%>fa-female<% }else{ %>fa-male<% } %>\"></i> " + kiwi.i18n.translate('plugin_social_profile_gender').fetch() + ": <%= profile.gender || '' %></li>\n" +
                 " <% } %>\n" +
                 " <% if(typeof(city) != 'undefined'){ %>\n" +
-                " <li><i class=\"fa fa-location-arrow\"></i> " + kiwi.i18n.translate('plugin_social_profile_location').fetch() + ": <% if(city.name != 'no_city'){ %><%= city.name %>, <% } %><%= city.country.name %></li>\n" +
+                " <li><i class=\"fa fa-location-arrow\"></i> " + kiwi.i18n.translate('plugin_social_profile_location').fetch() + ": <% if(city.name != 'no_city'){ %><%= city.name %>, <% } %><%= city.country_name %></li>\n" +
                 " <% } %>\n" +
                 " <li><center><a href=\"<%= url_user_profile %>\" <% if(typeof(window.user_id) == 'undefined') { %> target=\"_blank\"<% } %>> <i class=\"fa fa-info\"></i> " + kiwi.i18n.translate('plugin_social_profile_full_profile').fetch() + "</a></center></li>\n" +
                 "</ul>";
@@ -56,11 +56,14 @@
             user_path_profile = user_path_profile.replace("$username$", user.username);
             user_path_profile = user_path_profile.replace("$id$", user.id);
             var url_user_profile = social_endpoint + user_path_profile;
+            console.log('url_user_profile', url_user_profile);
             var data = _.extend(user, {url_user_profile : url_user_profile});
-            return _.template(tmpl, data);
+            console.log('data', url_user_profile);
+            return _.template(tmpl)(data);
         };
 
         var getUserInfo = function(panel){
+            console.log('init getUserInfo');
             var guest_api;
             if(typeof(window.gest_api) != 'undefined'){
                 guest_api = window.gest_api;
@@ -86,10 +89,12 @@
                     crossDomain: true,
                     url: url,
                     success: function(data){
+                        console.log('successs');
                         panel.set('userData', data);
                         deferred.resolve(data);
                     },
                     error: function(){
+                        console.log('error');
                         panel.set('userData', true); 
                         deferred.reject();
                     }
@@ -98,7 +103,10 @@
             
             //we haven't yet fetched the userdata from the server
             if(!userData){
-                var isNickRegistered = function(response) {
+                var isNickRegistered = function(response, msg, end) {
+                    console.log('isNickRegistered', response);
+                    console.log('msg', msg);
+                    console.log('end', end);
                     //if whois is of the user actually and we recived a message that this user is registered call to api to get profile
                     if (response.nick.toLowerCase() == username.toLowerCase() && response.msg == 'is a registered nick'){
                         isRegisteredInIRC = true;
@@ -108,7 +116,7 @@
                     //if we are in finish of whois and it not marked as registered, we marked that tab has data to not to do whois again
                     if(response.end && !isRegisteredInIRC){
                         panel.set('userData', true);
-                        network.off('whois', isNickRegistered);
+                        // network.off('whois', isNickRegistered);
                     }
                 };
 
@@ -116,6 +124,7 @@
                 network.on('whois', isNickRegistered);
                 network.raw('whois '+username);
             }else{
+                console.log('aaaa');
                 deferred.resolve(userData);
             }
             return deferred.promise();
@@ -124,6 +133,7 @@
         var showUserInfoOnSideBar = function(panel){
             var fetchingUserData = getUserInfo(panel);
             $.when(fetchingUserData).done(function(data){
+                console.log(data);
                 if (!(typeof(data) === 'boolean')){ 
                     kiwi.components.RightBar.show(false);
                     $('.memberlists').html(renderUser(data));
