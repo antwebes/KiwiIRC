@@ -2,6 +2,8 @@ kiwiirc:
   build: .
   entrypoint: "/entrypoint.sh"
   volumes: ["/home/ping/.ssh/:/root/.ssh/"]
+  ports:
+    - "7778:7778"
   environment:
     WEB_CONFIG_BRANCH: master
     WEB_CONFIG_APP: kiwiirc
