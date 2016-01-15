@@ -1,127 +1,108 @@
 <style>
-    .outstanded {
-        background: blue;
+    .registered {
+        font-weight: bold;
     }
 </style>
 
 <script>
     kiwi.plugins.on('loaded', function(){
 
-    var oustandingsCache = {};    
+        var users = {};
 
-    var accessToken = "MzBjYzU4NGZjNDNhN2Y2YTExNGUyODgwN2VlZmRkNGFiZTk2MzNhMmZlYmRhYTg3NGNkOGYwMWQwNzliOTM3YnJ1MDE0NTM4ODI4NDllODI3YjgyMWNkOGM1MWE2NDk5YTc3NjZjYTQ1OTc5NjU3N2JjYzkxNGY5ZTU1ZDVlNGU0ZjgyZjlmMDBlN2Q0";
+        var realtimeEndpoint = "http://127.0.0.1:8000/app_dev.php";
 
+        var originalMemberRender = _kiwi.view.Member.prototype.render;
+        var originalMemberListInitialize = _kiwi.model.MemberList.prototype.initialize;
 
-    var apiEndpoint = "http://api.chateagratis.local/app_dev.php";
-
-    var isNickOutstanded = function(nick){
-        var _$ = jQuery;
-
-        if(typeof(oustandingsCache[nick]) == 'undefined'){
-            _$.ajax({
-                url: apiEndpoint + '/api/users/' + nick,
+        var getRemoteUsersOfChannel = function(channel, page){
+            return jQuery.ajax({
+                url: realtimeEndpoint + '/user_channels',
                 data: {
-                    access_token: accessToken
-                },
-                success: function(data){
-                    if(typeof(data.outstanding) == 'undefined'){
-                        oustandingsCache[nick] = false;
-                    }else{
-                        oustandingsCache[nick] = true;
-                    }
-                },
-                error: function(xhr, ajaxOptions, thrownError){
-                    if(xhr.status==404){ // user does not exist in the api
-                        oustandingsCache[nick] = false;
-                    }
-                },
-                async: false
-            })
-        }
-
-        return oustandingsCache[nick] || false;
-    }
-
-    //var originalMemberRender = _kiwi.view.Member.prototype.render;
-    var originalComparator = _kiwi.model.MemberList.prototype.comparator;
-    var originalMemberListInitialize = _kiwi.model.MemberList.prototype.initialize;
-
-    _kiwi.view.Member.prototype.render = function(){
-        var $this = this.$el,
-            prefix_css_class = (this.model.get('modes') || []);
-
-        if(typeof(this.model.get('isoutstanded')) != 'undefined' && this.model.get('isoutstanded') == 1){
-            prefix_css_class.push('outstanded');            
-        }    
-
-        prefix_css_class = prefix_css_class.join(' ');
-
-        $this.attr('class', 'mode ' + prefix_css_class);
-        $this.html('<a class="nick"><span class="prefix">' + this.model.get("prefix") + '</span>' + this.model.get("nick") + '</a>');
-
-        console.log(['render: '+this.model.get("nick")+' with class: '+prefix_css_class, this.model.get('isoutstanded')]);
-
-        return this;
-    };
-
-    _kiwi.model.MemberList.prototype.comparator =   function (a, b) {
-        a_modes = a.get("modes");
-        b_modes = b.get("modes");
-
-        a_nick = a.get("nick");
-        b_nick = b.get("nick");
-
-        if(isNickOutstanded(a_nick) && isNickOutstanded(b_nick)){
-            a.set('isoutstanded', 1);
-            b.set('isoutstanded', 1);
-            return originalComparator.apply(this, [a, b]);
-        }if(isNickOutstanded(a_nick)){
-            a.set('isoutstanded', 1);
-            b.set('isoutstanded', 0);
-            return -1;
-        }else if(isNickOutstanded(b_nick)){
-            b.set('isoutstanded', 1);
-            a.set('isoutstanded', 0);
-            return 1;
-        }else{
-            b.set('isoutstanded', 0);
-            a.set('isoutstanded', 0);
-        }
-
-        return originalComparator.apply(this, [a, b]);
-    };
-
-    _kiwi.model.MemberList.prototype.initialize = function(){
-        var self = this;
-
-        originalMemberListInitialize.call(this);
-        
-        this.on('change:nick', function(member) {
-            self.sort();
-        });
-    };
-
-        /*var net = kiwi.components.Network();
-        net.on('connect', function(e){
-            var panels = kiwi.connections.active_connection.panels;
-            panels.bind('add', function(panel){
-                if(panel.isChannel()){
-                    var members = panel.get('members');
-
-                    /*member.comparator = function(){
-                        return 0;
-                    };*/
-
-             /*       members.bind('add', function(member, members, options){
-                        console.log(member.get('nick'));
-                        console.log(member);
-
-                        member.view.$el.addClass('iii');
-
-                        console.log(member.view.$el);
-                    });
+                    _format: 'json',
+                    name: channel,
+                    page: page
                 }
             });
-        });*/
+        };
+
+        var channelUsers = function(channel){
+            var users = [];
+            var usersDeferred = jQuery.Deferred();
+            var currentPage = 1;
+
+            var handleData = function(data){
+                var total = data["hydra:totalItems"];
+                var itemsPerPage = data["hydra:itemsPerPage"];
+                var id = data["@id"];
+                var lastPage = data["hydra:lastPage"];
+                
+
+                if(typeof(data['hydra:member']) != 'undefined'){
+                    _.map(data['hydra:member'], function(user){
+                        users.push(user);
+                    });
+                    
+                    if(id != lastPage){
+                        currentPage++;
+                        getRemoteUsersOfChannel(channel, currentPage).then(handleData);
+                    }else{
+                        usersDeferred.resolve(users);
+                    }
+                }
+            };
+
+            getRemoteUsersOfChannel(channel, currentPage).then(handleData);
+
+            return usersDeferred;
+        };
+
+        var getOrCreateDeferredForNickData = function(nick){
+            if(typeof(users[nick]) == 'undefined'){
+                var promise = jQuery.Deferred();
+                users[nick] = promise;
+            }
+
+            return users[nick];
+        };
+
+        var resolveUserDeffered = function(userData){
+            var user = userData.user;
+            var userDataDeferred = getOrCreateDeferredForNickData(user.nick);
+
+            if(userDataDeferred.state() == 'pending'){
+                userDataDeferred.resolve(user);
+            }
+        };
+
+        var populateUsersDeferredData = function(data){
+            _.map(data, resolveUserDeffered);
+        };
+
+        _kiwi.view.Member.prototype.render = function(){
+            var $this = this.$el;
+            var nick = this.model.get('nick');
+            var userDataDeferred = getOrCreateDeferredForNickData(nick);
+            
+            originalMemberRender.call(this);
+
+            userDataDeferred.then(function(userData){
+                if(userData.register){
+                    $this.addClass('registered');
+                }
+            });
+                
+            return this;
+        };
+
+
+        // when a panel is created, we fetch user from realtime
+        kiwi.events.on('panel:created', function(event, data){
+            var panel = data.panel;
+
+            if(panel.isChannel()){
+                var channel = panel.get('name');
+                channelUsers(channel).then(populateUsersDeferredData);
+            }
+        });
     });
 </script>
