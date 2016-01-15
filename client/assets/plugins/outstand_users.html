@@ -146,7 +146,13 @@
                 // refresh data for the channel every 2 minutes
                 var intervalTimer = setInterval(function(){
                     channelUsers(channel).then(populateUsersDeferredData);
-                }, 120000); 
+                }, 120000);
+
+                (function(panel, intervalTimer){ // wrap in anonymous function to avoid loosing intervalTimer reference
+                    panel.bind('remove', function(){
+                        clearInterval(intervalTimer);
+                    });
+                })(panel, intervalTimer);
             }
         });
     });
