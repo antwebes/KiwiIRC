@@ -14,6 +14,12 @@
         var originalMemberRender = _kiwi.view.Member.prototype.render;
         var originalMemberListInitialize = _kiwi.model.MemberList.prototype.initialize;
 
+        /**
+         * Get users connected to a channel
+         * @var channel
+         * @var page
+         * @return jQuery.Deferred
+         */
         var getRemoteUsersOfChannel = function(channel, page){
             return jQuery.ajax({
                 url: realtimeEndpoint + '/user_channels',
@@ -25,11 +31,17 @@
             });
         };
 
+        /**
+         * Gets a deferred of users of a given channel
+         * @var channel
+         * @return jQuery.Deferred
+         */       
         var channelUsers = function(channel){
             var users = [];
             var usersDeferred = jQuery.Deferred();
             var currentPage = 1;
 
+            // handles the data retreived from the server. The handler makes the decission to resolve the deferred or get more pages
             var handleData = function(data){
                 var total = data["hydra:totalItems"];
                 var itemsPerPage = data["hydra:itemsPerPage"];
@@ -42,20 +54,37 @@
                         users.push(user);
                     });
                     
-                    if(id != lastPage){
+                    if(id != lastPage){ // we have to fetch more pages
                         currentPage++;
-                        getRemoteUsersOfChannel(channel, currentPage).then(handleData);
+                        getRemoteUsersOfChannel(channel, currentPage)
+                            .then(handleData)
+                            .fail(function(){
+                                usersDeferred.reject();
+                            });
                     }else{
-                        usersDeferred.resolve(users);
+                        usersDeferred.resolve(users); //we have all data, let's resolve
                     }
+                }else{
+                    // no users so we resolve with empty data
+                    usersDeferred.resolve(users);
                 }
             };
 
-            getRemoteUsersOfChannel(channel, currentPage).then(handleData);
+            // begin to get data from the first page
+            getRemoteUsersOfChannel(channel, currentPage)
+               .then(handleData)
+               .fail(function(){
+                    usersDeferred.reject();
+               });
 
             return usersDeferred;
         };
 
+        /**
+         * Returns a deferred for the data of the user or create one
+         * @var nick
+         * @return jQuery.Deferred
+         */
         var getOrCreateDeferredForNickData = function(nick){
             if(typeof(users[nick]) == 'undefined'){
                 var promise = jQuery.Deferred();
@@ -65,17 +94,25 @@
             return users[nick];
         };
 
-        var resolveUserDeffered = function(userData){
+        /**
+         * Resolves the deferred corresponding to the userData given
+         * @var userData
+         */
+        var resolveUserDeferred = function(userData){
             var user = userData.user;
             var userDataDeferred = getOrCreateDeferredForNickData(user.nick);
 
+            // only resolve if not allready resolved
             if(userDataDeferred.state() == 'pending'){
                 userDataDeferred.resolve(user);
             }
         };
 
-        var populateUsersDeferredData = function(data){
-            _.map(data, resolveUserDeffered);
+        /**
+         * Resolves all user deferreds associated to the given users
+         */
+        var populateUsersDeferredData = function(usersData){
+            _.map(usersData, resolveUserDeferred);
         };
 
         _kiwi.view.Member.prototype.render = function(){
@@ -83,8 +120,10 @@
             var nick = this.model.get('nick');
             var userDataDeferred = getOrCreateDeferredForNickData(nick);
             
+            // we call the original render
             originalMemberRender.call(this);
 
+            // once the userData are resolved we check if the user is registered and add the class
             userDataDeferred.then(function(userData){
                 if(userData.register){
                     $this.addClass('registered');
@@ -101,7 +140,13 @@
 
             if(panel.isChannel()){
                 var channel = panel.get('name');
+
                 channelUsers(channel).then(populateUsersDeferredData);
+
+                // refresh data for the channel every 2 minutes
+                var intervalTimer = setInterval(function(){
+                    channelUsers(channel).then(populateUsersDeferredData);
+                }, 120000); 
             }
         });
     });
