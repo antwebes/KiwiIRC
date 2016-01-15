@@ -1,0 +1,8 @@
+kiwiirc:
+  build: .
+  entrypoint: "/entrypoint.sh"
+  volumes: ["/home/ping/.ssh/:/root/.ssh/"]
+  environment:
+    WEB_CONFIG_BRANCH: master
+    WEB_CONFIG_APP: kiwiirc
+    REPOSITORY: antweb/web-config.git
