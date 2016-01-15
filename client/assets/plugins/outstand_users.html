@@ -1,0 +1,127 @@
+<style>
+    .outstanded {
+        background: blue;
+    }
+</style>
+
+<script>
+    kiwi.plugins.on('loaded', function(){
+
+    var oustandingsCache = {};    
+
+    var accessToken = "MzBjYzU4NGZjNDNhN2Y2YTExNGUyODgwN2VlZmRkNGFiZTk2MzNhMmZlYmRhYTg3NGNkOGYwMWQwNzliOTM3YnJ1MDE0NTM4ODI4NDllODI3YjgyMWNkOGM1MWE2NDk5YTc3NjZjYTQ1OTc5NjU3N2JjYzkxNGY5ZTU1ZDVlNGU0ZjgyZjlmMDBlN2Q0";
+
+
+    var apiEndpoint = "http://api.chateagratis.local/app_dev.php";
+
+    var isNickOutstanded = function(nick){
+        var _$ = jQuery;
+
+        if(typeof(oustandingsCache[nick]) == 'undefined'){
+            _$.ajax({
+                url: apiEndpoint + '/api/users/' + nick,
+                data: {
+                    access_token: accessToken
+                },
+                success: function(data){
+                    if(typeof(data.outstanding) == 'undefined'){
+                        oustandingsCache[nick] = false;
+                    }else{
+                        oustandingsCache[nick] = true;
+                    }
+                },
+                error: function(xhr, ajaxOptions, thrownError){
+                    if(xhr.status==404){ // user does not exist in the api
+                        oustandingsCache[nick] = false;
+                    }
+                },
+                async: false
+            })
+        }
+
+        return oustandingsCache[nick] || false;
+    }
+
+    //var originalMemberRender = _kiwi.view.Member.prototype.render;
+    var originalComparator = _kiwi.model.MemberList.prototype.comparator;
+    var originalMemberListInitialize = _kiwi.model.MemberList.prototype.initialize;
+
+    _kiwi.view.Member.prototype.render = function(){
+        var $this = this.$el,
+            prefix_css_class = (this.model.get('modes') || []);
+
+        if(typeof(this.model.get('isoutstanded')) != 'undefined' && this.model.get('isoutstanded') == 1){
+            prefix_css_class.push('outstanded');            
+        }    
+
+        prefix_css_class = prefix_css_class.join(' ');
+
+        $this.attr('class', 'mode ' + prefix_css_class);
+        $this.html('<a class="nick"><span class="prefix">' + this.model.get("prefix") + '</span>' + this.model.get("nick") + '</a>');
+
+        console.log(['render: '+this.model.get("nick")+' with class: '+prefix_css_class, this.model.get('isoutstanded')]);
+
+        return this;
+    };
+
+    _kiwi.model.MemberList.prototype.comparator =   function (a, b) {
+        a_modes = a.get("modes");
+        b_modes = b.get("modes");
+
+        a_nick = a.get("nick");
+        b_nick = b.get("nick");
+
+        if(isNickOutstanded(a_nick) && isNickOutstanded(b_nick)){
+            a.set('isoutstanded', 1);
+            b.set('isoutstanded', 1);
+            return originalComparator.apply(this, [a, b]);
+        }if(isNickOutstanded(a_nick)){
+            a.set('isoutstanded', 1);
+            b.set('isoutstanded', 0);
+            return -1;
+        }else if(isNickOutstanded(b_nick)){
+            b.set('isoutstanded', 1);
+            a.set('isoutstanded', 0);
+            return 1;
+        }else{
+            b.set('isoutstanded', 0);
+            a.set('isoutstanded', 0);
+        }
+
+        return originalComparator.apply(this, [a, b]);
+    };
+
+    _kiwi.model.MemberList.prototype.initialize = function(){
+        var self = this;
+
+        originalMemberListInitialize.call(this);
+        
+        this.on('change:nick', function(member) {
+            self.sort();
+        });
+    };
+
+        /*var net = kiwi.components.Network();
+        net.on('connect', function(e){
+            var panels = kiwi.connections.active_connection.panels;
+            panels.bind('add', function(panel){
+                if(panel.isChannel()){
+                    var members = panel.get('members');
+
+                    /*member.comparator = function(){
+                        return 0;
+                    };*/
+
+             /*       members.bind('add', function(member, members, options){
+                        console.log(member.get('nick'));
+                        console.log(member);
+
+                        member.view.$el.addClass('iii');
+
+                        console.log(member.view.$el);
+                    });
+                }
+            });
+        });*/
+    });
+</script>
