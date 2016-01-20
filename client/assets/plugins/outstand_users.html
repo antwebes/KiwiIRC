@@ -122,13 +122,25 @@
              */
             var addRegisterMode = function(member){
                 var nick = member.get('nick');
-                var userDataDeferred = getOrCreateDeferredForNickData(nick);
 
-                userDataDeferred.then(function(userData){
-                    if(userData.register){
-                        member.addMode('r');
-                    }
+                var doAddModeRIfRegistered = function(nick){
+                    var userDataDeferred = getOrCreateDeferredForNickData(nick);
+
+                    userDataDeferred.then(function(userData){
+                        if(userData.register){
+                            member.addMode('r');
+                        }
+                    });
+                };
+
+                member.on('change', function(){
+                    member.removeMode('r');
+
+                    // recalculate if the new nick is a registered 
+                    doAddModeRIfRegistered(member.get('nick'));
                 });
+
+                doAddModeRIfRegistered(nick);
             };
 
             if(panel.isChannel()){
