@@ -1,5 +1,5 @@
 <style>
-    .registered {
+    .r {
         font-weight: bold;
     }
 </style>
@@ -9,10 +9,7 @@
 
         var users = {};
 
-        var realtimeEndpoint = "http://127.0.0.1:8000/app_dev.php";
-
-        var originalMemberRender = _kiwi.view.Member.prototype.render;
-        var originalMemberListInitialize = _kiwi.model.MemberList.prototype.initialize;
+        var realtimeEndpoint = kiwi.settings.get('realtime_api_endpoint');
 
         /**
          * Get users connected to a channel
@@ -115,31 +112,35 @@
             _.map(usersData, resolveUserDeferred);
         };
 
-        _kiwi.view.Member.prototype.render = function(){
-            var $this = this.$el;
-            var nick = this.model.get('nick');
-            var userDataDeferred = getOrCreateDeferredForNickData(nick);
-            
-            // we call the original render
-            originalMemberRender.call(this);
-
-            // once the userData are resolved we check if the user is registered and add the class
-            userDataDeferred.then(function(userData){
-                if(userData.register){
-                    $this.addClass('registered');
-                }
-            });
-                
-            return this;
-        };
-
 
         // when a panel is created, we fetch user from realtime
         kiwi.events.on('panel:created', function(event, data){
             var panel = data.panel;
 
+            var addRegisterMode = function(member){
+                var nick = member.get('nick');
+                var userDataDeferred = getOrCreateDeferredForNickData(nick);
+
+                userDataDeferred.then(function(userData){
+                    if(userData.register){
+                        member.addMode('r');
+                    }
+                });
+            };
+
             if(panel.isChannel()){
                 var channel = panel.get('name');
+                var memberList = panel.get('members');
+
+                panel.get('members').bind('add', addRegisterMode);
+
+                panel.get('members').bind('reset', function(members){
+                    members.forEach(addRegisterMode);
+                });
+
+                panel.on('active', function(){
+                    panel.get('members').forEach(addRegisterMode);
+                });
 
                 channelUsers(channel).then(populateUsersDeferredData);
 
