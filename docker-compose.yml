@@ -1,7 +1,7 @@
 kiwiirc:
   build: .
   entrypoint: "/entrypoint.sh"
-  volumes: ["/home/ping/.ssh/:/root/.ssh/"]
+  volumes: ["./devploy_keys/:/root/.ssh/"]
   ports:
     - "7778:7778"
   environment:
