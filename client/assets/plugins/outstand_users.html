@@ -113,10 +113,13 @@
         };
 
 
-        // when a panel is created, we fetch user from realtime
+        // when a panel is created a it is a chaNNEL, we fetch users from realtime
         kiwi.events.on('panel:created', function(event, data){
             var panel = data.panel;
 
+            /**
+             * function that adds register mode to member if he is registered
+             */
             var addRegisterMode = function(member){
                 var nick = member.get('nick');
                 var userDataDeferred = getOrCreateDeferredForNickData(nick);
@@ -142,6 +145,7 @@
                     panel.get('members').forEach(addRegisterMode);
                 });
 
+                // start fetching data
                 channelUsers(channel).then(populateUsersDeferredData);
 
                 // refresh data for the channel every 2 minutes
