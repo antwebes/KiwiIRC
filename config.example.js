@@ -218,7 +218,8 @@ conf.client = {
         ignore_new_queries: false,
         count_all_activity: false,
         show_autocomplete_slideout: true,
-        locale: null // null = use the browser locale settings
+        locale: null, // null = use the browser locale settings
+        realtime_api_endpoint: 'http://127.0.0.1:8000/app_dev.php'
     },
     window_title: 'Kiwi IRC'
 };
