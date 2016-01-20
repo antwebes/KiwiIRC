@@ -10,3 +10,5 @@ client/index.html
 kiwi.log
 kiwiirc.pid
 config.js
+deploy_keys/*
+!deploy_keys/config
