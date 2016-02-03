@@ -1,0 +1,146 @@
+<script>
+    kiwi.plugins.on('loaded', function(){
+
+        var usrTmpl = "<%\n" +
+                "var currentYear, yearUser, yearsOld;\n" +
+                "\n" +
+                "if(typeof(profile) != 'undefined'){\n" +
+                " currentYear = new Date().getFullYear();\n" +
+                " yearUser = new Date(profile.birthday).getFullYear().toString().substring(0,4);\n" +
+                " yearsOld = currentYear - yearUser;\n" +
+                " if (yearsOld <=0){\n" +
+                " yearsOld = '>18';\n" +
+                "}else if(isNaN(yearsOld)){\n" +
+                " yearsOld = null;\n" +
+                " }\n" +
+                "}else{\n" +
+                " yearsOld = null;\n" +
+                "}\n" +
+                "%>\n" +
+                "\n" +
+                "<% if(typeof(profile) != 'undefined' &&\n" +
+                " typeof(profile.profile_photo) != 'undefined' &&\n" +
+                " typeof(profile.profile_photo.path_medium) != 'undefined'){ %>\n" +
+                " <img src=\"<%= profile.profile_photo.path_medium %>\" width=\"199px\">\n" +
+                "<% } %>\n" +
+                "<ul id=\"user-info\" style=\"margin-left:15px;\">\n" +
+                " <% if(yearsOld != null){ %>\n" +
+                " <li><i class=\"fa fa-calendar-o\"></i> " + kiwi.i18n.translate('plugin_social_profile_age').fetch() + ": <%= yearsOld %></li>\n" +
+                " <% } %>\n" +
+                " <% if(typeof(profile) != 'undefined' && typeof(profile.gender) != 'undefined' && profile.gender != ''){ %>\n" +
+                " <li><i class=\"fa <%if(profile.gender == 'female'){%>fa-female<% }else{ %>fa-male<% } %>\"></i> " + kiwi.i18n.translate('plugin_social_profile_gender').fetch() + ": <%= profile.gender || '' %></li>\n" +
+                " <% } %>\n" +
+                " <% if(typeof(city) != 'undefined'){ %>\n" +
+                " <li><i class=\"fa fa-location-arrow\"></i> " + kiwi.i18n.translate('plugin_social_profile_location').fetch() + ": <% if(city.name != 'no_city'){ %><%= city.name %>, <% } %><%= city.country_name %></li>\n" +
+                " <% } %>\n" +
+                " <li><center><a href=\"<%= url_user_profile %>\" <% if(typeof(window.user_id) == 'undefined') { %> target=\"_blank\"<% } %>> <i class=\"fa fa-info\"></i> " + kiwi.i18n.translate('plugin_social_profile_full_profile').fetch() + "</a></center></li>\n" +
+                "</ul>";
+
+        var renderUser = function(user){
+            var tmpl = usrTmpl.trim();
+            var user_path_profile;
+            var social_endpoint;
+            if (!getQueryVariable('social_endpoint')){
+                social_endpoint = kiwi.settings.get('social_endpoint');
+            }else{
+                social_endpoint = getQueryVariable('social_endpoint');
+            }
+            if (!getQueryVariable('user_path_profile')){
+                user_path_profile = kiwi.settings.get('user_path_profile');
+            }else{
+                user_path_profile = getQueryVariable('user_path_profile');
+            }
+            if (!user_path_profile){
+                console.log('If necessary declare param user_path_profile in config.js');
+            }
+            user_path_profile = user_path_profile.replace("$username$", user.username);
+            user_path_profile = user_path_profile.replace("$id$", user.id);
+            var url_user_profile = social_endpoint + user_path_profile;
+            var data = _.extend(user, {url_user_profile : url_user_profile});
+            return _.template(tmpl)(data);
+        };
+
+        var getUserInfo = function(panel){
+            var guest_api;
+            if(typeof(window.gest_api) != 'undefined'){
+                guest_api = window.gest_api;
+            }else if(getQueryVariable('guest_api')){
+                guest_api = getQueryVariable('guest_api');
+            }else{
+                guest_api = kiwi.settings.get('guest_api')
+            }
+
+            var deferred = $.Deferred();
+            //we created a field userData to check if we have data of user from api or this user is not registered 
+            var userData = panel.get('userData');
+            var username = panel.get('name');
+            var network = kiwi.components.Network();
+            var url = guest_api+ "/users/"+username;
+            var isRegisteredInIRC = false;
+
+            //this function calls the api for fetching the profile and resolves the promise
+            var getProfileFomApi = function(){
+                $.ajax({
+                    dataType: 'json',
+                    headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    crossDomain: true,
+                    url: url,
+                    success: function(data){
+                        panel.set('userData', data);
+                        deferred.resolve(data);
+                    },
+                    error: function(){
+                        panel.set('userData', true); 
+                        deferred.reject();
+                    }
+                });
+            };
+            
+            //we haven't yet fetched the userdata from the server
+            if(!userData){
+                var isNickRegistered = function(response) {
+                    //if whois is of the user actually and we recived a message that this user is registered call to api to get profile
+                    if (response.nick.toLowerCase() == username.toLowerCase() && response.msg == 'is a registered nick'){
+                        isRegisteredInIRC = true;
+                        getProfileFomApi();
+                        network.off('whois', isNickRegistered)
+                    }
+                    //if we are in finish of whois and it not marked as registered, we marked that tab has data to not to do whois again
+                    if(response.end && !isRegisteredInIRC){
+                        panel.set('userData', true);
+                        network.off('whois', isNickRegistered);
+                    }
+                };
+
+                //check if user is registered in irc
+                network.on('whois', isNickRegistered);
+                network.raw('whois '+username);
+            }else{
+                deferred.resolve(userData);
+            }
+            return deferred.promise();
+        };
+
+        var showUserInfoOnSideBar = function(panel){
+            var fetchingUserData = getUserInfo(panel);
+            $.when(fetchingUserData).done(function(data){
+                if (!(typeof(data) === 'boolean')){ 
+                    kiwi.components.RightBar.show(false);
+                    $('.memberlists').html(renderUser(data));
+                }
+            });
+        };
+
+        var net = kiwi.components.Network();
+        net.on('connect', function(e){
+            var panels = kiwi.connections.active_connection.panels;
+            panels.bind('add', function(panel){
+                if(panel.isQuery()){
+                    panel.on('active', function(){
+                        showUserInfoOnSideBar(panel);
+                    });
+                }
+            });
+        });
+    });
+</script>
