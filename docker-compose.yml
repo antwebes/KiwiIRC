@@ -1,0 +1,6 @@
+kiwiirc:
+  build: .
+  entrypoint: "/entrypoint.sh"
+  volumes: ["/home/kiwiirc/config.js/:/usr/src/app/config.js"]
+  ports:
+    - "80:7778"
