@@ -7,6 +7,9 @@
   "bin": {
     "kiwiirc": "./kiwi"
   },
+  "scripts": {
+    "start": "./kiwi -f start"
+  }, 
   "man": "./man/kiwiirc.1",
   "repository": {
     "type": "git",
