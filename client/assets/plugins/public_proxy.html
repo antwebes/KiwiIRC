@@ -1,0 +1,21 @@
+<script type="text/javascript">
+    (function(){
+
+        //Create IE + others compatible event handler
+        var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+        var eventer = window[eventMethod];
+        var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+        // Listen to message from child window
+
+        eventer(messageEvent,function(e) {
+            if(arg[0] == "/") {
+                var network = kiwi.components.Network();
+                while(command.charAt(0) === '/')
+                command = command.substr(1);
+
+                network.raw(command);
+            } 
+        },false);
+
+    })();
+</script>
