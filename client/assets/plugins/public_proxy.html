@@ -1,6 +1,8 @@
 <script type="text/javascript">
     (function(){
 
+    var network = kiwi.components.Network();
+
         //Create IE + others compatible event handler
         var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
         var eventer = window[eventMethod];
@@ -8,14 +10,25 @@
         // Listen to message from child window
 
         eventer(messageEvent,function(e) {
-            if(arg[0] == "/") {
-                var network = kiwi.components.Network();
+        var command = e.data;
+            if(command[0] == "/") {
                 while(command.charAt(0) === '/')
                 command = command.substr(1);
 
                 network.raw(command);
             } 
         },false);
+
+        network.on('connect', function(nick) {
+            proxyEvent('connected', nick);
+        });
+
+        function proxyEvent(e, data) {
+            var args = [e,data];
+
+            //Send event to parent iframe
+            parent.postMessage(args, "*");
+        }
 
     })();
 </script>
