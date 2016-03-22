@@ -182,6 +182,8 @@
                     }else{
                         memberPanel.removeMode('r');
                     }
+
+                    memberList.sort();
                 });
 
                 eventBus.on('media:PREMIUM', function(event){
@@ -198,28 +200,32 @@
                     }else{
                         memberPanel.removeMode('p');
                     }
+
+                    memberList.sort();
                 });
             }
-        });
 
-        // listen to mode change. If +r check media els remove r (registered) and p (premium) modes
-        network.on('mode', function(event) {
-            var modes = event.modes;
-            var nick = event.target;
+            // listen to mode change. If +r check media els remove r (registered) and p (premium) modes
+            network.on('mode', function(event) {
+                var modes = event.modes;
+                var nick = event.target;
 
-            for(var i=0;i<modes.length;i++){
-                if(modes[i].mode == '+r'){
-                    checkMedia(nick);
-                }else if(modes[i].mode == '-r'){
-                    var memberPanel = memberList.getByNick(nick);
+                for(var i=0;i<modes.length;i++){
+                    if(modes[i].mode == '+r'){
+                        checkMedia(nick);
+                    }else if(modes[i].mode == '-r'){
+                        var memberPanel = memberList.getByNick(nick);
 
-                    if(memberPanel != null){
-                        memberPanel.removeMode('r');
-                        memberPanel.removeMode('p');
-                        network.raw('MEDIA ' + nick + ' FEATURED OFF');
+                        if(memberPanel != null){
+                            memberPanel.removeMode('r');
+                            memberPanel.removeMode('p');
+                            network.raw('MEDIA ' + nick + ' FEATURED OFF');
+
+                            memberList.sort();
+                        }
                     }
                 }
-            }
+            });
         });
     });
 </script>
