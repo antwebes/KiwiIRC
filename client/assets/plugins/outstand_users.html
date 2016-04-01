@@ -123,15 +123,72 @@
 
         _.extend(eventBus, Backbone.Events);
 
+        // nick modes
+        var nickModes = {};
+
+        var addModeToNick = function(nick, mode){
+            if(typeof(nickModes[nick]) == 'undefined'){
+                nickModes[nick] = [];
+            }
+
+            if(nickModes[nick].indexOf(mode ) < 0){
+                nickModes[nick].push(mode);
+
+                eventBus.trigger('addMode', {
+                    nick: nick,
+                    mode: mode
+                });
+            }
+        };
+
+        var removeModeToNick = function(nick, mode){
+            if(typeof(nickModes[nick]) != 'undefined'){
+                var modeIndex = nickModes[nick].indexOf(mode);
+
+                if(modeIndex >= 0){
+                    nickModes[nick].splice(modeIndex, 1);
+
+                    eventBus.trigger('removeMode', {
+                        nick: nick,
+                        mode: mode
+                    });
+                }
+            }
+        };
+
+        eventBus.on('media:FEATURED', function(event){
+            var nick = event.nick;
+            var move = event.move;
+
+            if(move == '+'){
+                addModeToNick(nick, 'r');
+            }else{
+                removeModeToNick(nick, 'r');
+            }
+        });
+
+        eventBus.on('media:PREMIUM', function(event){
+            var nick = event.nick;
+            var move = event.move;
+
+            if(move == '+'){
+                addModeToNick(nick, 'p');
+            }else{
+                removeModeToNick(nick, 'p');
+            }
+        });
+
         // handler that checks what type of media event we received
         var handleMediaCommand = function(event){
             var action = event.params[0];
             var move = event.params[1];
-            var nick = event.params[2];
+            var nicks = event.params[2].split(' ');
 
-            eventBus.trigger('media:' + action, {
-                move: move,
-                nick: nick
+            _.each(nicks, function(nick){
+                eventBus.trigger('media:' + action, {
+                    move: move,
+                    nick: nick
+                });
             });
         };
 
@@ -171,8 +228,40 @@
             if(panel.isChannel()){
                 var channel = panel.get('name');
                 var memberList = panel.get('members');
+                var memberPanel;
 
-                eventBus.on('media:FEATURED', function(event){
+                setTimeout(function(){ // we need to get the hole list in the panel so we delay
+                    for(var nick in nickModes){
+                        memberPanel = memberList.getByNick(nick);
+                        if(memberPanel != null && typeof(nickModes[nick]) != 'undefined'){
+                            _.each(nickModes[nick], function(mode){
+                                memberPanel.addMode(mode);
+                            });
+                        }
+                    }
+
+                    memberList.sort();
+                }, 5000);
+
+                eventBus.on('addMode', function(eventData){
+                    memberPanel = memberList.getByNick(eventData.nick);
+
+                    if(memberPanel != null){
+                        memberPanel.addMode(eventData.mode);
+                        memberList.sort();
+                    }
+                });
+
+                eventBus.on('removeMode', function(eventData){
+                    memberPanel = memberList.getByNick(eventData.nick);
+
+                    if(memberPanel != null){
+                        memberPanel.removeMode(eventData.mode);
+                        memberList.sort();
+                    }
+                });
+
+                /*eventBus.on('media:FEATURED', function(event){
                     var nick = event.nick;
                     var move = event.move;
                     var memberPanel = memberList.getByNick(nick);
@@ -202,7 +291,7 @@
                     }
 
                     memberList.sort();
-                });
+                });*/
             }
 
             // listen to mode change. If +r check media els remove r (registered) and p (premium) modes
