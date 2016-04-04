@@ -1,10 +1,26 @@
 <style>
-    .r {
-        font-weight: bold;
+    .r span {
+        display: block !important;
+        overflow: hidden;
+        float: left;        
+        background-repeat: no-repeat;
+        font-size: 20px !important;
+        width: 16px !important;
+        height: 16px !important;
+        color: transparent !important;
+        background-image: url("/kiwi/assets/img/icons/user.png");
     }
 
-    .p {
-        background-color: red;
+    .p span {
+        display: block !important;
+        float: left;
+        overflow: hidden;
+        background-repeat: no-repeat;
+        font-size: 20px !important;
+        width: 16px !important;
+        height: 16px !important;
+        color: transparent !important;
+        background-image: url("/kiwi/assets/img/icons/featured.png");
     }
 </style>
 
@@ -131,14 +147,12 @@
                 nickModes[nick] = [];
             }
 
-            if(nickModes[nick].indexOf(mode ) < 0){
-                nickModes[nick].push(mode);
+            nickModes[nick].push(mode);
 
-                eventBus.trigger('addMode', {
-                    nick: nick,
-                    mode: mode
-                });
-            }
+            eventBus.trigger('addMode', {
+                nick: nick,
+                mode: mode
+            });
         };
 
         var removeModeToNick = function(nick, mode){
@@ -247,6 +261,7 @@
                     memberPanel = memberList.getByNick(eventData.nick);
 
                     if(memberPanel != null){
+                        console.log(memberPanel);
                         memberPanel.addMode(eventData.mode);
                         memberList.sort();
                     }
