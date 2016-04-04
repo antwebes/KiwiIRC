@@ -1,0 +1,320 @@
+<style>
+    .r {
+        font-weight: bold;
+    }
+
+    .p {
+        background-color: red;
+    }
+</style>
+
+<script>
+    kiwi.plugins.on('loaded', function(){
+
+        // code to get token from API
+        var guestApi = kiwi.settings.get('guest_api');
+
+        var GuestClientConfig = {
+            authorization: guestApi + "/oauth/v2/token",
+            client_id: kiwi.settings.get('client_id'),
+            secret: kiwi.settings.get('client_secret')
+        };
+
+        var getCookie = function(name){
+            var re = new RegExp(name + "=([^;]+)");
+            var value = re.exec(document.cookie);
+            return (value != null) ? decodeURI(value[1]) : null;
+        };
+
+
+        function getTokenForGuestClients(){
+            $.ajax({
+                url: GuestClientConfig.authorization,
+                method: "GET",
+                dataType: 'JSON',
+                data: { client_id: GuestClientConfig.client_id, client_secret: GuestClientConfig.secret, 'grant_type':  'guest_credentials'  }
+            }).done(function(data, textStatus, jqXHR){
+                var access_token = jqXHR.responseJSON.access_token;
+                var expires_in = jqXHR.responseJSON.expires_in;
+                saveTokenInSession(access_token, expires_in);
+                prepare();
+            });
+        }
+
+        function saveTokenInSession(access_token, expires_in)
+        {
+            window.token = access_token;
+            var tokenLocalStorage = localStorage.getItem('token');
+            if (!tokenLocalStorage){
+                // Put the token into storage
+                localStorage.setItem('token', access_token);
+            }
+            var det = localStorage.getItem('det');
+            if (!det || expires_in){
+                var det = new Date();
+                if (expires_in) {
+                    //86400segundos = 1 día
+                    det.setSeconds(det.getSeconds()+expires_in-86400);
+                } else{
+                    det.setSeconds(det.getSeconds()+86400);
+                }
+                // Put the date expire token into storage
+                localStorage.setItem('det', det);
+            }
+        }
+
+        function getTokenOfSession() {
+            var tokenCookie = getCookie("token");
+            if(tokenCookie == undefined) {
+                if (window.token == undefined) {
+                    // Retrieve the object from storage
+                    var tokenLocalStorage = localStorage.getItem('token');
+                    if (tokenLocalStorage) {
+                        window.token = tokenLocalStorage;
+                        var det = localStorage.getItem('det');
+                        var det_date = new Date(det);
+                        var now = new Date();
+                        if (det_date.getTime() > now.getTime()){
+                            return tokenLocalStorage;
+                        }
+                    }
+                    return false;
+                } else {
+                    return window.token;
+                }
+            }
+            return tokenCookie;
+        }
+
+        function prepare() {
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if(settings.url.indexOf(guestApi) !== -1){
+                        xhr.setRequestHeader('Authorization', 'Bearer ' +window.token);
+                    }
+                }
+            });
+        }
+
+        // get dat of the user from the API
+        var getProfileFomApi = function(username){
+            var url = guestApi + "/api/users/"+username;
+            return $.ajax({
+                url: url,
+                method: "GET",
+                dataType: 'JSON'
+            });
+        };
+
+        // we obtain a token for the API
+        var mytoken = getTokenOfSession();
+
+        if(mytoken != false){
+            saveTokenInSession(mytoken);
+            prepare();
+        }else{
+            getTokenForGuestClients();
+        }
+
+        // end of code to get token from API
+
+        // event bus to comunicate
+        var eventBus = {};
+
+        _.extend(eventBus, Backbone.Events);
+
+        // nick modes
+        var nickModes = {};
+
+        var addModeToNick = function(nick, mode){
+            if(typeof(nickModes[nick]) == 'undefined'){
+                nickModes[nick] = [];
+            }
+
+            if(nickModes[nick].indexOf(mode ) < 0){
+                nickModes[nick].push(mode);
+
+                eventBus.trigger('addMode', {
+                    nick: nick,
+                    mode: mode
+                });
+            }
+        };
+
+        var removeModeToNick = function(nick, mode){
+            if(typeof(nickModes[nick]) != 'undefined'){
+                var modeIndex = nickModes[nick].indexOf(mode);
+
+                if(modeIndex >= 0){
+                    nickModes[nick].splice(modeIndex, 1);
+
+                    eventBus.trigger('removeMode', {
+                        nick: nick,
+                        mode: mode
+                    });
+                }
+            }
+        };
+
+        eventBus.on('media:FEATURED', function(event){
+            var nick = event.nick;
+            var move = event.move;
+
+            if(move == '+'){
+                addModeToNick(nick, 'r');
+            }else{
+                removeModeToNick(nick, 'r');
+            }
+        });
+
+        eventBus.on('media:PREMIUM', function(event){
+            var nick = event.nick;
+            var move = event.move;
+
+            if(move == '+'){
+                addModeToNick(nick, 'p');
+            }else{
+                removeModeToNick(nick, 'p');
+            }
+        });
+
+        // handler that checks what type of media event we received
+        var handleMediaCommand = function(event){
+            var action = event.params[0];
+            var move = event.params[1];
+            var nicks = event.params[2].split(' ');
+
+            _.each(nicks, function(nick){
+                eventBus.trigger('media:' + action, {
+                    move: move,
+                    nick: nick
+                });
+            });
+        };
+
+        var informMediaIfFeatured = function(data){
+            if(typeof(data.city) != 'undefined'){
+                network.raw('MEDIA ' + data.username + ' FEATURED ON');
+            }
+        };
+
+        var informMediaIfPremium = function(data){
+            if(typeof(data.outstanding) != 'undefined'){
+                network.raw('privmsg wololo IAMPREMIUM');
+            }
+        };
+
+        // function that checks if user is featured and premium
+        var checkMedia = function(nick){
+            var userDataPromise = getProfileFomApi(nick);
+
+            userDataPromise.then(informMediaIfFeatured);
+            userDataPromise.then(informMediaIfPremium);
+        };
+
+        var network = kiwi.components.Network();
+
+        // parse unknown_command to check if its a media event
+        network.on('unknown_command', function(event){
+            if(event.command == 'MEDIA'){
+                handleMediaCommand(event);
+            }
+        });
+
+        // when a panel is created a it is a chaNNEL, we fetch users from realtime
+        kiwi.events.on('panel:created', function(event, data){
+            var panel = data.panel;
+
+            if(panel.isChannel()){
+                var channel = panel.get('name');
+                var memberList = panel.get('members');
+                var memberPanel;
+
+                setTimeout(function(){ // we need to get the hole list in the panel so we delay
+                    for(var nick in nickModes){
+                        memberPanel = memberList.getByNick(nick);
+                        if(memberPanel != null && typeof(nickModes[nick]) != 'undefined'){
+                            _.each(nickModes[nick], function(mode){
+                                memberPanel.addMode(mode);
+                            });
+                        }
+                    }
+
+                    memberList.sort();
+                }, 5000);
+
+                eventBus.on('addMode', function(eventData){
+                    memberPanel = memberList.getByNick(eventData.nick);
+
+                    if(memberPanel != null){
+                        memberPanel.addMode(eventData.mode);
+                        memberList.sort();
+                    }
+                });
+
+                eventBus.on('removeMode', function(eventData){
+                    memberPanel = memberList.getByNick(eventData.nick);
+
+                    if(memberPanel != null){
+                        memberPanel.removeMode(eventData.mode);
+                        memberList.sort();
+                    }
+                });
+
+                /*eventBus.on('media:FEATURED', function(event){
+                    var nick = event.nick;
+                    var move = event.move;
+                    var memberPanel = memberList.getByNick(nick);
+
+                    if(move == '+'){
+                        memberPanel.addMode('r');
+                    }else{
+                        memberPanel.removeMode('r');
+                    }
+
+                    memberList.sort();
+                });
+
+                eventBus.on('media:PREMIUM', function(event){
+                    var nick = event.nick;
+                    var move = event.move;
+                    var memberPanel = memberList.getByNick(nick);
+
+                    if(memberPanel == null){
+                        return;
+                    }
+
+                    if(move == '+'){
+                        memberPanel.addMode('p');
+                    }else{
+                        memberPanel.removeMode('p');
+                    }
+
+                    memberList.sort();
+                });*/
+            }
+
+            // listen to mode change. If +r check media els remove r (registered) and p (premium) modes
+            network.on('mode', function(event) {
+                var modes = event.modes;
+                var nick = event.target;
+
+                for(var i=0;i<modes.length;i++){
+                    if(modes[i].mode == '+r'){
+                        checkMedia(nick);
+                    }else if(modes[i].mode == '-r'){
+                        var memberPanel = memberList.getByNick(nick);
+
+                        if(memberPanel != null){
+                            memberPanel.removeMode('r');
+                            memberPanel.removeMode('p');
+                            network.raw('MEDIA ' + nick + ' FEATURED OFF');
+
+                            memberList.sort();
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>
