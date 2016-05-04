@@ -8,7 +8,7 @@
         width: 16px !important;
         height: 16px !important;
         color: transparent !important;
-        background-image: url("/kiwi/assets/img/icons/user.png");
+        background: no-repeat url("/kiwi/assets/img/icons/user.png") !important;
     }
 
     .p span {
@@ -20,7 +20,7 @@
         width: 16px !important;
         height: 16px !important;
         color: transparent !important;
-        background-image: url("/kiwi/assets/img/icons/featured.png");
+        background: no-repeat url("/kiwi/assets/img/icons/featured.png") !important;
     }
 </style>
 
@@ -261,7 +261,6 @@
                     memberPanel = memberList.getByNick(eventData.nick);
 
                     if(memberPanel != null){
-                        console.log(memberPanel);
                         memberPanel.addMode(eventData.mode);
                         memberList.sort();
                     }
