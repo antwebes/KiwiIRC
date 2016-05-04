@@ -4,10 +4,6 @@ _kiwi.model.MemberList = Backbone.Collection.extend({
         var i, a_modes, b_modes, a_idx, b_idx, a_nick, b_nick;
         var user_prefixes = this.channel.get('network').get('user_prefixes');
 
-        // add custom modes
-        user_prefixes.push({ mode: 'p', symbol: '*'});
-        user_prefixes.push({ mode: 'r', symbol: '&'});
-
         a_modes = a.get("modes");
         b_modes = b.get("modes");
 
