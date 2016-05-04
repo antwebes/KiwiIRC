@@ -22,7 +22,8 @@ var handlers = {
 
 
     RPL_ISUPPORT: function (command) {
-        var options, i, option, matches, j;
+        var options, i, option, matches, j, k;
+        var prefixData = null;
         options = command.params;
         for (i = 1; i < options.length; i++) {
             option = options[i].split("=", 2);
@@ -35,6 +36,22 @@ var handlers = {
                         this.irc_connection.options.PREFIX = [];
                         for (j = 0; j < matches[2].length; j++) {
                             this.irc_connection.options.PREFIX.push({symbol: matches[2].charAt(j), mode: matches[1].charAt(j)});
+                        }
+
+                        // we nneed to send also the prefixes for premium and registered
+                        this.irc_connection.options.PREFIX.push({symbol: '*', mode: 'p'});
+                        this.irc_connection.options.PREFIX.push({symbol: '&', mode: 'r'});
+
+                        // if we have v mode put it as last
+                        for(k=0;k<this.irc_connection.options.PREFIX.length;k++){
+                            if(this.irc_connection.options.PREFIX[k].mode == 'v'){
+                                prefixData = this.irc_connection.options.PREFIX[k];
+                                this.irc_connection.options.PREFIX.splice(k, 1);
+                            }
+                        }
+
+                        if(prefixData){
+                            this.irc_connection.options.PREFIX.push(prefixData);
                         }
                     }
                 } else if (option[0] === 'CHANTYPES') {
