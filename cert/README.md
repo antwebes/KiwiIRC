@@ -1,0 +1,1 @@
+#Locate in this folder your ssl cert and key.
