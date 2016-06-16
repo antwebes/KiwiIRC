@@ -1,9 +1,9 @@
 kiwiirc:
   build: .
   entrypoint: "/entrypoint.sh"
-  volumes: ["./deploy_keys/:/root/.ssh/"]
   ports:
-    - "7778:7778"
+    - "80:7778"
+    - "443:443"
   environment:
     WEB_CONFIG_BRANCH: master
     WEB_CONFIG_APP: kiwiirc
