@@ -6,4 +6,5 @@ kiwiirc:
     - "443:443"
   volumes:
     - "./config.js:/usr/src/app/config.js"
-    - "cert:/usr/src/app/cert "
+    - "cert:/usr/src/app/cert"
+  restart: always
