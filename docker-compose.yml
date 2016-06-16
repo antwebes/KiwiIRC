@@ -5,5 +5,5 @@ kiwiirc:
     - "80:7778"
     - "443:443"
   volumes:
-    - "config.js:/usr/src/app/config.js"
-    - "cert:/usr/src/app/cert"
+    - "./config.js:/usr/src/app/config.js"
+    - "cert:/usr/src/app/cert "
