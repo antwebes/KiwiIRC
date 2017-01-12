@@ -113,8 +113,19 @@
 
             var auto_connect = getQueryVariable('auto_connect');
 
+            var retry = 1;
             if (typeof auto_connect == 'undefined' || auto_connect =='true') {
-                $('[data-js=submit]').click();
+               var refreshIntervalId = setInterval(function() {                  
+	          $('[data-js=submit]').click();
+                  retry++;
+                  if(retry > 5) {
+                      clearInterval(refreshIntervalId);           
+                  }
+               }, 2000);
+
+               network.on('connect', function () {
+                  clearInterval(refreshIntervalId);
+               });
             }
         });
     })();
