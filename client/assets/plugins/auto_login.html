@@ -115,17 +115,21 @@
 
             var retry = 1;
             if (typeof auto_connect == 'undefined' || auto_connect =='true') {
-               var refreshIntervalId = setInterval(function() {                  
+              var refreshIntervalId;
+              setTimeout(function () { 
+               refreshIntervalId = setInterval(function() {                  
 	          $('[data-js=submit]').click();
                   retry++;
                   if(retry > 5) {
                       clearInterval(refreshIntervalId);           
                   }
-               }, 2000);
+                }, 2000);
+               }, 700);
 
                network.on('connect', function () {
                   clearInterval(refreshIntervalId);
                });
+             
             }
         });
     })();
