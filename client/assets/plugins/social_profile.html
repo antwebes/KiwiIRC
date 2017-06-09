@@ -33,7 +33,6 @@
                 " <% if(typeof(city) != 'undefined'){ %>\n" +
                 " <li><i class=\"fa fa-location-arrow\"></i> " + kiwi.i18n.translate('plugin_social_profile_location').fetch() + ": <% if(city.name != 'no_city'){ %><%= city.name %>, <% } %><%= city.country_name %></li>\n" +
                 " <% } %>\n" +
-                " <li><center><a href=\"<%= url_user_profile %>\" <% if(typeof(window.user_id) == 'undefined') { %> target=\"_blank\"<% } %>> <i class=\"fa fa-info\"></i> " + kiwi.i18n.translate('plugin_social_profile_full_profile').fetch() + "</a></center></li>\n" +
                 "</ul>";
 
         var renderUser = function(user){
@@ -75,21 +74,22 @@
             var userData = panel.get('userData');
             var username = panel.get('name');
             var network = kiwi.components.Network();
-            var url = guest_api+ "/users/"+username;
+            var url = guest_api+ "/api/users/"+username;
             var isRegisteredInIRC = false;
 
             //this function calls the api for fetching the profile and resolves the promise
             var getProfileFomApi = function(){
+
                 $.ajax({
                     dataType: 'json',
-                    headers: {'X-Requested-With': 'XMLHttpRequest'},
                     crossDomain: true,
                     url: url,
                     success: function(data){
                         panel.set('userData', data);
                         deferred.resolve(data);
                     },
-                    error: function(){
+                    error: function(e){
+                        console.log(e);
                         panel.set('userData', true); 
                         deferred.reject();
                     }
