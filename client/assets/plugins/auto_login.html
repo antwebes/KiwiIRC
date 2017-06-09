@@ -45,6 +45,10 @@
             var input = kiwi.components.ControlInput();
             var token = getToken();
 
+            $(".channelList").click(function () {
+                network.raw("list");
+            });
+
             //if token so we listen event to do identify with token
             if (token) {
                 network.on('message:notice', function(event) {
