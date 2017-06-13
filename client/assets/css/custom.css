@@ -20,3 +20,8 @@
     float: none;
     width: 100%!important;
 }
+
+#kiwi.narrow .toolbar .tabs {
+    margin-right: 0;
+    width: 100%;
+}

@@ -49,6 +49,10 @@
                 network.raw("list");
             });
 
+            if($(window).width() < 768) {
+                $('#kiwi').removeClass('chanlist_treeview');
+            }
+
             //if token so we listen event to do identify with token
             if (token) {
                 network.on('message:notice', function(event) {
