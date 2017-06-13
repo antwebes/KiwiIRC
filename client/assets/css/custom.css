@@ -3,3 +3,20 @@
 	position: relative;
     height: 2em;
 }
+
+#kiwi.chanlist_treeview .toolbar .app_tools {
+    float: none;
+    width: 160px;
+    height: 28px;
+}
+
+#kiwi .toolbar .app_tools ul li {
+    font-size: 31px;
+    border-right: 1px solid;
+    padding-right: 5px;
+}
+
+#kiwi.chanlist_treeview .toolbar .app_tools {
+    float: none;
+    width: 100%!important;
+}

@@ -118,6 +118,8 @@ _kiwi.view.Application = Backbone.View.extend({
             this.$el.removeClass('chanlist_treeview');
         }
 
+        this.$el.addClass('chanlist_treeview');
+
         this.doLayout();
     },
 
