@@ -25,3 +25,7 @@
     margin-right: 0;
     width: 100%;
 }
+
+.whois {
+    display: none;
+}
